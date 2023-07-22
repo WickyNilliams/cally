@@ -1,0 +1,10 @@
+{
+  "extends": "@atomico/tsconfig/base.json",
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
+  }
+}

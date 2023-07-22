@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODO: Calendar Components documentation</title>
+    <script async type="module" src="../src/components.tsx"></script>
+
+    <!-- <link
+      rel="stylesheet"
+      href="https://unpkg.com/simpledotcss/simple.min.css"
+    /> -->
+
+    <link rel="stylesheet" href="./docs.css" />
+  </head>
+  <body>
+    <header class="container">
+      <div class="heading">
+        <h1>Calendar Components</h1>
+        <nav>
+          <ul>
+            <li>
+              <a href="https://github.com/WickyNilliams/calkit">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  width="16"
+                  height="16"
+                >
+                  <path
+                    d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"
+                  />
+                </svg>
+                Github
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <p class="intro">Small and feature-rich calendar components</p>
+    </header>
+
+    <main class="container">
+      <p>The goals for this project are:</p>
+
+      <ul>
+        <li><strong>Small bundle size</strong> - less than 7kb min/gzip</li>
+        <li>
+          <strong>Full feature set</strong> - single dates, ranges, display
+          multiple months
+        </li>
+        <li>
+          <strong>HTML-friendly</strong> - easy to author, framework-independent
+        </li>
+        <li>
+          <strong>Minimal dependencies</strong> - just one, the wonderful
+          <a href="https://atomicojs.dev/">atomico</a>, for rendering
+        </li>
+        <li><strong>Accessible</strong> - keyboard and screen reader</li>
+        <li>
+          <strong>Localizable</strong> - <code>Intl.DateTimeFormat</code>, CSS
+          logical properties, RTL support
+        </li>
+        <li>
+          <strong>Themeable</strong> - CSS
+          <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part"
+            >parts</a
+          >
+          and custom properties to offer flexibility and power
+        </li>
+        <li>
+          <strong>Composable</strong> - impose no DOM specific structure, play
+          well with others
+        </li>
+      </ul>
+
+      <p>
+        The aim is not to give you a full date picker, instead only the
+        lower-level building blocks that allow you to build your own. You likely
+        already have your own inputs, buttons, popover etc components. So why
+        not use them?
+      </p>
+
+      <p>
+        By making minimal assumptions about how the components will look and
+        function, we can keep the bundle size small without compromising on
+        functionality or ability to customize.
+      </p>
+
+      <h2>Get started</h2>
+
+      <p>
+        In the simplest scenario, include a script tag in your HTML page. The
+        components are then immediately available for use. For example, using
+        unpkg:
+      </p>
+
+      <pre><code>&lt;script
+  type="module"
+  src="https://unpkg.com/@simple-components/calendar"&gt;
+&lt;/script&gt;</code></pre>
+
+      <p>
+        Alternatively, you can install the package via npm or your preferred
+        package manager:
+      </p>
+
+      <pre><code>npm install @simple-components/calendar</code></pre>
+
+      <p>
+        Then import the components into your JavaScript or TypeScript file. For
+        example, using ES modules:
+      </p>
+
+      <pre><code>import "@simple-components/calendar";</code></pre>
+
+      <h2 id="calendar-date"><code>&lt;calendar-date&gt;</code></h2>
+
+      <p>
+        This component, combined with <code>&lt;calendar-month&gt;</code> is
+        used to select single dates. It shows one or more months in a page, that
+        can be moved between via next and previous buttons
+      </p>
+
+      <h3>Example</h3>
+
+      <div class="example">
+        <calendar-date
+          value="2024-01-10"
+          min="2024-01-01"
+          max="2024-12-31"
+          locale="en-GB"
+          months="2"
+        >
+          <div slot="button-previous">&lt;</div>
+          <div slot="button-next">&gt;</div>
+          <div class="grid">
+            <calendar-month></calendar-month>
+            <calendar-month offset="1"></calendar-month>
+          </div>
+        </calendar-date>
+        <pre><code>&lt;calendar-date
+  value="2024-01-10"
+  min="2024-01-01"
+  max="2024-12-31"
+  locale="en-GB"
+  months="2"
+&gt;
+  &lt;div slot="button-previous"&gt;&amp;lt;&lt;/div&gt;
+  &lt;div slot="button-next"&gt;&amp;gt;&lt;/div&gt;
+
+  &lt;div class="grid"&gt;
+&lt;calendar-month&gt;&lt;/calendar-month&gt;
+&lt;calendar-month offset="1"&gt;&lt;/calendar-month&gt;
+  &lt;/div&gt;
+&lt;/calendar-date></code></pre>
+      </div>
+
+      <h3>Properties and attributes</h3>
+
+      <p>All dates are expected in ISO-8601 format (<code>YYYY-MM-DD</code>)</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Attribute</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Default</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>value</code></td>
+            <td><code>value</code></td>
+            <td>The currently selected date</td>
+            <td><code>string</code></td>
+            <td><code>""</code></td>
+          </tr>
+          <tr>
+            <td><code>min</code></td>
+            <td><code>min</code></td>
+            <td>The earliest date that can be selected</td>
+            <td><code>string</code></td>
+            <td><code>""</code></td>
+          </tr>
+          <tr>
+            <td><code>max</code></td>
+            <td><code>max</code></td>
+            <td>The latest date that can be selected</td>
+            <td><code>string</code></td>
+            <td><code>""</code></td>
+          </tr>
+          <tr>
+            <td><code>firstDayOfWeek</code></td>
+            <td><code>first-day-of-week</code></td>
+            <td>
+              The first day of the week, where Monday is <code>0</code>, Tuesday
+              is <code>1</code>, etc
+            </td>
+            <td><code>number</code></td>
+            <td><code>0</code></td>
+          </tr>
+          <tr>
+            <td><code>locale</code></td>
+            <td><code>locale</code></td>
+            <td>
+              The locale for formatting dates. If not set, will use the
+              browser's locale
+            </td>
+            <td><code>string | undefined</code></td>
+            <td><code>undefined</code></td>
+          </tr>
+          <tr>
+            <td><code>months</code></td>
+            <td><code>months</code></td>
+            <td>The number of months to display per page</td>
+            <td><code>number</code></td>
+            <td><code>1</code></td>
+          </tr>
+          <tr>
+            <td><code>dir</code></td>
+            <td><code>dir</code></td>
+            <td>
+              The writing direction. Set to <code>"rtl"</code> for RTL languages
+            </td>
+            <td><code>"ltr" | "rtl"</code></td>
+            <td><code>"ltr"</code></td>
+          </tr>
+          <tr>
+            <td><code>isDateDisallowed</code></td>
+            <td>-</td>
+            <td>
+              A function that takes a date and returns <code>true</code> if the
+              date should not be selectable
+            </td>
+            <td><code>(date: Date) => boolean</code></td>
+            <td><code>() => false</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>CSS Parts</h3>
+
+      <p>
+        CSS parts allow for fine-grained styling and theming. They target
+        specific elements inside the component. An element may have multiple
+        parts, and a part may be used on multiple elements. They can be used in
+        isolation, or combined to e.g. style selected days within a range.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>button</code></td>
+            <td>Any button within the component</td>
+          </tr>
+          <tr>
+            <td><code>previous</code></td>
+            <td>The previous page <code>button</code></td>
+          </tr>
+          <tr>
+            <td><code>next</code></td>
+            <td>The next page <code>button</code></td>
+          </tr>
+          <tr>
+            <td><code>calendar-heading</code></td>
+            <td>The heading containing the month and year</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Events</h3>
+
+      <p>
+        Emits non-bubbling <code>CustomEvents</code> in response to user
+        interaction
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>change</code></td>
+            <td>
+              Emitted when the <code>value</code> changes via user interaction.
+              Not emitted when <code>value</code> is programmatically changed
+            </td>
+          </tr>
+          <tr>
+            <td><code>focusday</code></td>
+            <td>
+              Emitted when the currently focused day changes. This can happen
+              via keyboard commands, or clicking the next or previous buttons
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Slots</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Default slot</td>
+            <td>
+              The default slot is where you place your
+              <code>&lt;calendar-month&gt;</code> components, along with any
+              other markup. Note <code>&lt;calendar-month&gt;</code> does not
+              need to be a direct descendant
+            </td>
+          </tr>
+          <tr>
+            <td><code>button-previous</code></td>
+            <td>
+              The inner content of the previous page button. By default uses
+              text "Previous". You will likely want to slot an icon here.
+            </td>
+          </tr>
+          <tr>
+            <td><code>button-next</code></td>
+            <td>
+              The inner content of the next page button. By default uses text
+              "Next". You will likely want to slot an icon here.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="calendar-range"><code>&lt;calendar-range&gt;</code></h2>
+
+      <p>
+        This component, combined with <code>&lt;calendar-month&gt;</code> is
+        used to select a date range. It shows one or more months within a page.
+      </p>
+
+      <h3>Example</h3>
+
+      <div class="example">
+        <calendar-range
+          value="2024-01-10/2024-01-20"
+          min="2024-01-01"
+          max="2024-12-31"
+          locale="en-GB"
+          months="2"
+        >
+          <div slot="button-previous">&lt;</div>
+          <div slot="button-next">&gt;</div>
+          <div class="grid">
+            <calendar-month></calendar-month>
+            <calendar-month offset="1"></calendar-month>
+          </div>
+        </calendar-range>
+        <pre><code>&lt;calendar-range
+  value="2024-01-10/2024-01-20"
+  min="2024-01-01"
+  max="2024-02-20"
+  locale="en-GB"
+  months="2"
+&gt;
+  &lt;div slot="button-previous"&gt;&amp;lt;&lt;/div&gt;
+  &lt;div slot="button-next"&gt;&amp;gt;&lt;/div&gt;
+
+  &lt;div class="grid"&gt;
+&lt;calendar-month&gt;&lt;/calendar-month&gt;
+&lt;calendar-month offset="1"&gt;&lt;/calendar-month&gt;
+  &lt;/div&gt;
+&lt;/calendar-range&gt;</code></pre>
+      </div>
+
+      <h3>Properties and attributes</h3>
+
+      <p>
+        The <code>value</code> property is expected in ISO-8601 range format
+        (<code>YYYY-MM-DD/YYYY-MM-DD</code>). All other dates are expected in
+        ISO-8601 format (<code>YYYY-MM-DD</code>).
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Attribute</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Default</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>value</code></td>
+            <td><code>value</code></td>
+            <td>The currently selected range</td>
+            <td><code>string</code></td>
+            <td><code>""</code></td>
+          </tr>
+          <tr>
+            <td><code>min</code></td>
+            <td><code>min</code></td>
+            <td>The earliest date that can be selected</td>
+            <td><code>string</code></td>
+            <td><code>""</code></td>
+          </tr>
+          <tr>
+            <td><code>max</code></td>
+            <td><code>max</code></td>
+            <td>The latest date that can be selected</td>
+            <td><code>string</code></td>
+            <td><code>""</code></td>
+          </tr>
+          <tr>
+            <td><code>firstDayOfWeek</code></td>
+            <td><code>first-day-of-week</code></td>
+            <td>
+              The first day of the week, where Monday is <code>0</code>, Tuesday
+              is <code>1</code>, etc
+            </td>
+            <td><code>number</code></td>
+            <td><code>0</code></td>
+          </tr>
+          <tr>
+            <td><code>locale</code></td>
+            <td><code>locale</code></td>
+            <td>
+              The locale date formatting. If not set, will use the browser's
+              locale
+            </td>
+            <td><code>string | undefined</code></td>
+            <td><code>undefined</code></td>
+          </tr>
+          <tr>
+            <td><code>months</code></td>
+            <td><code>months</code></td>
+            <td>The number of months to display per page</td>
+            <td><code>number</code></td>
+            <td><code>1</code></td>
+          </tr>
+          <tr>
+            <td><code>dir</code></td>
+            <td><code>dir</code></td>
+            <td>
+              The writing direction. Set to <code>"rtl"</code> for RTL languages
+            </td>
+            <td><code>"ltr" | "rtl"</code></td>
+            <td><code>"ltr"</code></td>
+          </tr>
+          <tr>
+            <td><code>isDateDisallowed</code></td>
+            <td>-</td>
+            <td>
+              A function that takes a date and returns <code>true</code> if the
+              date should not be selectable
+            </td>
+            <td><code>(date: Date) => boolean</code></td>
+            <td><code>() => false</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>CSS Parts</h3>
+
+      <p>
+        CSS parts allow for fine-grained styling and theming. They target
+        specific elements inside the component. An element may have multiple
+        parts, and a part may be used on multiple elements. They can be used in
+        isolation, or combined.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>button</code></td>
+            <td>Any button within the component</td>
+          </tr>
+          <tr>
+            <td><code>previous</code></td>
+            <td>The previous page <code>button</code></td>
+          </tr>
+          <tr>
+            <td><code>next</code></td>
+            <td>The next page <code>button</code></td>
+          </tr>
+          <tr>
+            <td><code>calendar-heading</code></td>
+            <td>The heading that labels the calendar</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Events</h3>
+
+      <p>
+        Emits non-bubbling <code>CustomEvents</code> in response to user
+        interaction
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>change</code></td>
+            <td>
+              Emitted when the <code>value</code> changes via user interaction.
+              Not emitted when <code>value</code> is programmatically changed
+            </td>
+          </tr>
+          <tr>
+            <td><code>focusday</code></td>
+            <td>
+              Emitted when the currently focused day changes. This can happen
+              via keyboard commands, or clicking the next or previous buttons
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Slots</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Default slot</td>
+            <td>
+              The default slot is where you place your
+              <code>&lt;calendar-month&gt;</code> components, along with any
+              other markup. Note <code>&lt;calendar-month&gt;</code> does not
+              need to be a direct descendant
+            </td>
+          </tr>
+          <tr>
+            <td><code>button-previous</code></td>
+            <td>
+              The inner content of the previous page button. By default uses
+              text "Previous". You will likely want to slot an icon here.
+            </td>
+          </tr>
+          <tr>
+            <td><code>button-next</code></td>
+            <td>
+              The inner content of the next page button. By default uses text
+              "Next". You will likely want to slot an icon here.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="calendar-month"><code>&lt;calendar-month&gt;</code></h2>
+
+      <p>
+        This is the lowest level component that displays a grid of clickable
+        days. It should not be used alone, but as a descendant of one of
+        <code>&lt;calendar-date&gt;</code> or
+        <code>&lt;calendar-range&gt;</code>.
+      </p>
+      <h3>Properties and attributes</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Attribute</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Default</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>showOutsideDays</code></td>
+            <td><code>show-outside-days</code></td>
+            <td>Controls whether to show days outside the current month</td>
+            <td><code>boolean</code></td>
+            <td><code>false</code></td>
+          </tr>
+          <tr>
+            <td><code>offset</code></td>
+            <td><code>offset</code></td>
+            <td>
+              In a multi-month view, controls which month is shown relative to
+              the start of the view.
+            </td>
+            <td><code>number</code></td>
+            <td><code>0</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>CSS Custom Properties</h3>
+
+      <p>CSS custom properties allow for coarse-grained styling and theming</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Default</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>--color-accent</code></td>
+            <td>The accent color used throughout</td>
+            <td><code>black</code></td>
+          </tr>
+          <tr>
+            <td><code>--color-text-on-accent</code></td>
+            <td>The color used on with <code>--color-accent</code></td>
+            <td><code>white</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>CSS Parts</h3>
+
+      <p>
+        CSS parts allow for fine-grained styling and theming. They target
+        specific elements inside the component. An element may have multiple
+        parts, and a part may be used on multiple elements. They can be used in
+        isolation, or combined to e.g. style selected days within a range.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>table</code></td>
+            <td>The &lt;table&gt; element</td>
+          </tr>
+          <tr>
+            <td><code>tr</code></td>
+            <td>Any row within the table</td>
+          </tr>
+          <tr>
+            <td><code>head</code></td>
+            <td>The table's header row</td>
+          </tr>
+          <tr>
+            <td><code>week</code></td>
+            <td>The table's body rows</td>
+          </tr>
+          <tr>
+            <td><code>th</code></td>
+            <td>The table's header cells</td>
+          </tr>
+          <tr>
+            <td><code>td</code></td>
+            <td>The table's body cells</td>
+          </tr>
+          <tr>
+            <td><code>button</code></td>
+            <td>Any button used in the component</td>
+          </tr>
+          <tr>
+            <td><code>day</code></td>
+            <td>The buttons corresponding to each day in the grid</td>
+          </tr>
+          <tr>
+            <td><code>selected</code></td>
+            <td>Any <code>day</code>s which are selected</td>
+          </tr>
+          <tr>
+            <td><code>today</code></td>
+            <td>Today's <code>day</code></td>
+          </tr>
+          <tr>
+            <td><code>disallowed</code></td>
+            <td>
+              Any <code>day</code>that has been disallowed via
+              `isDateDisallowed`
+            </td>
+          </tr>
+          <tr>
+            <td><code>outside</code></td>
+            <td>Any <code>day</code>s which are outside the current month</td>
+          </tr>
+          <tr>
+            <td><code>range-start</code></td>
+            <td>The <code>day</code> at the start of a date range</td>
+          </tr>
+          <tr>
+            <td><code>range-end</code></td>
+            <td>The <code>day</code> at the end of a date range</td>
+          </tr>
+          <tr>
+            <td><code>range-inner</code></td>
+            <td>
+              Any <code>day</code>s between the start and end of a date range
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <footer class="container">
+      <p>Built by <a href="#TODO">Nick Williams</a></p>
+    </footer>
+  </body>
+</html>
