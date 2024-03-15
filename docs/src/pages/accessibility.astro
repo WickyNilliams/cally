@@ -1,0 +1,59 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageIntro from "../components/PageIntro.astro";
+import Heading from "../components/Heading.astro";
+import Note from "../components/Note.astro";
+---
+
+<Layout title="Accessibility">
+  <h1 slot="intro">Accessibility</h1>
+  <PageIntro slot="intro">What has been tested, and how?</PageIntro>
+
+  <Note>
+    <strong>This page is a work in progress</strong>. Eventually, it will detail
+    what testing has been done, which tools and assistive technology were used,
+    and list any known issues.
+  </Note>
+
+  <p>
+    These components aim to be accessible to all users, whether they are using
+    touch screens, keyboards, screen readers, or other assistive technology.
+    ARIA is used when necessary to enhance the underlying HTML. Focus is managed
+    where appropriate. The components have been tested with a variety of
+    browsers and screen readers.
+  </p>
+
+  <Heading level={2} id="guarantee">Guarantee…?</Heading>
+
+  <p>
+    In some regards the components offered here are akin to design system
+    components. They are low-level pieces to a larger puzzle. The components
+    themselves strive to offer the best possible accessible <em>baseline</em>.
+    But beyond that, the guarantees that can be made regarding accessiblity are
+    limited. The way the components get used and combined can still lead to
+    inaccessible outcomes.
+  </p>
+
+  <p>
+    If you are building more complex interfaces atop these components, you will
+    need to test and evaluate accessiblity yourself.
+  </p>
+
+  <Heading level={2}>Testing</Heading>
+
+  <p>
+    At a minimum testing will be done with the following browser and screen
+    reader combinations
+  </p>
+
+  <ul>
+    <li>Chrome + NVDA</li>
+    <li>Chrome + JAWS</li>
+    <li>Firefox + NVDA</li>
+    <li>Safari + VoiceOver</li>
+  </ul>
+
+  <Heading level={2}>Known issues</Heading>
+
+  <p>Coming soon (but hopefully not!)</p>
+</Layout>

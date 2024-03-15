@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"a"> {
+  href: `/${string}`;
+}
+
+const { href, ...rest } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+if (href.startsWith(base)) {
+  throw new Error(
+    `href should not include BASE_URL. href: "${href}", BASE_URL: "${base}"`
+  );
+}
+
+const url = href === "/" ? base : base + href.slice(1);
+---
+
+<a href={url} {...rest}><slot /></a>

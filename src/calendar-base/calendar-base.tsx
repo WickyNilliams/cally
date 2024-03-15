@@ -33,7 +33,7 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
     <>
       <div class="header">
         <button
-          part="button previous"
+          part={`button previous ${props.previous ? "" : "disabled"}`}
           onclick={props.previous}
           aria-disabled={props.previous ? null : "true"}
         >
@@ -48,7 +48,7 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
         </h2>
 
         <button
-          part="button next"
+          part={`button next ${props.next ? "" : "disabled"}`}
           onclick={props.next}
           aria-disabled={props.next ? null : "true"}
         >

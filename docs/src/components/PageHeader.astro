@@ -1,0 +1,25 @@
+---
+
+---
+
+<header>
+  <div class="heading">
+    <slot name="title" />
+    <slot name="nav" />
+  </div>
+  <slot />
+</header>
+
+<style>
+  header {
+    margin-block-end: var(--space-s);
+  }
+
+  .heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+  }
+</style>

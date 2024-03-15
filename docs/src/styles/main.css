@@ -1,0 +1,177 @@
+@layer theme {
+  /* @link https://utopia.fyi/type/calculator?c=320,15,1.2,1750,18,1.2,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+  :root {
+    --step-0: clamp(0.9375rem, 0.8955rem + 0.2098vi, 1.125rem);
+    --step-1: clamp(1.125rem, 1.0747rem + 0.2517vi, 1.35rem);
+    --step-2: clamp(1.35rem, 1.2896rem + 0.3021vi, 1.62rem);
+    --step-3: clamp(1.62rem, 1.5475rem + 0.3625vi, 1.944rem);
+    --step-4: clamp(1.944rem, 1.857rem + 0.435vi, 2.3328rem);
+  }
+
+  /* @link https://utopia.fyi/space/calculator?c=320,16,1.25,1140,18,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4,s-2xs&g=s,l,xl,12 */
+  :root {
+    --space-3xs: clamp(0.25rem, 0.2256rem + 0.122vi, 0.3125rem);
+    --space-2xs: clamp(0.5rem, 0.4756rem + 0.122vi, 0.5625rem);
+    --space-xs: clamp(0.75rem, 0.7012rem + 0.2439vi, 0.875rem);
+    --space-s: clamp(1rem, 0.9512rem + 0.2439vi, 1.125rem);
+    --space-m: clamp(1.5rem, 1.4268rem + 0.3659vi, 1.6875rem);
+    --space-l: clamp(2rem, 1.9024rem + 0.4878vi, 2.25rem);
+    --space-xl: clamp(3rem, 2.8537rem + 0.7317vi, 3.375rem);
+
+    /* One-up pairs */
+    --space-s-m: clamp(1rem, 0.7317rem + 1.3415vi, 1.6875rem);
+    --space-m-l: clamp(1.5rem, 1.2073rem + 1.4634vi, 2.25rem);
+  }
+
+  :root {
+    --font-family: system-ui, sans-serif;
+    --color-surface: rgb(250, 250, 250);
+    /* TW gray 900 */
+    --color-body: #111827;
+    /* TW gray 800 */
+    --color-heading: #1f2937;
+    /* TW gray 500 */
+    --color-intro: #6b7280;
+    /* TW gray 400 */
+    --color-border: #9ca3af;
+    /* TW red 600 */
+    --color-accent: #dc2626;
+    --color-code: rgba(0, 0, 0, 0.06);
+
+    --container-size: 70ch;
+    --border-radius: 3px;
+    --gutter: var(--space-m);
+  }
+}
+
+@layer reset {
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  ul {
+    padding: 0;
+    margin-inline: 0;
+  }
+
+  ul:not(ul ul) {
+    margin-block: 0 var(--space-s);
+  }
+
+  li {
+    margin-left: 1em;
+    padding-left: 0.5rem;
+  }
+
+  li + li {
+    margin-block-start: calc(var(--space-3xs) / 2);
+  }
+
+  strong {
+    font-weight: 500;
+  }
+}
+
+@layer typography {
+  body {
+    font-family: var(--font-family);
+    font-size: var(--step-0);
+    line-height: 1.6;
+  }
+
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3 {
+    margin-block: var(--space-l) var(--space-s);
+    font-weight: bold;
+    line-height: 1.2;
+    color: var(--color-heading);
+  }
+
+  h1,
+  .h1 {
+    font-size: var(--step-3);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  h2 {
+    font-size: var(--step-2);
+  }
+
+  h3 {
+    font-size: var(--step-1);
+    font-weight: 500;
+    margin-block-end: var(--space-xs);
+  }
+
+  p {
+    font-size: var(--step-0);
+    margin-block: 0 var(--space-s);
+  }
+}
+
+@layer utils {
+  .container {
+    max-width: var(--container-size);
+    margin-inline: auto;
+  }
+}
+
+@layer components {
+  a {
+    color: var(--a-color, var(--color-accent));
+
+    &:visited {
+      color: var(--a-color, var(--color-accent));
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--a-color, var(--color-accent));
+      outline-offset: 1px;
+      border-radius: 1px;
+      text-decoration: none;
+    }
+  }
+
+  h1 {
+    code {
+      padding: 0;
+      background: none;
+    }
+  }
+
+  pre {
+    padding-block: var(--space-s);
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    margin-inline: calc(var(--gutter) * -1);
+    margin-block-start: var(--space-m);
+
+    @media (min-width: 753px) {
+      border-radius: 5px;
+    }
+
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+
+  code {
+    background: var(--color-code);
+    padding-block: 0.1em;
+    padding-inline: 0.3em;
+  }
+}

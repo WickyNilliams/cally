@@ -1,0 +1,25 @@
+---
+interface Props {
+  color: string;
+}
+
+const { color } = Astro.props;
+---
+
+<code>{color}<span style={{ "--color": color }}></span></code>
+<style>
+  code {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    border-radius: var(--border-radius);
+  }
+  span {
+    display: inline-block;
+    inline-size: var(--space-xs);
+    block-size: var(--space-xs);
+    background-color: var(--color);
+    border-radius: calc(var(--border-radius) - 1px);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+</style>

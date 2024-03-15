@@ -1,0 +1,29 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<footer class={className} {...rest}>
+  <p>
+    <slot />
+  </p>
+</footer>
+
+<style>
+  footer {
+    opacity: 0.5;
+    text-align: end;
+    transition: opacity 100ms ease-in-out;
+  }
+
+  footer:is(:hover, :focus-within) {
+    opacity: 1;
+  }
+
+  footer > * {
+    margin: 0;
+  }
+</style>

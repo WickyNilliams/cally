@@ -1,0 +1,83 @@
+---
+import "../styles/main.css";
+import PageHeader from "../components/PageHeader.astro";
+import PageNav from "../components/PageNav.astro";
+import PageTitle from "../components/PageTitle.astro";
+import PageFooter from "../components/PageFooter.astro";
+
+interface Props {
+  title: string;
+  root?: boolean;
+}
+
+const { title, root } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {title} - Cally
+    </title>
+
+    <slot name="head" />
+  </head>
+
+  <body class="container">
+    <PageHeader>
+      <PageTitle slot="title" asLink={!root}>Cally</PageTitle>
+      <PageNav slot="nav" />
+      <div class="intro">
+        <slot name="intro" />
+      </div>
+    </PageHeader>
+
+    <main>
+      <slot />
+    </main>
+
+    <PageFooter class="footer">
+      Built by <a href="https://wicky.nillia.ms/">Nick Williams</a>
+    </PageFooter>
+  </body>
+</html>
+
+<script>
+  import "../../../src/index.ts";
+</script>
+
+<style>
+  html,
+  body {
+    block-size: 100%;
+  }
+
+  html {
+    padding-inline: var(--gutter);
+  }
+
+  body {
+    padding-block-start: var(--space-s-m);
+    background: var(--color-surface);
+    color: var(--color-body);
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+  }
+
+  .intro {
+    h1 {
+      margin-block: var(--space-s) 0;
+    }
+  }
+
+  .footer {
+    margin-block-start: var(--space-xl);
+    padding-block-end: var(--space-s-m);
+  }
+</style>

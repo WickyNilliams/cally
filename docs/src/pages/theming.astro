@@ -1,0 +1,605 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Example from "../components/Example.astro";
+import Color from "../components/Color.astro";
+import Note from "../components/Note.astro";
+import PageIntro from "../components/PageIntro.astro";
+import Heading from "../components/Heading.astro";
+import Link from "../components/Link.astro";
+
+const colorAccent = "#7048e8";
+const colorAccentSecondary = "#845ef7";
+const colorTextOnAccent = "#ffffff";
+---
+
+<Layout title="Theming">
+  <h1 slot="intro">Theming</h1>
+  <PageIntro slot="intro">Learn how to style the components</PageIntro>
+
+  <p>
+    This serves as a general theming guide. Please read the respective
+    <Link href="/components/">component API</Link> docs to see all available styling
+    options.
+  </p>
+
+  <p>
+    Out of the box, the components are not particularly pretty. This is
+    intentional. The goal is to provide <em>just enough</em> styles so that the components
+    are functional, and no more. Every style bundled with the components is potentially
+    a style you need to override or revert, and thus is wasted bytes.
+  </p>
+
+  <Example lineLength={72}>
+    <calendar-range
+      value="2024-01-10/2024-01-20"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+      months="2"
+    >
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
+    </calendar-range>
+  </Example>
+
+  <p>
+    Thankfully, styling the components is not difficult. Let's make the above
+    example look nice.
+  </p>
+
+  <Heading level={2}>HTML</Heading>
+
+  <p>
+    The first thing we want to do is stack the components horizontally if we
+    have space. Cally's components are designed to allow for flexible markup, so
+    we can add a grid around the <code>{`<calendar-month>`}</code> components. Additionally,
+    we can constrain the width of the
+    <code>{`<calendar-range>`}</code> component to fit the content
+  </p>
+
+  <Example
+    css={`
+      .grid {
+        display: flex;
+        gap: 1.5em;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      calendar-range {
+        inline-size: fit-content;
+      }
+    `}
+  >
+    <calendar-range
+      value="2024-01-10/2024-01-20"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+      months="2"
+    >
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-range>
+  </Example>
+
+  <p>
+    That's already much better. We use flexbox to wrap the components if there
+    is not enough space, but otherwise stack them horizontally.
+  </p>
+
+  <p>
+    Next, let's replace the "Previous" and "Next" button text with icons. We can
+    do this with <a
+      href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot"
+      >slots</a
+    >. Slots are a way to pass content into a component from the outside. The
+    <code>{`<calendar-range>`}</code> and <code>{`<calendar-date>`}</code> components
+    offer <code>button-previous</code> and <code>button-next</code> slots for this
+    purpose.
+  </p>
+
+  <Note>
+    <strong>Note:</strong> for brevity we will use native
+    <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting"
+      >CSS nesting</a
+    >
+    in these examples. This is a fairly new feature, and may not be supported in
+    all browsers
+  </Note>
+
+  <Example
+    css={`
+      .grid {
+        display: flex;
+        gap: 1.5em;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      calendar-range {
+        inline-size: fit-content;
+
+        svg {
+          height: 16px;
+          width: 16px;
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 1.5;
+        }
+
+        path {
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+      }
+    `}
+  >
+    <calendar-range
+      value="2024-01-10/2024-01-20"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+      months="2"
+    >
+      <svg
+        aria-label="Previous"
+        slot="button-previous"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+      </svg>
+      <svg
+        aria-label="Next"
+        slot="button-next"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+      </svg>
+
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-range>
+  </Example>
+
+  <p>
+    Since we are replacing the "Previous"/"Next" text, we need to add some kind
+    of label back in ourselves. We can do this with an
+    <code>aria-label</code> attribute on the SVGs.
+  </p>
+
+  <Heading level={2}>CSS</Heading>
+
+  <p>
+    Cally's components can be themed and styled via CSS
+    <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">parts</a> and
+    <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/--*"
+      >custom properties</a
+    >. This allows for both coarse and fine-grained styling. If these are new
+    concepts to you, please read the linked MDN docs.
+  </p>
+
+  <Heading level={3}>CSS Custom properties</Heading>
+
+  <p>
+    Custom properties are for coarse-grained styling. There are only a few
+    custom properties available, and they relate to accent colors (likely your
+    brand color). Let's imagine our brand color is
+    <Color color={colorAccent} />. For ideal contrast, we will use
+    <Color color={colorTextOnAccent} /> for text on this color.
+  </p>
+
+  <Example
+    css={`
+      .grid {
+        display: flex;
+        gap: 1.5em;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      calendar-range {
+        inline-size: fit-content;
+
+        svg {
+          height: 16px;
+          width: 16px;
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 1.5;
+        }
+
+        path {
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+      }
+
+      calendar-month {
+        --color-accent: ${colorAccent};
+        --color-text-on-accent: ${colorTextOnAccent};
+      }
+    `}
+  >
+    <calendar-range
+      value="2024-01-10/2024-01-20"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+      months="2"
+    >
+      <svg
+        aria-label="Previous"
+        slot="button-previous"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+      </svg>
+      <svg
+        aria-label="Next"
+        slot="button-next"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+      </svg>
+
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-range>
+  </Example>
+
+  <Heading level={3}>CSS Parts</Heading>
+
+  <p>
+    CSS parts are for fine-grained styling. Only certain elements are exposed as
+    a part. An element may have multiple parts, and a part may be used on
+    multiple elements. Parts may be added or removed conditionally, depending on
+    the state of the component. Parts can be used in isolation or combined.
+  </p>
+
+  <p>
+    Each component offers many parts. Please consult the
+    <Link href="/components/">component API</Link> docs for the complete list.
+  </p>
+
+  <p>
+    Let's style the previous and next buttons first. These can be targetted via
+    the <code>button</code> part. Additionally, the previous and next buttons have
+    <code>previous</code> and <code>next</code> parts, should you wish to style them
+    differently.
+  </p>
+
+  <Example
+    css={`
+    .grid {
+      display: flex;
+      gap: 1.5em;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    calendar-range {
+      inline-size: fit-content;
+
+      svg {
+        height: 16px;
+        width: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+      }
+
+      path {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      &::part(button) {
+        border: 1px solid #adb5bd;
+        background-color: #fff;
+        border-radius: 3px;
+        width: 26px;
+        height: 26px;
+      }
+
+      &::part(button):focus-visible {
+        outline: 2px solid ${colorAccent};
+      }
+    }
+
+    calendar-month {
+      --color-accent: ${colorAccent};
+      --color-text-on-accent: ${colorTextOnAccent};
+    }
+  `}
+  >
+    <calendar-range
+      value="2024-01-10/2024-01-20"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+      months="2"
+    >
+      <svg
+        aria-label="Previous"
+        slot="button-previous"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+      </svg>
+      <svg
+        aria-label="Next"
+        slot="button-next"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+      </svg>
+
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-range>
+  </Example>
+
+  <p>
+    Things are starting to look good. Notice that parts can be combined with
+    pseudo-classes like <code>:focus-visible</code>.
+  </p>
+
+  <p>
+    Now let's add some final tweaks. Perhaps we want rounded corners for the
+    start and end of the range.
+  </p>
+
+  <Example
+    css={`
+      .grid {
+        display: flex;
+        gap: 1.5em;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      calendar-range {
+        inline-size: fit-content;
+
+        svg {
+          height: 16px;
+          width: 16px;
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 1.5;
+        }
+
+        path {
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        &::part(button) {
+          border: 1px solid #adb5bd;
+          background-color: #fff;
+          border-radius: 3px;
+          width: 26px;
+          height: 26px;
+        }
+
+        &::part(button):focus-visible {
+          outline: 2px solid ${colorAccent};
+        }
+      }
+
+      calendar-month {
+        --color-accent: ${colorAccent};
+        --color-text-on-accent: ${colorTextOnAccent};
+
+        &::part(button) {
+          border-radius: 3px;
+        }
+
+        &::part(range-inner) {
+          border-radius: 0;
+        }
+
+        &::part(range-start) {
+          border-start-end-radius: 0;
+          border-end-end-radius: 0;
+        }
+
+        &::part(range-end) {
+          border-start-start-radius: 0;
+          border-end-start-radius: 0;
+        }
+
+        &::part(range-start range-end) {
+          border-radius: 3px;
+        }
+      }
+    `}
+  >
+    <calendar-range
+      value="2024-01-10/2024-01-20"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+      months="2"
+    >
+      <svg
+        aria-label="Previous"
+        slot="button-previous"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+      </svg>
+      <svg
+        aria-label="Next"
+        slot="button-next"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+      </svg>
+
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-range>
+  </Example>
+
+  <Note>
+    If you're wondering about <code>border-end-end-radius</code> and other strange
+    looking CSS properties, these are <a
+      href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values"
+      >logical properties</a
+    >. Logical properties make your code tolerant to changes in writing
+    direction, simplifying localization efforts
+  </Note>
+
+  <p>
+    And finally, let's use a slightly different shade
+    <Color color={colorAccentSecondary} /> for the inner parts of the range:
+  </p>
+
+  <Example
+    css={`
+      .grid {
+        display: flex;
+        gap: 1.5em;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      calendar-range {
+        inline-size: fit-content;
+
+        svg {
+          height: 16px;
+          width: 16px;
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 1.5;
+        }
+
+        path {
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        &::part(button) {
+          border: 1px solid #adb5bd;
+          background-color: #fff;
+          border-radius: 3px;
+          width: 26px;
+          height: 26px;
+        }
+
+        &::part(button):focus-visible {
+          outline: 2px solid ${colorAccent};
+        }
+      }
+
+      calendar-month {
+        --color-accent: ${colorAccent};
+        --color-text-on-accent: ${colorTextOnAccent};
+
+        &::part(button) {
+          border-radius: 3px;
+        }
+
+        &::part(range-inner) {
+          border-radius: 0;
+          background-color: ${colorAccentSecondary};
+        }
+
+        &::part(range-start) {
+          border-start-end-radius: 0;
+          border-end-end-radius: 0;
+        }
+
+        &::part(range-end) {
+          border-start-start-radius: 0;
+          border-end-start-radius: 0;
+        }
+
+        &::part(range-start range-end) {
+          border-radius: 3px;
+        }
+      }
+    `}
+  >
+    <calendar-range
+      value="2024-01-10/2024-01-20"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+      months="2"
+    >
+      <svg
+        aria-label="Previous"
+        slot="button-previous"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+      </svg>
+      <svg
+        aria-label="Next"
+        slot="button-next"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+      </svg>
+
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-range>
+  </Example>
+
+  <Heading level={2}>Finally</Heading>
+
+  <p>
+    We've taken the components from their default unattractive state to
+    something that looks much nicer. We've used a combination of HTML, CSS
+    custom properties, CSS parts, and SVGs to achieve this. You can take this as
+    far as you wish, or perhaps with a little tweaking this is enough for your
+    needs.
+  </p>
+
+  <p>
+    We haven't paid any mind to mobile styles throughout this guide. On mobile,
+    perhaps you'd want to only show one month at a time. Or render an overlay
+    rather than a popup. These decisions are beyond the scope of this guide, and
+    are left as an exercise for the reader.
+  </p>
+
+  <p>
+    To find out more about each component, please see the respective
+    <Link href="/components/">component API</Link> docs. Or visit the
+    <Link href="/theming/">theming</Link> guide for a more in-depth look at styling
+    the components.
+  </p>
+</Layout>
+
+<style is:global>
+  calendar-range {
+    margin-inline: auto;
+  }
+</style>

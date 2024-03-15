@@ -1,0 +1,343 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Code } from "astro:components";
+import PageIntro from "../components/PageIntro.astro";
+import Example from "../components/Example.astro";
+import Heading from "../components/Heading.astro";
+import Link from "../components/Link.astro";
+
+const tagline = "Small, feature-rich calendar components";
+---
+
+<Layout title={tagline} root>
+  <script is:inline type="module" slot="head">
+    const toISO = (date) => date.toISOString().split("T")[0];
+
+    const today = new Date();
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    document
+      .querySelector("calendar-range")
+      ?.setAttribute("value", `${toISO(today)}/${toISO(nextWeek)}`);
+
+    await customElements.whenDefined("calendar-range");
+    document.querySelector(".card")?.classList.remove("card-initial");
+  </script>
+
+  <PageIntro slot="intro">{tagline}</PageIntro>
+
+  <Example class="feature">
+    <div class="card card-initial">
+      <calendar-range months="2">
+        <svg
+          aria-label="Previous"
+          slot="button-previous"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+        </svg>
+        <svg
+          aria-label="Next"
+          slot="button-next"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+        </svg>
+
+        <div class="grid">
+          <calendar-month></calendar-month>
+          <calendar-month offset="1"></calendar-month>
+        </div>
+      </calendar-range>
+    </div>
+  </Example>
+
+  <Heading level={2}>Goals</Heading>
+
+  <ul>
+    <li><strong>Small bundle size</strong> - less than 9kb min/gzip</li>
+    <li>
+      <strong>Full feature set</strong> - single dates, ranges, display multiple
+      months
+    </li>
+    <li>
+      <strong>HTML-friendly</strong> - easy to author, framework-independent
+    </li>
+    <li>
+      <strong>Minimal dependencies</strong> - only one
+    </li>
+    <li><strong>Accessible</strong> - keyboard and screen reader</li>
+    <li>
+      <strong>Localizable</strong> - <code>Intl.DateTimeFormat</code>, CSS
+      logical properties, RTL support
+    </li>
+    <li>
+      <strong>Themeable</strong> - CSS
+      <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">parts</a
+      >
+      and custom properties to offer flexibility and power
+    </li>
+    <li>
+      <strong>Composable</strong> - impose no DOM specific structure, play well with
+      others
+    </li>
+  </ul>
+
+  <p>
+    The aim is not to give you a full date picker, instead only the lower-level
+    building blocks that allow you to build your own. You likely already have
+    your own inputs, buttons, popover etc components. So why not use them?
+  </p>
+
+  <p>
+    By making minimal assumptions about how the components will look and
+    function, we can keep the bundle size small without compromising on
+    functionality or ability to customize.
+  </p>
+
+  <Heading level={2}>Installation</Heading>
+
+  <p>
+    In the simplest scenario, include a script tag in your HTML page. The
+    components are then immediately available for use. For example, using unpkg:
+  </p>
+
+  <Code
+    lang="html"
+    code={`<script\n  type="module"\n  src="https://unpkg.com/cally"\n></script>`}
+  />
+
+  <p>
+    Alternatively, you can install the package via npm or your preferred package
+    manager:
+  </p>
+
+  <Code lang="shell" code="npm install cally" />
+
+  <p>
+    Then import the components into your JavaScript or TypeScript file. For
+    example, using ES modules:
+  </p>
+
+  <Code lang="javascript" code={`import "cally";`} />
+
+  <Heading level={2}>Quick start</Heading>
+
+  <p>
+    Assuming you have followed the installation instructions, the next step is
+    to put the components to use.
+  </p>
+
+  <Heading level={3}>Single date</Heading>
+
+  <p>
+    For a single date, use the <code>{`<calendar-date>`}</code> component, and place
+    inside it a <code>{`<calendar-month>`}</code> component.
+  </p>
+
+  <Example lineLength={50}>
+    <calendar-date>
+      <calendar-month></calendar-month>
+    </calendar-date>
+  </Example>
+
+  <Heading level={3}>Date range</Heading>
+
+  For a single date, use the <code>{`<calendar-range>`}</code> component, and place
+  inside it a <code>{`<calendar-month>`}</code> component.
+
+  <Example lineLength={50}>
+    <calendar-range>
+      <calendar-month></calendar-month>
+    </calendar-range>
+  </Example>
+
+  <Heading level={3}>Multiple months</Heading>
+
+  <p>
+    To display multiple months, add more <code>{`<calendar-month>`}</code> components
+    inside <code>{`<calendar-range>`}</code> or <code>{`<calendar-date>`}</code>
+    components. You must set the <code>months</code> attribute of the range and date
+    calendars to the number of months you will display. Then configure the
+    <code>offset</code> attribute of each <code>{`<calendar-month>`}</code> to specify
+    the month it represents relative to the first visible month.
+  </p>
+
+  <p>
+    By default, the <code>{`<calendar-month>`}</code> components will stack vertically.
+    You will likely want to use flexbox or css grid to improve the layout as seen
+    below.
+  </p>
+
+  <Example
+    lineLength={50}
+    css={`
+      .grid {
+        display: flex;
+        gap: 1em;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    `}
+  >
+    <calendar-range months="2">
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-range>
+  </Example>
+
+  <Heading level={2}>Next steps</Heading>
+
+  <p>
+    For a detailed look at each component, check out the respective
+    <Link href="/components/">component API</Link> docs. The
+    <Link href="/theming/">theming</Link> guide to explains how to style the components
+    to match your designs. And the
+    <Link href="/integration/">integration</Link> guide explains how to compose Cally's
+    components to build a date/range picker using your own or third-party components.
+  </p>
+
+  <p>
+    If you have an issue or feature request, please open an issue in the
+    <a href="https://github.com/WickyNilliams/cally">repository</a>.
+  </p>
+
+  <Heading level={2}>Acknowledgments</Heading>
+
+  <p>
+    Cally is a spiritual successor to my earlier work on
+    <a href="https://duetds.github.io/date-picker/">Duet date picker</a>. Shout
+    out to everyone that made it possible to open source that. The component
+    APIs are partially inspired by the Date and Time components from <a
+      href="https://react-spectrum.adobe.com/react-aria/components.html#date-and-time"
+      >React ARIA Components</a
+    >, though there is some amount of convergent evolution. Much appreciation to
+    <a href="https://stream7.github.io/">Nikos Gereoudakis</a> for transferring ownersip
+    of the <code>cally</code> package on npm. And finally, thanks for
+    <a href="https://twitter.com/uppercod">@Uppercod</a> for all his work on
+    <a href="https://atomicojs.dev/">atomico</a>.
+  </p>
+</Layout>
+
+<style is:global>
+  .feature {
+    --border: #dcdfe5;
+    --radius: 4px;
+    --icon-color: #666;
+    --accent: var(--color-accent);
+
+    .card {
+      padding: var(--space-s-m);
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: white;
+      box-shadow:
+        0 1px 5px rgba(0, 0, 0, 0.05),
+        0 0 30px rgba(0, 0, 0, 0.01);
+      inline-size: fit-content;
+      margin-inline: auto;
+      block-size: fit-content;
+      transition:
+        opacity 0.6s ease-in,
+        transform 0.4s ease-out;
+      min-block-size: 402px;
+    }
+
+    .card-initial {
+      opacity: 0;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transform: translateY(-3em);
+      }
+    }
+
+    .grid {
+      display: flex;
+      gap: 1em;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    :is(calendar-range, calendar-month)::part(button) {
+      border-radius: var(--radius);
+    }
+
+    calendar-range {
+      svg {
+        height: 16px;
+        width: 16px;
+        fill: none;
+        stroke: var(--icon-color);
+        stroke-width: 1.5;
+      }
+
+      path {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      &::part(button) {
+        width: 30px;
+        height: 30px;
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--icon-color);
+      }
+
+      &::part(button):is(:hover, :focus-visible) {
+        --icon-color: black;
+      }
+
+      &::part(button):hover {
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      &::part(button):focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: -1px;
+      }
+    }
+
+    calendar-month {
+      --color-accent: var(--accent);
+
+      &::part(today) {
+        color: var(--color-accent);
+      }
+
+      &::part(today selected),
+      &::part(today):focus-visible {
+        color: white;
+      }
+
+      &::part(range-inner) {
+        border-radius: 0;
+      }
+
+      &::part(range-start) {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      &::part(range-end) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+
+      &::part(range-start range-end) {
+        border-radius: var(--radius);
+      }
+    }
+  }
+
+  calendar-date,
+  calendar-range {
+    margin: 0 auto;
+    inline-size: fit-content;
+  }
+</style>

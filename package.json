@@ -10,8 +10,12 @@
   ],
   "scripts": {
     "start": "vite",
-    "build": "vite build",
-    "test": "wtr"
+    "build": "vite build && npm run astro:build",
+    "test": "wtr",
+    "astro:dev": "astro dev --root ./docs",
+    "preastro:build": "rm -rf ./docs/dist",
+    "astro:build": "astro check --root ./docs && astro build --root ./docs",
+    "astro:preview": "astro preview --root ./docs"
   },
   "devDependencies": {
     "@astrojs/check": "^0.5.9",

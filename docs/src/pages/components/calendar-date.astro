@@ -1,0 +1,242 @@
+---
+import ApiLayout from "../../layouts/ApiLayout.astro";
+import Example from "../../components/Example.astro";
+import Table from "../../components/Table.astro";
+import Heading from "../../components/Heading.astro";
+import Link from "../../components/Link.astro";
+---
+
+<ApiLayout title="<calendar-date>">
+  <p>
+    This component, combined with
+    <Link href="/api/calendar-month/"><code>{`<calendar-month>`}</code></Link>,
+    is used to select a single date. It can display one or more months at a
+    time.
+  </p>
+
+  <Example>
+    <calendar-date
+      value="2024-01-10"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+    >
+      <calendar-month></calendar-month>
+    </calendar-date>
+  </Example>
+
+  <Heading level={2}>Properties and attributes</Heading>
+
+  <p>All dates are expected in ISO-8601 format (<code>YYYY-MM-DD</code>).</p>
+
+  <Table>
+    <tr slot="head">
+      <th>Property</th>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Default</th>
+    </tr>
+
+    <tr>
+      <td><code>value</code></td>
+      <td><code>value</code></td>
+      <td>The currently selected date</td>
+      <td><code>string</code></td>
+      <td><code>""</code></td>
+    </tr>
+    <tr>
+      <td><code>min</code></td>
+      <td><code>min</code></td>
+      <td>The earliest date that can be selected</td>
+      <td><code>string</code></td>
+      <td><code>""</code></td>
+    </tr>
+    <tr>
+      <td><code>max</code></td>
+      <td><code>max</code></td>
+      <td>The latest date that can be selected</td>
+      <td><code>string</code></td>
+      <td><code>""</code></td>
+    </tr>
+    <tr>
+      <td><code>firstDayOfWeek</code></td>
+      <td><code>first-day-of-week</code></td>
+      <td>
+        The first day of the week, where Monday is
+        <code>0</code>, Tuesday is <code>1</code>, etc
+      </td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+    </tr>
+    <tr>
+      <td><code>showOutsideDays</code></td>
+      <td><code>show-outside-days</code></td>
+      <td>Whether to show days outside the month</td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+    </tr>
+    <tr>
+      <td><code>locale</code></td>
+      <td><code>locale</code></td>
+      <td>
+        The locale for formatting dates. If not set, will use the browser's
+        locale
+      </td>
+      <td><code>string | undefined</code></td>
+      <td><code>undefined</code></td>
+    </tr>
+    <tr>
+      <td><code>months</code></td>
+      <td><code>months</code></td>
+      <td>The number of months to display per page</td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+    </tr>
+    <tr>
+      <td><code>dir</code></td>
+      <td><code>dir</code></td>
+      <td>
+        The writing direction. Set to <code>"rtl"</code> for RTL languages
+      </td>
+      <td><code>"ltr" | "rtl"</code></td>
+      <td><code>"ltr"</code></td>
+    </tr>
+    <tr>
+      <td><code>isDateDisallowed</code></td>
+      <td>-</td>
+      <td>
+        A function that takes a date and returns <code>true</code> if the date should
+        not be selectable
+      </td>
+      <td><code>(date: Date) =&gt; boolean</code></td>
+      <td><code>() =&gt; false</code></td>
+    </tr>
+  </Table>
+
+  <Heading level={2}>Events</Heading>
+
+  <p>
+    Emits non-bubbling <code>CustomEvents</code> in response to user interaction.
+  </p>
+
+  <Table>
+    <tr slot="head">
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+
+    <tr>
+      <td><code>change</code></td>
+      <td>
+        Emitted when the <code>value</code> changes via user interaction. Not emitted
+        when <code>value</code> is programmatically changed
+      </td>
+    </tr>
+    <tr>
+      <td><code>focusday</code></td>
+      <td>
+        Emitted when the currently focused day changes. This can happen via
+        keyboard commands, or clicking the next or previous buttons
+      </td>
+    </tr>
+  </Table>
+
+  <Heading level={2}>Methods</Heading>
+
+  <Table>
+    <tr slot="head">
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+
+    <tr>
+      <td><code>focus</code></td>
+      <td>
+        Focuses the <code>&lt;calendar-month&gt;</code> containing the currently
+        focused date
+      </td>
+    </tr>
+  </Table>
+
+  <Heading level={2}>CSS Parts</Heading>
+
+  <p>
+    CSS parts allow for fine-grained styling and theming. They target specific
+    elements inside the component. An element may have multiple parts, and a
+    part may be used on multiple elements. They can be used in isolation, or
+    combined to e.g. style selected days within a range.
+  </p>
+
+  <p>
+    See the guide on <Link href="/theming/">theming</Link> for a walkthrough of how
+    to style this component.
+  </p>
+
+  <Table>
+    <tr slot="head">
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+
+    <tr>
+      <td><code>button</code></td>
+      <td>Any button within the component</td>
+    </tr>
+    <tr>
+      <td><code>previous</code></td>
+      <td>The previous page <code>button</code></td>
+    </tr>
+    <tr>
+      <td><code>next</code></td>
+      <td>The next page <code>button</code></td>
+    </tr>
+    <tr>
+      <td><code>disabled</code></td>
+      <td>A <code>button</code> that is disabled due to min/max</td>
+    </tr>
+    <tr>
+      <td><code>heading</code></td>
+      <td>The heading containing the month and year</td>
+    </tr>
+  </Table>
+
+  <Heading level={2}>Slots</Heading>
+
+  <Table>
+    <tr slot="head">
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+
+    <tr>
+      <td>Default slot</td>
+      <td>
+        The default slot is where you place your
+        <code>&lt;calendar-month&gt;</code> components, along with any other markup.
+        Note <code>&lt;calendar-month&gt;</code> does not need to be a direct descendant
+      </td>
+    </tr>
+    <tr>
+      <td><code>button-previous</code></td>
+      <td>
+        The inner content of the previous page button. By default uses text
+        "Previous". You will likely want to slot an icon here.
+      </td>
+    </tr>
+    <tr>
+      <td><code>button-next</code></td>
+      <td>
+        The inner content of the next page button. By default uses text "Next".
+        You will likely want to slot an icon here.
+      </td>
+    </tr>
+  </Table>
+</ApiLayout>
+
+<style is:global>
+  calendar-date {
+    inline-size: fit-content;
+    margin-inline: auto;
+  }
+</style>

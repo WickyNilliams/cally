@@ -1,0 +1,28 @@
+<div class="note">
+  <p>
+    <slot />
+  </p>
+</div>
+
+<style>
+  .note {
+    /* https://yeun.github.io/open-color/ */
+    --bg: #fff3bf;
+    --border: #f0dbb4;
+
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding-inline: var(--space-s);
+    padding-block: var(--space-xs);
+    margin-block-end: var(--space-s);
+
+    a {
+      --a-color: #90500a;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+</style>

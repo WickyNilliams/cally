@@ -1,0 +1,19 @@
+---
+import Layout from "./Layout.astro";
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<Layout title={title}>
+  <h1 slot="intro"><code>{title}</code></h1>
+  <slot />
+</Layout>
+
+<style>
+  h1 {
+    margin-block-start: var(--space-m);
+  }
+</style>

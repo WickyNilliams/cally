@@ -1,0 +1,432 @@
+---
+import PageIntro from "../components/PageIntro.astro";
+import Layout from "../layouts/Layout.astro";
+import Example from "../components/Example.astro";
+import Note from "../components/Note.astro";
+import Heading from "../components/Heading.astro";
+import Link from "../components/Link.astro";
+---
+
+<Layout title="Integration">
+  <link
+    slot="head"
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.14.0/cdn/themes/light.css"
+  />
+  <script
+    slot="head"
+    is:inline
+    type="module"
+    src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.14.0/cdn/shoelace.js"
+  ></script>
+
+  <h1 slot="intro">Integrating with other components</h1>
+  <PageIntro slot="intro">Let's build a date range picker</PageIntro>
+
+  <p>
+    You likely already have your own component library with inputs, buttons,
+    popovers, and more. And you probably have your own design tokens too. So
+    rather than re-implement all those parts, Cally's components are designed
+    around composition and ease of integration.
+  </p>
+
+  <p>
+    In this guide we will use <a href="https://shoelace.style/">Shoelace</a> as an
+    example. But the principles apply to any other component library. We will not
+    cover the finer details of Shoelace, but rather the generic high-level concepts.
+  </p>
+
+  <Heading level={2}>What makes a date picker?</Heading>
+
+  <p>A date picker typically consists of:</p>
+
+  <ul>
+    <li>An input - for manual date entry</li>
+    <li>A button - to toggle the popout</li>
+    <li>A popout - to contain the calendar</li>
+    <li>A calendar - for browsing and selecting dates</li>
+  </ul>
+
+  <p>
+    Shoelace provides everything but the calendar. Using these lower-level
+    pieces, we can compose together a more complex component. Additionally,
+    shoelace provides a number of tokens for styling, which we can use to match
+    its look and feel.
+  </p>
+
+  <Heading level={2}>Calendar components</Heading>
+
+  <p>
+    Let's start by styling the calendar components. We'll use Shoelace's card
+    and icon components, plus some tokens.
+  </p>
+
+  <Example
+    lineLength={100}
+    css={`
+      .flex { display: flex; }
+      .gap-l { gap: var(--sl-spacing-large); }
+      .flex-wrap { flex-wrap: wrap; }
+      .justify-center { justify-content: center; }
+
+      calendar-range {
+        &::part(button) {
+          border-radius: var(--sl-input-border-radius-small);
+          background-color: var(--sl-input-background-color);
+          border: 1px solid var(--sl-input-border-color);
+          padding: var(--sl-spacing-x-small);
+        }
+      }
+
+      calendar-month {
+        --color-accent: var(--sl-color-primary-600);
+
+        &::part(button) {
+          border-radius: var(--sl-input-border-radius-medium);
+        }
+        &::part(range-inner) {
+          border-radius: 0;
+        }
+        &::part(range-start) {
+          border-start-end-radius: 0;
+          border-end-end-radius: 0;
+        }
+        &::part(range-end) {
+          border-start-start-radius: 0;
+          border-end-start-radius: 0;
+        }
+        &::part(range-start range-end) {
+          border-radius: var(--sl-input-border-radius-medium);
+        }
+      }
+    `}
+  >
+    <sl-card>
+      <calendar-range months="2">
+        <sl-icon slot="button-previous" name="chevron-left" label="Previous"
+        ></sl-icon>
+        <sl-icon slot="button-next" name="chevron-right" label="Next"></sl-icon>
+
+        <div class="flex gap-l flex-wrap justify-center">
+          <calendar-month></calendar-month>
+          <calendar-month offset="1"></calendar-month>
+        </div>
+      </calendar-range>
+    </sl-card>
+  </Example>
+
+  <p>
+    This is already looking good. Now we need to integrate with the rest of the
+    components.
+  </p>
+
+  <Note>
+    For more information on styling and theming the calendar components please
+    see the full <Link href="/theming/">theming</Link> guide.
+  </Note>
+
+  <Heading level={2}>The input and toggle button</Heading>
+
+  <p>
+    Let's use Shoelace's input, button, and icon components to build out the
+    rest of the date picker.
+  </p>
+
+  <Example
+    lineLength={100}
+    css={`
+      .flex { display: flex; }
+      .gap-xs { gap: var(--sl-spacing-x-small); }
+      .gap-l { gap: var(--sl-spacing-large); }
+      .flex-wrap { flex-wrap: wrap; }
+      .justify-center { justify-content: center; }
+      .flex-1 { flex: 1; }
+      .align-end { align-items: end; }
+
+      calendar-range {
+        &::part(button) {
+          border-radius: var(--sl-input-border-radius-small);
+          background-color: var(--sl-input-background-color);
+          border: 1px solid var(--sl-input-border-color);
+          padding: var(--sl-spacing-x-small);
+        }
+      }
+
+      calendar-month {
+        --color-accent: var(--sl-color-primary-600);
+        &::part(button) {
+          border-radius: var(--sl-input-border-radius-medium);
+        }
+        &::part(range-inner) {
+          border-radius: 0;
+        }
+        &::part(range-start) {
+          border-start-end-radius: 0;
+          border-end-end-radius: 0;
+        }
+        &::part(range-end) {
+          border-start-start-radius: 0;
+          border-end-start-radius: 0;
+        }
+        &::part(range-start range-end) {
+          border-radius: var(--sl-input-border-radius-medium);
+        }
+      }
+    `}
+  >
+    <div class="flex gap-xs align-end">
+      <sl-input label="Date range" class="flex-1"></sl-input>
+      <sl-button>
+        <sl-icon name="calendar-range" label="Toggle calendar"></sl-icon>
+      </sl-button>
+    </div>
+
+    <sl-card>
+      <calendar-range months="2">
+        <sl-icon slot="button-previous" name="chevron-left" label="Previous"
+        ></sl-icon>
+        <sl-icon slot="button-next" name="chevron-right" label="Next"></sl-icon>
+
+        <div class="flex gap-l flex-wrap justify-center">
+          <calendar-month></calendar-month>
+          <calendar-month offset="1"></calendar-month>
+        </div>
+      </calendar-range>
+    </sl-card>
+  </Example>
+
+  <p>
+    This is now starting to look like an actual date picker, but we need to show
+    and hide the calendar on click.
+  </p>
+
+  <Heading level={2}>Adding the popup</Heading>
+
+  <p>
+    Shoelace provides a popup component that we can use to show and hide the
+    calendar. The popup component is also responsible for positioning its
+    content alongside some anchor element.
+  </p>
+
+  <p>
+    We'll place the card we've already built inside the popup. However, nothing
+    will happen until we wire up the button to the popup's <code>active</code> state.
+  </p>
+
+  <Example
+    lineLength={100}
+    css={`
+      .flex { display: flex; }
+      .gap-xs { gap: var(--sl-spacing-x-small); }
+      .gap-l { gap: var(--sl-spacing-large); }
+      .flex-wrap { flex-wrap: wrap; }
+      .justify-center { justify-content: center; }
+      .flex-1 { flex: 1; }
+      .align-end { align-items: end; }
+
+      calendar-range {
+        &::part(button) {
+          border-radius: var(--sl-input-border-radius-small);
+          background-color: var(--sl-input-background-color);
+          border: 1px solid var(--sl-input-border-color);
+          padding: var(--sl-spacing-x-small);
+        }
+      }
+
+      calendar-month {
+        --color-accent: var(--sl-color-primary-600);
+        &::part(button) {
+          border-radius: var(--sl-input-border-radius-medium);
+        }
+        &::part(range-inner) {
+          border-radius: 0;
+        }
+        &::part(range-start) {
+          border-start-end-radius: 0;
+          border-end-end-radius: 0;
+        }
+        &::part(range-end) {
+          border-start-start-radius: 0;
+          border-end-start-radius: 0;
+        }
+        &::part(range-start range-end) {
+          border-radius: var(--sl-input-border-radius-medium);
+        }
+      }
+    `}
+  >
+    <div class="flex gap-xs align-end">
+      <sl-input label="Date range" class="flex-1"></sl-input>
+      <sl-button>
+        <sl-icon name="calendar-range" label="Toggle calendar"></sl-icon>
+      </sl-button>
+    </div>
+
+    <sl-popup placement="bottom-end" distance="8" auto-size="horizontal">
+      <sl-card>
+        <calendar-range months="2">
+          <sl-icon slot="button-previous" name="chevron-left" label="Previous"
+          ></sl-icon>
+          <sl-icon slot="button-next" name="chevron-right" label="Next"
+          ></sl-icon>
+
+          <div class="flex gap-l flex-wrap justify-center">
+            <calendar-month></calendar-month>
+            <calendar-month offset="1"></calendar-month>
+          </div>
+        </calendar-range>
+      </sl-card>
+    </sl-popup>
+  </Example>
+
+  <Heading level={2}>Adding interactivity</Heading>
+
+  <p>
+    All the HTML and CSS is now in place, but nothing actually works. With a
+    little javascript to wire up events, we can finish up the component and have
+    a functional date range picker.
+  </p>
+
+  <p>
+    The <code>&lt;calendar-range&gt;</code> and
+    <code>&lt;calendar-date&gt;</code> components both emit <code>change</code> events
+    on selection. We can use this to set the <code>value</code> of the input and
+    close the popup. Additionally, we can listen to the <code>input</code> event
+    on the input to set the <code>value</code> of the calendar.
+  </p>
+
+  <Example
+    lineLength={100}
+    css={`
+      .flex { display: flex; }
+      .gap-xs { gap: var(--sl-spacing-x-small); }
+      .gap-l { gap: var(--sl-spacing-large); }
+      .flex-wrap { flex-wrap: wrap; }
+      .flex-1 { flex: 1; }
+      .align-end { align-items: end; }
+      .justify-center { justify-content: center; }
+
+      sl-card {
+        max-inline-size: calc(var(--auto-size-available-width) - 20px);
+      }
+
+      calendar-range {
+        &::part(button) {
+          border-radius: var(--sl-input-border-radius-small);
+          background-color: var(--sl-input-background-color);
+          border: 1px solid var(--sl-input-border-color);
+          padding: var(--sl-spacing-x-small);
+        }
+      }
+
+      calendar-month {
+        --color-accent: var(--sl-color-primary-600);
+        &::part(button) {
+          border-radius: var(--sl-input-border-radius-medium);
+        }
+        &::part(range-inner) {
+          border-radius: 0;
+        }
+        &::part(range-start) {
+          border-start-end-radius: 0;
+          border-end-end-radius: 0;
+        }
+        &::part(range-end) {
+          border-start-start-radius: 0;
+          border-end-start-radius: 0;
+        }
+        &::part(range-start range-end) {
+          border-radius: var(--sl-input-border-radius-medium);
+        }
+      }
+    `}
+  >
+    <div class="flex gap-xs align-end">
+      <sl-input label="Date range" class="flex-1"></sl-input>
+      <sl-button id="toggle-button">
+        <sl-icon name="calendar-range" label="Toggle calendar"></sl-icon>
+      </sl-button>
+    </div>
+
+    <sl-popup
+      placement="bottom-end"
+      distance="8"
+      anchor="toggle-button"
+      auto-size="horizontal"
+    >
+      <sl-card
+        style="max-inline-size: calc(var(--auto-size-available-width) - 20px)"
+      >
+        <calendar-range months="2">
+          <sl-icon slot="button-previous" name="chevron-left" label="Previous"
+          ></sl-icon>
+          <sl-icon slot="button-next" name="chevron-right" label="Next"
+          ></sl-icon>
+
+          <div class="flex gap-l flex-wrap justify-center">
+            <calendar-month></calendar-month>
+            <calendar-month offset="1"></calendar-month>
+          </div>
+        </calendar-range>
+      </sl-card>
+    </sl-popup>
+
+    <script is:inline>
+      const root = document.currentScript.closest(".example");
+
+      const input = root.querySelector("sl-input");
+      const popup = root.querySelector("sl-popup");
+      const toggle = root.querySelector("sl-button");
+      const calendar = root.querySelector("calendar-range");
+
+      function open() {
+        popup.active = true;
+        requestAnimationFrame(() => calendar.focus());
+      }
+
+      function close() {
+        popup.active = false;
+        toggle.focus();
+      }
+
+      toggle.addEventListener("click", () => {
+        popup.active ? close() : open();
+      });
+
+      calendar.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") close();
+      });
+
+      calendar.addEventListener("change", (e) => {
+        input.value = e.target.value;
+        close();
+      });
+
+      input.addEventListener("input", (e) => {
+        calendar.value = e.target.value;
+      });
+    </script>
+  </Example>
+
+  <Heading level={2}>Finally</Heading>
+
+  <p>
+    And we are done! Hopefully this hasn't been too daunting. If you are using a
+    front-end framework like react or vue, you would likely wrap this up in a
+    reusable component, adapting the javascript as necessary.
+  </p>
+
+  <p>
+    We haven't paid any mind to mobile styles throughout this guide. On mobile,
+    perhaps you'd want to only show one month at a time. Or render an overlay
+    rather than a popup. These decisions are beyond the scope of this guide, and
+    are left as an exercise for the reader.
+  </p>
+
+  <p>
+    To find out more about each component, please see the respective
+    <Link href="/components/">component API</Link> docs. Or visit the
+    <Link href="/theming/">theming</Link> guide for a more in-depth look at styling
+    the components.
+  </p>
+</Layout>

@@ -1,0 +1,94 @@
+---
+import { Code } from "astro:components";
+import * as prettier from "prettier";
+
+interface Props {
+  lineLength?: number;
+  css?: string;
+  class?: string;
+}
+
+/**
+ * @see https://stackoverflow.com/a/52171480/135778
+ */
+function cyrb53(str: string, seed = 0) {
+  let h1 = 0xdeadbeef ^ seed,
+    h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+  h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+  h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+
+const { css, lineLength = 80, class: className, ...rest } = Astro.props;
+
+const html = await Astro.slots.render("default");
+const source = `
+  ${css ? `<style>${css}</style>` : ""}
+  ${html}
+`;
+
+const id = `id-${cyrb53(source)}`;
+const output = `
+  ${css ? `<style>#${id}{ ${css} }</style>` : ""}
+  <div id="${id}">${html}</div>
+`;
+
+const formatted = await prettier.format(source, {
+  parser: "html",
+  printWidth: lineLength,
+});
+
+// TODO: remove when this bug is resolved
+// https://github.com/withastro/compiler/issues/984
+// `
+---
+
+<div class:list={["example", className]} {...rest}>
+  <div class="preview" set:html={output} />
+  <Code class="code" code={formatted} lang="html" />
+</div>
+
+<style>
+  .example {
+    --border: #dcdfe5;
+    --bg: #f7f7f7;
+    margin-block: var(--space-s) var(--space-l);
+  }
+
+  .example:not(:first-child) {
+    margin-block-start: var(--space-l);
+  }
+
+  .preview {
+    border-block-start: 1px solid var(--border);
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--space-s);
+    padding-block: var(--space-m-l);
+    background-color: var(--bg);
+  }
+
+  .code {
+    margin-block: 0;
+    padding-block: var(--space-m);
+  }
+
+  @media (min-width: 753px) {
+    .preview {
+      border-radius: 5px 5px 0 0;
+      border: 1px solid var(--border);
+      border-block-end: none;
+    }
+
+    .code {
+      border-radius: 0 0 5px 5px;
+    }
+  }
+</style>

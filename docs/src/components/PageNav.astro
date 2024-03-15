@@ -1,0 +1,70 @@
+---
+import LogoTwitter from "./LogoTwitter.astro";
+import LogoGithub from "./LogoGithub.astro";
+---
+
+<nav>
+  <ul>
+    <li>
+      <a href="https://github.com/WickyNilliams/cally">
+        <LogoGithub role="presentation" />
+        <span>Github</span>
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/WickyNilliams">
+        <LogoTwitter role="presentation" />
+        <span>WickyNilliams</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<style>
+  ul {
+    display: flex;
+    gap: var(--space-s);
+    list-style: none;
+    margin: 0;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+  }
+
+  nav {
+    --icon-size: var(--space-s);
+    --icon-color: var(--color-body);
+
+    svg {
+      width: var(--icon-size);
+      height: var(--icon-size);
+      fill: var(--icon-color);
+
+      /* fix alignment */
+      margin-block-start: 1px;
+    }
+  }
+
+  a {
+    display: flex;
+    gap: var(--space-3xs);
+    align-items: center;
+    line-height: 1;
+    text-decoration: none;
+
+    &:focus-visible {
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 440px) {
+      &:not(:focus-visible) {
+        span {
+          position: absolute;
+          transform: scale(0);
+        }
+      }
+    }
+  }
+</style>
