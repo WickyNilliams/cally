@@ -8,6 +8,10 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WickyNilliams/cally"
+  },
   "scripts": {
     "start": "vite",
     "build": "vite build && npm run astro:build",
@@ -15,7 +19,10 @@
     "astro:dev": "astro dev --root ./docs",
     "preastro:build": "rm -rf ./docs/dist",
     "astro:build": "astro check --root ./docs && astro build --root ./docs",
-    "astro:preview": "astro preview --root ./docs"
+    "astro:preview": "astro preview --root ./docs",
+    "preversion": "npm test",
+    "version": "npm run build",
+    "postversion": "git push origin main --tags && npm publish"
   },
   "devDependencies": {
     "@astrojs/check": "^0.5.9",
