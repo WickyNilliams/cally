@@ -1,4 +1,4 @@
-import { css } from "atomico";
+import { css, type Host } from "atomico";
 import { CalendarMonthContext } from "../calendar-month/CalendarMonthContext.js";
 import { reset } from "../utils/styles.js";
 import type { DaysOfWeek } from "../utils/utils.js";

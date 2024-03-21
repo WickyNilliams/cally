@@ -1,4 +1,4 @@
-import { c, useEffect, useEvent, useMemo, useState } from "atomico";
+import { c, useEffect, useMemo, useState, type Host } from "atomico";
 import { PlainDate } from "../utils/temporal.js";
 import { inRange } from "../utils/utils.js";
 import { useDateRangeProp } from "../utils/hooks.js";
@@ -8,7 +8,7 @@ import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
 type Tentative = { first: PlainDate; second: PlainDate };
 
 export const CalendarRange = c(
-  (props) => {
+  (props): Host<{ onChange: Event }> => {
     const [value, setValue] = useDateRangeProp("value");
 
     const calendar = useCalendarBase(props);
