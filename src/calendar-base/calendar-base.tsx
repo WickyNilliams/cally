@@ -86,7 +86,7 @@ export const props = {
   },
   firstDayOfWeek: {
     type: Number,
-    value: (): DaysOfWeek => 0,
+    value: (): DaysOfWeek => 1,
   },
   showOutsideDays: {
     type: Boolean,
