@@ -130,7 +130,7 @@ export const CalendarMonth = c(
 
         button:disabled,
         :host::part(outside),
-        :host::part(disabled) {
+        :host::part(disallowed) {
           cursor: default;
           opacity: 0.5;
         }
