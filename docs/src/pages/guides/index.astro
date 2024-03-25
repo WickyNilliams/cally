@@ -1,0 +1,22 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Link from "../../components/Link.astro";
+---
+
+<Layout title="Guides">
+  <h1 slot="intro">Guides</h1>
+
+  <p>
+    Learn how to style Cally's components or integrate with external components
+    to build more complex UIs.
+  </p>
+
+  <ul>
+    <li>
+      <Link href="/guides/theming/">Theming</Link>
+    </li>
+    <li>
+      <Link href="/guides/integration/">Integration</Link>
+    </li>
+  </ul>
+</Layout>
