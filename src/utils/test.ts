@@ -112,3 +112,15 @@ export async function clickDay(month: MonthInstance, dateLabel: string) {
 
   await click(button);
 }
+
+export function getActiveElement(root: Document | ShadowRoot = document) {
+  if (
+    root.activeElement &&
+    "shadowRoot" in root.activeElement &&
+    root.activeElement.shadowRoot
+  ) {
+    return getActiveElement(root.activeElement.shadowRoot);
+  }
+
+  return root.activeElement;
+}
