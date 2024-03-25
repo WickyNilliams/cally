@@ -12,7 +12,6 @@ type CalendarBaseProps = {
   locale: string | undefined;
   formatter: Intl.DateTimeFormat;
   isDateDisallowed: (date: Date) => boolean;
-  dir: "ltr" | "rtl";
   previous?: () => void;
   next?: () => void;
   onSelect: (e: CustomEvent<PlainDate>) => void;
@@ -80,10 +79,6 @@ export const props = {
   max: {
     type: String,
     value: "",
-  },
-  dir: {
-    type: String,
-    value: (): "ltr" | "rtl" => "ltr",
   },
   isDateDisallowed: {
     type: Function,

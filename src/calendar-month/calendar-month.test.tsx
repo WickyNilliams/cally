@@ -24,6 +24,7 @@ interface TestPropsBase {
   onselectday: (e: CustomEvent<PlainDate>) => void;
   onfocusday: (e: CustomEvent<PlainDate>) => void;
   focusedDate: PlainDate;
+  dir: "ltr" | "rtl";
 }
 
 interface DateTestProps extends TestPropsBase, DateContext {}
@@ -35,6 +36,7 @@ function Fixture({
   onselectday,
   onfocusday,
   focusedDate = today(),
+  dir,
   ...props
 }: Partial<DateTestProps> | Partial<RangeTestProps>): VNodeAny {
   const dateWindow = new DateWindow(
@@ -47,9 +49,9 @@ function Fixture({
     <CalendarMonthContext
       onselectday={onselectday}
       onfocusday={onfocusday}
+      dir={dir}
       value={{
         firstDayOfWeek: 1,
-        dir: "ltr",
         locale: "en-GB",
         dateWindow,
         ...props,

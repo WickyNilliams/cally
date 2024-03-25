@@ -8,7 +8,6 @@ type CalendarMonthContextBase = {
   max?: PlainDate;
   firstDayOfWeek: DaysOfWeek;
   isDateDisallowed?: (date: Date) => boolean;
-  dir: "ltr" | "rtl";
   dateWindow: DateWindow;
   locale: string | undefined;
   showOutsideDays?: boolean;
@@ -31,7 +30,6 @@ export const CalendarMonthContext = createContext<CalendarMonthContextValue>({
   firstDayOfWeek: 0,
   highlightedRange: {},
   isDateDisallowed: () => false,
-  dir: "ltr",
   locale: undefined,
   dateWindow: new DateWindow(t.toPlainYearMonth(), { months: 1 }, t),
 });
