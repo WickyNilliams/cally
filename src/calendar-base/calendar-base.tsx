@@ -1,7 +1,7 @@
 import { css, type Host } from "atomico";
 import { CalendarMonthContext } from "../calendar-month/CalendarMonthContext.js";
 import { reset } from "../utils/styles.js";
-import type { DaysOfWeek } from "../utils/utils.js";
+import type { DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { DateWindow } from "../utils/DateWindow.js";
 

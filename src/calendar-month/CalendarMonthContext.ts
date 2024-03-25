@@ -1,7 +1,7 @@
 import { createContext } from "atomico";
 import { DateWindow } from "../utils/DateWindow.js";
 import type { PlainDate } from "../utils/temporal.js";
-import { today, type DaysOfWeek } from "../utils/utils.js";
+import { today, type DaysOfWeek } from "../utils/date.js";
 
 type CalendarMonthContextBase = {
   min?: PlainDate;

@@ -10,7 +10,7 @@ import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { fixture } from "atomico/test-dom";
 import { PlainDate } from "../utils/temporal.js";
 import { DateWindow } from "../utils/DateWindow.js";
-import { today } from "../utils/utils.js";
+import { today } from "../utils/date.js";
 
 type MonthContextInstance = InstanceType<typeof CalendarMonthContext>;
 
