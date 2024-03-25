@@ -177,5 +177,6 @@
     background: var(--color-code);
     padding-block: 0.1em;
     padding-inline: 0.3em;
+    border-radius: var(--border-radius);
   }
 }
