@@ -8,7 +8,7 @@ import {
   startOfWeek,
   today,
 } from "../utils/utils.js";
-import { PlainDate } from "../utils/PlainDate.js";
+import type { PlainDate } from "../utils/temporal.js";
 import type { CalendarMonthContextValue } from "./CalendarMonthContext.js";
 
 function cx(map: Record<string, boolean | null | undefined>) {
@@ -33,15 +33,8 @@ type UseCalendarMonthOptions = {
 
 export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   const { offset } = props;
-  const {
-    firstDayOfWeek,
-    isDateDisallowed,
-    dir,
-    min,
-    max,
-    dateWindow,
-    locale,
-  } = context;
+  const { firstDayOfWeek, isDateDisallowed, min, max, dateWindow, locale } =
+    context;
 
   const todaysDate = today();
   const dayNamesLong = useDayNames("long", firstDayOfWeek, locale);
@@ -67,11 +60,11 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     dispatchFocusDay(clamp(date, min, max));
   }
 
-  function onKeyDown(event: KeyboardEvent) {
-    const isLTR = dir === "ltr";
-    let date: PlainDate | undefined;
+  function onKeyDown(e: KeyboardEvent) {
+    const isLTR = (e.target as HTMLElement).matches(":dir(ltr)");
+    let date: PlainDate;
 
-    switch (event.key) {
+    switch (e.key) {
       case "ArrowRight":
         date = focusedDate.add({ days: isLTR ? 1 : -1 });
         break;
@@ -85,10 +78,10 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
         date = focusedDate.add({ days: -7 });
         break;
       case "PageUp":
-        date = focusedDate.add(event.shiftKey ? { years: -1 } : { months: -1 });
+        date = focusedDate.add(e.shiftKey ? { years: -1 } : { months: -1 });
         break;
       case "PageDown":
-        date = focusedDate.add(event.shiftKey ? { years: 1 } : { months: 1 });
+        date = focusedDate.add(e.shiftKey ? { years: 1 } : { months: 1 });
         break;
       case "Home":
         date = startOfWeek(focusedDate, firstDayOfWeek);
@@ -101,7 +94,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     }
 
     focusDay(date);
-    event.preventDefault();
+    e.preventDefault();
   }
 
   function getDayProps(date: PlainDate) {

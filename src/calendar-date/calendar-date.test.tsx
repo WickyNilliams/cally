@@ -12,10 +12,9 @@ import {
   getPrevPageButton,
   mount,
 } from "../utils/test.js";
-
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { CalendarDate } from "./calendar-date.js";
-import type { PlainDate } from "../utils/PlainDate.js";
+import type { PlainDate } from "../utils/temporal.js";
 
 type TestProps = {
   onchange: (e: Event) => void;

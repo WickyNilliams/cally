@@ -1,0 +1,169 @@
+---
+import Example from "./Example.astro";
+---
+
+<Example class="feature">
+  <div class="card">
+    <calendar-range months="2">
+      <svg
+        aria-label="Previous"
+        slot="button-previous"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+      </svg>
+      <svg
+        aria-label="Next"
+        slot="button-next"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+      </svg>
+
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-range>
+  </div>
+</Example>
+
+<script is:inline type="module">
+  const toISO = (date) => date.toISOString().split("T")[0];
+
+  const today = new Date();
+  const nextWeek = new Date(today);
+  nextWeek.setDate(nextWeek.getDate() + 7);
+
+  document
+    .querySelector("calendar-range")
+    ?.setAttribute("value", `${toISO(today)}/${toISO(nextWeek)}`);
+
+  await Promise.all([
+    customElements.whenDefined("calendar-range"),
+    customElements.whenDefined("calendar-month"),
+  ]);
+
+  document.querySelector(".card")?.classList.add("reveal");
+</script>
+
+<style>
+  .feature {
+    --border: #dcdfe5;
+    --radius: 4px;
+    --icon-color: #666;
+    --accent: var(--color-accent);
+  }
+
+  .grid {
+    display: flex;
+    gap: 1em;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .card {
+    padding: var(--space-s-m);
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: white;
+    box-shadow:
+      0 1px 5px rgba(0, 0, 0, 0.05),
+      0 0 30px rgba(0, 0, 0, 0.01);
+    inline-size: fit-content;
+    margin-inline: auto;
+    block-size: fit-content;
+    transition:
+      opacity 0.6s ease-in,
+      transform 0.4s ease-out;
+
+    /* avoid reflow */
+    min-block-size: 643px;
+    @media (min-height: 594px) {
+      min-block-size: 402px;
+    }
+
+    /* animate card in when ready */
+    &:not(.reveal) {
+      opacity: 0;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transform: translateY(-3em);
+      }
+    }
+  }
+
+  calendar-range {
+    svg {
+      height: 16px;
+      width: 16px;
+      fill: none;
+      stroke: var(--icon-color);
+      stroke-width: 1.5;
+    }
+
+    path {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    &::part(button) {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--icon-color);
+      border-radius: var(--radius);
+    }
+
+    &::part(button):is(:hover, :focus-visible) {
+      --icon-color: black;
+    }
+
+    &::part(button):hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    &::part(button):focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -1px;
+    }
+  }
+
+  calendar-month {
+    --color-accent: var(--accent);
+
+    &::part(button) {
+      border-radius: var(--radius);
+    }
+
+    &::part(today) {
+      color: var(--color-accent);
+    }
+
+    &::part(today selected),
+    &::part(today):focus-visible {
+      color: white;
+    }
+
+    &::part(range-inner) {
+      border-radius: 0;
+    }
+
+    &::part(range-start) {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    &::part(range-end) {
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
+
+    &::part(range-start range-end) {
+      border-radius: var(--radius);
+    }
+  }
+</style>

@@ -1,5 +1,5 @@
 import { c, useEffect, useEvent } from "atomico";
-import { PlainDate } from "../utils/PlainDate.js";
+import type { PlainDate } from "../utils/temporal.js";
 import { useDateProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
@@ -7,7 +7,6 @@ import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
 export const CalendarDate = c(
   (props) => {
     const [value, setValue] = useDateProp("value");
-    const dispatch = useEvent("change");
     const calendar = useCalendarBase(props);
 
     useEffect(() => {
@@ -23,7 +22,7 @@ export const CalendarDate = c(
 
     function handleSelect(e: CustomEvent<PlainDate>) {
       setValue(e.detail);
-      dispatch();
+      calendar.dispatch();
     }
 
     return (

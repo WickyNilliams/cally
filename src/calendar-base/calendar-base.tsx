@@ -2,7 +2,7 @@ import { css } from "atomico";
 import { CalendarMonthContext } from "../calendar-month/CalendarMonthContext.js";
 import { reset } from "../utils/styles.js";
 import type { DaysOfWeek } from "../utils/utils.js";
-import { PlainDate } from "../utils/PlainDate.js";
+import type { PlainDate } from "../utils/temporal.js";
 import type { DateWindow } from "../utils/DateWindow.js";
 
 type CalendarBaseProps = {
@@ -12,7 +12,6 @@ type CalendarBaseProps = {
   locale: string | undefined;
   formatter: Intl.DateTimeFormat;
   isDateDisallowed: (date: Date) => boolean;
-  dir: "ltr" | "rtl";
   previous?: () => void;
   next?: () => void;
   onSelect: (e: CustomEvent<PlainDate>) => void;
@@ -80,10 +79,6 @@ export const props = {
   max: {
     type: String,
     value: "",
-  },
-  dir: {
-    type: String,
-    value: (): "ltr" | "rtl" => "ltr",
   },
   isDateDisallowed: {
     type: Function,

@@ -8,7 +8,7 @@ import {
 } from "./CalendarMonthContext.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { fixture } from "atomico/test-dom";
-import { PlainDate } from "../utils/PlainDate.js";
+import { PlainDate } from "../utils/temporal.js";
 import { DateWindow } from "../utils/DateWindow.js";
 import { today } from "../utils/utils.js";
 
@@ -24,6 +24,7 @@ interface TestPropsBase {
   onselectday: (e: CustomEvent<PlainDate>) => void;
   onfocusday: (e: CustomEvent<PlainDate>) => void;
   focusedDate: PlainDate;
+  dir: "ltr" | "rtl";
 }
 
 interface DateTestProps extends TestPropsBase, DateContext {}
@@ -35,6 +36,7 @@ function Fixture({
   onselectday,
   onfocusday,
   focusedDate = today(),
+  dir,
   ...props
 }: Partial<DateTestProps> | Partial<RangeTestProps>): VNodeAny {
   const dateWindow = new DateWindow(
@@ -47,9 +49,9 @@ function Fixture({
     <CalendarMonthContext
       onselectday={onselectday}
       onfocusday={onfocusday}
+      dir={dir}
       value={{
         firstDayOfWeek: 1,
-        dir: "ltr",
         locale: "en-GB",
         dateWindow,
         ...props,

@@ -143,6 +143,10 @@
       border-radius: 1px;
       text-decoration: none;
     }
+
+    &:has(code) {
+      text-underline-offset: 3px;
+    }
   }
 
   h1 {
@@ -173,5 +177,6 @@
     background: var(--color-code);
     padding-block: 0.1em;
     padding-inline: 0.3em;
+    border-radius: var(--border-radius);
   }
 }

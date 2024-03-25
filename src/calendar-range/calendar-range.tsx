@@ -1,5 +1,5 @@
 import { c, useEffect, useEvent, useMemo, useState } from "atomico";
-import { PlainDate } from "../utils/PlainDate.js";
+import { PlainDate } from "../utils/temporal.js";
 import { inRange } from "../utils/utils.js";
 import { useDateRangeProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
@@ -10,7 +10,6 @@ type Tentative = { first: PlainDate; second: PlainDate };
 export const CalendarRange = c(
   (props) => {
     const [value, setValue] = useDateRangeProp("value");
-    const dispatch = useEvent("change");
 
     const calendar = useCalendarBase(props);
 
@@ -52,7 +51,7 @@ export const CalendarRange = c(
       } else {
         setValue(sorted[0]!, sorted[1]!);
         setTentative(undefined);
-        dispatch();
+        calendar.dispatch();
       }
     }
 

@@ -1,5 +1,4 @@
-import { type PlainDate } from "./PlainDate.js";
-import { PlainYearMonth } from "./PlainYearMonth.js";
+import { type PlainDate, PlainYearMonth } from "./temporal.js";
 
 export type Duration = { months: number };
 
