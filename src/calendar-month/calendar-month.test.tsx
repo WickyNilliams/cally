@@ -8,7 +8,7 @@ import {
 } from "./CalendarMonthContext.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { fixture } from "atomico/test-dom";
-import { PlainDate } from "../utils/PlainDate.js";
+import { PlainDate } from "../utils/temporal.js";
 import { DateWindow } from "../utils/DateWindow.js";
 import { today } from "../utils/utils.js";
 

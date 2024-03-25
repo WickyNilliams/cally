@@ -8,7 +8,7 @@ import {
   startOfWeek,
   today,
 } from "../utils/utils.js";
-import { PlainDate } from "../utils/PlainDate.js";
+import type { PlainDate } from "../utils/temporal.js";
 import type { CalendarMonthContextValue } from "./CalendarMonthContext.js";
 
 function cx(map: Record<string, boolean | null | undefined>) {
@@ -69,7 +69,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
 
   function onKeyDown(event: KeyboardEvent) {
     const isLTR = dir === "ltr";
-    let date: PlainDate | undefined;
+    let date: PlainDate;
 
     switch (event.key) {
       case "ArrowRight":

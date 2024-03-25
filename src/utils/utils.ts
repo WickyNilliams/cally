@@ -1,5 +1,4 @@
-import { PlainDate } from "./PlainDate.js";
-import { PlainYearMonth } from "./PlainYearMonth.js";
+import { PlainDate, type PlainYearMonth } from "./temporal.js";
 
 export type DaysOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -90,7 +89,7 @@ function getDaysInRange(start: PlainDate, end: PlainDate): PlainDate[] {
 }
 
 function chunk<T>(array: T[], chunkSize: number): T[][] {
-  const result: T[][] = [];
+  const result = [];
 
   for (let i = 0; i < array.length; i += chunkSize) {
     result.push(array.slice(i, i + chunkSize));

@@ -1,6 +1,5 @@
 import { useProp, useMemo } from "atomico";
-import { PlainDate } from "./PlainDate";
-import type { PlainYearMonth } from "./PlainYearMonth";
+import { PlainDate, type PlainYearMonth } from "./temporal.js";
 import { getDayNames, type DaysOfWeek, type WeekdayOption } from "./utils";
 
 function safeFrom<T extends PlainDate | PlainYearMonth>(

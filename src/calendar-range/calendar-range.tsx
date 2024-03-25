@@ -1,5 +1,5 @@
 import { c, useEffect, useEvent, useMemo, useState } from "atomico";
-import { PlainDate } from "../utils/PlainDate.js";
+import { PlainDate } from "../utils/temporal.js";
 import { inRange } from "../utils/utils.js";
 import { useDateRangeProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
