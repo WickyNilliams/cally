@@ -5,6 +5,7 @@ import {
   click,
   clickDay,
   createSpy,
+  getActiveElement,
   getDayButton,
   getMonth,
   getNextPageButton,
@@ -236,7 +237,7 @@ describe("CalendarDate", () => {
       await sendKeys({ press: "Tab" });
       await sendKeys({ press: "Enter" });
 
-      expect(getNextPageButton(calendar)).to.match(":focus-within");
+      expect(getActiveElement()).to.eq(getNextPageButton(calendar));
     });
 
     it("moves focus to the selected date when clicking outside of the month", async () => {
@@ -257,7 +258,7 @@ describe("CalendarDate", () => {
 
       // get the clicked day
       const button = getDayButton(month, "1 February");
-      expect(button).to.match(":focus-within");
+      expect(getActiveElement()).to.eq(button);
       expect(button.tabIndex).to.eq(0);
     });
   });
