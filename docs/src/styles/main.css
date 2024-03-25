@@ -143,6 +143,10 @@
       border-radius: 1px;
       text-decoration: none;
     }
+
+    &:has(code) {
+      text-underline-offset: 3px;
+    }
   }
 
   h1 {
