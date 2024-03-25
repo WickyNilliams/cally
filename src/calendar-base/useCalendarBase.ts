@@ -12,7 +12,8 @@ type CalendarBaseOptions = {
 export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   const [min] = useDateProp("min");
   const [max] = useDateProp("max");
-  const dispatch = useEvent<string>("focusday");
+  const dispatchFocusDay = useEvent<string>("focusday");
+  const dispatch = useEvent("change");
 
   const [dateWindow, setDateWindow] = useState(() => {
     const todaysDate = today();
@@ -27,13 +28,13 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   function next() {
     const next = dateWindow.next();
     setDateWindow(next);
-    dispatch(next.focusedDate.toString());
+    dispatchFocusDay(next.focusedDate.toString());
   }
 
   function previous() {
     const prev = dateWindow.prev();
     setDateWindow(prev);
-    dispatch(prev.focusedDate.toString());
+    dispatchFocusDay(prev.focusedDate.toString());
   }
 
   const host = useHost();
@@ -45,6 +46,7 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   return {
     formatter,
     dateWindow,
+    dispatch,
     setFocusedDate(day: PlainDate) {
       setDateWindow(dateWindow.adjust(day));
     },

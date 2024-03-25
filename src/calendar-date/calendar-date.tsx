@@ -7,7 +7,6 @@ import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
 export const CalendarDate = c(
   (props) => {
     const [value, setValue] = useDateProp("value");
-    const dispatch = useEvent("change");
     const calendar = useCalendarBase(props);
 
     useEffect(() => {
@@ -23,7 +22,7 @@ export const CalendarDate = c(
 
     function handleSelect(e: CustomEvent<PlainDate>) {
       setValue(e.detail);
-      dispatch();
+      calendar.dispatch();
     }
 
     return (
