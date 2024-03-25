@@ -14,16 +14,15 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   const [max] = useDateProp("max");
   const dispatch = useEvent<string>("focusday");
 
-  const todaysDate = today();
-  const start = todaysDate.toPlainYearMonth();
+  const [dateWindow, setDateWindow] = useState(() => {
+    const todaysDate = today();
+    const start =
+      months === 12
+        ? new PlainYearMonth(todaysDate.year, 1)
+        : todaysDate.toPlainYearMonth();
 
-  const [dateWindow, setDateWindow] = useState(
-    new DateWindow(
-      months === 12 ? new PlainYearMonth(start.year, 1) : start,
-      { months },
-      todaysDate
-    )
-  );
+    return new DateWindow(start, { months }, todaysDate);
+  });
 
   function next() {
     const next = dateWindow.next();
@@ -40,10 +39,8 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   const host = useHost();
   const formatter = useDateFormatter(locale, { year: "numeric" });
 
-  const canNext =
-    max == null || PlainYearMonth.compare(max, dateWindow.end) > 0;
-  const canPrevious =
-    min == null || PlainYearMonth.compare(min, dateWindow.start) < 0;
+  const canNext = max == null || !dateWindow.contains(max);
+  const canPrevious = min == null || !dateWindow.contains(min);
 
   return {
     formatter,
