@@ -31,7 +31,7 @@ import "cally";
 
 ## Docs
 
-Coming soon.
+For full documentation, visit: https://wicky.nillia.ms/cally/
 
 ## License
 
