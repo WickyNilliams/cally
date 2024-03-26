@@ -2,27 +2,39 @@
   "name": "cally",
   "version": "0.2.0",
   "description": "small, feature-rich calendar components",
-  "module": "dist/cally.js",
-  "type": "module",
   "license": "MIT",
+  "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
+  "module": "dist/cally.js",
+  "types": "dist/cally.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/cally.js",
+      "types": "./dist/cally.d.ts"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/WickyNilliams/cally"
   },
   "scripts": {
     "start": "vite",
+    "clean": "rm -rf dist docs/dist types",
+    "prebuild": "npm run clean",
     "build": "vite build && npm run astro:build",
     "test": "wtr",
     "astro:dev": "astro dev --root ./docs",
-    "preastro:build": "rm -rf ./docs/dist",
     "astro:build": "astro check --root ./docs && astro build --root ./docs",
     "astro:preview": "astro preview --root ./docs",
     "preversion": "npm test",
     "version": "npm run build",
     "postversion": "git push origin main --tags && npm publish"
+  },
+  "dependencies": {
+    "atomico": "^1.76.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.5.9",
@@ -36,9 +48,9 @@
     "@web/test-runner-playwright": "^0.11.0",
     "@web/test-runner-visual-regression": "^0.9.0",
     "astro": "^4.5.3",
-    "atomico": "^1.76.1",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3",
-    "vite": "^5.1.4"
+    "vite": "^5.1.4",
+    "vite-plugin-dts": "^3.7.3"
   }
 }

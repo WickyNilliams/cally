@@ -1,7 +1,7 @@
-import { css } from "atomico";
+import { css, type Host } from "atomico";
 import { CalendarMonthContext } from "../calendar-month/CalendarMonthContext.js";
 import { reset } from "../utils/styles.js";
-import type { DaysOfWeek } from "../utils/utils.js";
+import type { DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { DateWindow } from "../utils/DateWindow.js";
 
@@ -86,7 +86,7 @@ export const props = {
   },
   firstDayOfWeek: {
     type: Number,
-    value: (): DaysOfWeek => 0,
+    value: (): DaysOfWeek => 1,
   },
   showOutsideDays: {
     type: Boolean,

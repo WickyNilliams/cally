@@ -1,11 +1,17 @@
-import { c, css, useContext, useRef } from "atomico";
+import { c, css, useContext, useRef, type Host } from "atomico";
 import { reset } from "../utils/styles.js";
 import { useCalendarMonth } from "./useCalendarMonth.js";
 import { CalendarMonthContext } from "./CalendarMonthContext.js";
 import { useDateFormatter } from "../utils/hooks.js";
 
 export const CalendarMonth = c(
-  (props) => {
+  (
+    props
+  ): Host<{
+    onSelectDay: CustomEvent<string>;
+    onFocusDay: CustomEvent<string>;
+    onHoverDay: CustomEvent<string>;
+  }> => {
     const context = useContext(CalendarMonthContext);
     const table = useRef<HTMLTableElement>();
     const calendar = useCalendarMonth({ props, context });
@@ -124,7 +130,7 @@ export const CalendarMonth = c(
 
         button:disabled,
         :host::part(outside),
-        :host::part(disabled) {
+        :host::part(disallowed) {
           cursor: default;
           opacity: 0.5;
         }

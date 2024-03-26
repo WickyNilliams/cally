@@ -2,7 +2,7 @@ import { useState, useEvent, useHost } from "atomico";
 import { DateWindow } from "../utils/DateWindow.js";
 import { type PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { useDateProp, useDateFormatter } from "../utils/hooks.js";
-import { today } from "../utils/utils.js";
+import { today } from "../utils/date.js";
 
 type CalendarBaseOptions = {
   months: number;

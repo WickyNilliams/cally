@@ -7,7 +7,7 @@ import {
   inRange,
   startOfWeek,
   today,
-} from "../utils/utils.js";
+} from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { CalendarMonthContextValue } from "./CalendarMonthContext.js";
 

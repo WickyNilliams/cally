@@ -1,4 +1,4 @@
-import { endOfMonth, clamp, compare } from "./utils.js";
+import { endOfMonth, clamp, compare } from "./date.js";
 
 type Duration = { months: number } | { years: number } | { days: number };
 type CompareResult = -1 | 0 | 1;
