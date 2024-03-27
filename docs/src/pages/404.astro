@@ -1,0 +1,16 @@
+---
+import Link from "../components/Link.astro";
+import PageIntro from "../components/PageIntro.astro";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Page not found">
+  <h1 slot="intro">404</h1>
+  <PageIntro slot="intro">Page not found</PageIntro>
+
+  <p>
+    If you arrived here via a link, please
+    <a href="https://github.com/WickyNilliams/cally/issues">report an issue</a> on
+    github. Otherwise, return <Link href="/">home</Link>.
+  </p>
+</Layout>
