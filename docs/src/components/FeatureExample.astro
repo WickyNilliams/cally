@@ -1,0 +1,55 @@
+---
+import BrandedCalendar from "./BrandedCalendar.astro";
+import Example from "./Example.astro";
+---
+
+<Example class="feature">
+  <BrandedCalendar />
+</Example>
+
+<script is:inline type="module">
+  const toISO = (date) => date.toISOString().split("T")[0];
+
+  // pick some dates mid-month
+  const today = new Date();
+  const start = new Date(today.getUTCFullYear(), today.getUTCMonth(), 8);
+  const end = new Date(today.getUTCFullYear(), today.getUTCMonth(), 16);
+
+  document
+    .querySelector("calendar-range")
+    ?.setAttribute("value", `${toISO(start)}/${toISO(end)}`);
+
+  await Promise.all([
+    customElements.whenDefined("calendar-range"),
+    customElements.whenDefined("calendar-month"),
+  ]);
+
+  document.querySelector(".card")?.classList.add("reveal");
+</script>
+
+<style is:global>
+  .feature {
+    container-type: inline-size;
+  }
+
+  .card {
+    transition:
+      opacity 0.6s ease-in,
+      transform 0.4s ease-out;
+
+    /* avoid reflow */
+    min-block-size: 631px;
+    @container (inline-size > 562px) {
+      min-block-size: 385px;
+    }
+
+    /* animate card in when ready */
+    &:not(.reveal) {
+      opacity: 0;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transform: translateY(-3em);
+      }
+    }
+  }
+</style>
