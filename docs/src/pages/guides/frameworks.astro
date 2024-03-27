@@ -1,14 +1,18 @@
 ---
 import PageIntro from "../../components/PageIntro.astro";
 import Layout from "../../layouts/Layout.astro";
-import Example from "../../components/Example.astro";
 import Note from "../../components/Note.astro";
 import Heading from "../../components/Heading.astro";
-import Link from "../../components/Link.astro";
 import { Code } from "astro:components";
 ---
 
-<Layout title="Integrate with frameworks">
+<Layout
+  meta={{
+    title: "Frameworks guide",
+    description:
+      "Find out how to integrate Cally's components with frontend frameworks like React and Vue, and how to improve TypeScript support.",
+  }}
+>
   <h1 slot="intro">Integrating with frameworks</h1>
   <PageIntro slot="intro">How to use with React/Vue/etc</PageIntro>
 

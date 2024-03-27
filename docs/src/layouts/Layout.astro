@@ -6,11 +6,36 @@ import PageTitle from "../components/PageTitle.astro";
 import PageFooter from "../components/PageFooter.astro";
 
 interface Props {
-  title: string;
+  meta: {
+    title: string;
+    description: string | undefined;
+  };
+  og?: Partial<{
+    title?: string;
+    type?: "article" | "website";
+    url: string;
+    image: string;
+    description: string;
+    site_name: string;
+  }>;
   root?: boolean;
 }
 
-const { title, root } = Astro.props;
+const baseUrl = new URL(import.meta.env.BASE_URL, Astro.url);
+const ogImageUrl = new URL("public/og.png", baseUrl);
+
+const {
+  meta: { title, description },
+  og: {
+    title: ogTitle = title,
+    description: ogDescription = description,
+    type: ogType = "article",
+    url: ogUrl = Astro.url,
+    image: ogImage = ogImageUrl,
+    site_name: ogSiteName = "Cally",
+  } = {},
+  root,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -18,10 +43,19 @@ const { title, root } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#dc2626" />
-    <title>{title} - Cally</title>
-
+    <title>{root ? title : `${title} - Cally`}</title>
     <slot name="head" />
+
+    <!-- meta -->
+    <meta name="description" content={description} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={ogUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:site_name" content={ogSiteName} />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#dc2626" />
   </head>
 
   <body class="container">

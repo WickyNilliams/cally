@@ -5,15 +5,23 @@ import PageIntro from "../components/PageIntro.astro";
 import Example from "../components/Example.astro";
 import Heading from "../components/Heading.astro";
 import Link from "../components/Link.astro";
-import IntroExample from "../components/IntroExample.astro";
+import FeatureExample from "../components/FeatureExample.astro";
 
 const tagline = "Small, feature-rich calendar components";
 ---
 
-<Layout title={tagline} root>
+<Layout
+  root
+  meta={{
+    title: "Cally: small, feature-rich calendar components",
+    description:
+      "Open source calendar components for selecting single dates or date ranges. Framework-agnostic, themeable, localizable, accessible.",
+  }}
+  og={{ type: "website" }}
+>
   <PageIntro slot="intro">{tagline}</PageIntro>
 
-  <IntroExample />
+  <FeatureExample />
 
   <Heading level={2}>Goals</Heading>
 

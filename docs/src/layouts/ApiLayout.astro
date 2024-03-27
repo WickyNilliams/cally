@@ -1,14 +1,15 @@
 ---
+import type { ComponentProps } from "astro/types";
 import Layout from "./Layout.astro";
 
-interface Props {
-  title: string;
+interface Props extends ComponentProps<typeof Layout> {
+  heading: string;
 }
-const { title } = Astro.props;
+const { meta, heading } = Astro.props;
 ---
 
-<Layout title={title}>
-  <h1 slot="intro"><code>{title}</code></h1>
+<Layout meta={meta}>
+  <h1 slot="intro"><code>{heading}</code></h1>
   <slot />
 </Layout>
 
