@@ -7,7 +7,13 @@ import Heading from "../../components/Heading.astro";
 import Link from "../../components/Link.astro";
 ---
 
-<Layout title="Usage">
+<Layout
+  meta={{
+    title: "Usage guide",
+    description:
+      "Learn how to use Cally's calendar components to build a date range picker, combining them with existing components to build more complex UIs.",
+  }}
+>
   <link
     slot="head"
     rel="stylesheet"

@@ -5,7 +5,13 @@ import Heading from "../components/Heading.astro";
 import Note from "../components/Note.astro";
 ---
 
-<Layout title="Accessibility">
+<Layout
+  meta={{
+    title: "Accessibility statement",
+    description:
+      "Find out how Cally has been tested for accessibility, and with what assistive technology. Any known issues are detailed here.",
+  }}
+>
   <h1 slot="intro">Accessibility</h1>
   <PageIntro slot="intro">What has been tested, and how?</PageIntro>
 

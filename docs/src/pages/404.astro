@@ -4,7 +4,7 @@ import PageIntro from "../components/PageIntro.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Page not found">
+<Layout meta={{ title: "Page not found", description: undefined }}>
   <h1 slot="intro">404</h1>
   <PageIntro slot="intro">Page not found</PageIntro>
 

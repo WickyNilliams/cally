@@ -6,7 +6,13 @@ import Heading from "../../components/Heading.astro";
 import { Code } from "astro:components";
 ---
 
-<Layout title="Integrate with frameworks">
+<Layout
+  meta={{
+    title: "Frameworks guide",
+    description:
+      "Find out how to integrate Cally's components with frontend frameworks like React and Vue, and how to improve TypeScript support.",
+  }}
+>
   <h1 slot="intro">Integrating with frameworks</h1>
   <PageIntro slot="intro">How to use with React/Vue/etc</PageIntro>
 

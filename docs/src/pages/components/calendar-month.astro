@@ -5,7 +5,14 @@ import Heading from "../../components/Heading.astro";
 import Link from "../../components/Link.astro";
 ---
 
-<ApiLayout title="<calendar-month>">
+<ApiLayout
+  heading="<calendar-month>"
+  meta={{
+    title: "<calendar-month> API",
+    description:
+      "The calendar-month component displays a grid of clickable days. Find out how to use its properties, methods, events, and styling options.",
+  }}
+>
   <p>
     This is the lowest level component that displays a grid of clickable days.
     It should not be used alone, but as a descendant of one of

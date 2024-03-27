@@ -6,7 +6,14 @@ import Heading from "../../components/Heading.astro";
 import Link from "../../components/Link.astro";
 ---
 
-<ApiLayout title="<calendar-date>">
+<ApiLayout
+  heading="<calendar-date>"
+  meta={{
+    title: "<calendar-date> API",
+    description:
+      "The calendar-date component is used to select a single date. Find out how to use its properties, methods, events, and styling options.",
+  }}
+>
   <p>
     This component, combined with
     <Link href="/api/calendar-month/"><code>{`<calendar-month>`}</code></Link>,
