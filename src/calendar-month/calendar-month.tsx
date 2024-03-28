@@ -33,7 +33,8 @@ export const CalendarMonth = c(
             <tr part="tr head">
               {calendar.dayNamesLong.map((dayName, i) => (
                 <th part="th" scope="col">
-                  <span aria-label={dayName}>{calendar.dayNamesShort[i]}</span>
+                  <span class="vh">{dayName}</span>
+                  <span aria-hidden="true">{calendar.dayNamesShort[i]}</span>
                 </th>
               ))}
             </tr>
@@ -84,6 +85,11 @@ export const CalendarMonth = c(
           gap: 0.25rem;
           text-align: center;
           inline-size: fit-content;
+        }
+
+        .vh {
+          position: absolute;
+          scale: 0;
         }
 
         table {
