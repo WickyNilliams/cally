@@ -112,6 +112,7 @@ export const CalendarMonth = c(
 
         button {
           color: inherit;
+          font-size: inherit;
           background: transparent;
           border: 0;
           cursor: pointer;
