@@ -39,12 +39,12 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
           <slot name="button-previous">Previous</slot>
         </button>
 
-        <h2 part="heading" aria-live="polite" aria-atomic="true">
+        <div id="heading" part="heading" aria-live="polite" aria-atomic="true">
           {props.formatter.formatRange(
             props.dateWindow.start.toDate(),
             props.dateWindow.end.toDate()
           )}
-        </h2>
+        </div>
 
         <button
           part={`button next ${props.next ? "" : "disabled"}`}
@@ -117,10 +117,9 @@ export const styles = [
       justify-content: space-between;
     }
 
-    h2 {
-      margin: 0;
+    #heading {
+      font-weight: bold;
       font-size: 1.25em;
-      text-align: center;
     }
 
     button {
