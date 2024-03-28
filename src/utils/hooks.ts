@@ -21,18 +21,18 @@ export function useDateProp(prop: string) {
   return [date, setDate] as const;
 }
 
-function parseISORange(value?: string) {
+function parseISORange(value?: string): [PlainDate, PlainDate] | undefined {
   if (value) {
     const split = value.split("/");
     const start = safeFrom(PlainDate, split[0]);
     const end = safeFrom(PlainDate, split[1]);
 
     if (start && end) {
-      return { start, end };
+      return [start, end];
     }
   }
 
-  return { start: undefined, end: undefined };
+  return undefined;
 }
 
 function printISORange(start?: PlainDate, end?: PlainDate): string {
@@ -43,8 +43,8 @@ export function useDateRangeProp(prop: string) {
   const [value, setValue] = useProp<string>(prop);
   const range = useMemo(() => parseISORange(value), [value]);
 
-  const setRange = (start: PlainDate, end: PlainDate) =>
-    setValue(printISORange(start, end));
+  const setRange = (range: [PlainDate, PlainDate]) =>
+    setValue(printISORange(range[0], range[1]));
 
   return [range, setRange] as const;
 }

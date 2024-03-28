@@ -5,7 +5,7 @@ import type { DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { DateWindow } from "../utils/DateWindow.js";
 
-type CalendarBaseProps = {
+interface CalendarBaseProps {
   firstDayOfWeek: DaysOfWeek;
   showOutsideDays: boolean;
   dateWindow: DateWindow;
@@ -17,10 +17,10 @@ type CalendarBaseProps = {
   onSelect: (e: CustomEvent<PlainDate>) => void;
   onFocus: (e: CustomEvent<PlainDate>) => void;
   onHover?: (e: CustomEvent<PlainDate>) => void;
-};
+}
 
 interface CalendarRangeProps extends CalendarBaseProps {
-  highlightedRange: { start?: PlainDate; end?: PlainDate };
+  highlightedRange?: [PlainDate, PlainDate];
 }
 
 interface CalendarDateProps extends CalendarBaseProps {

@@ -112,7 +112,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
 
     // range
     if ("highlightedRange" in context) {
-      const { start, end } = context.highlightedRange;
+      const [start, end] = context.highlightedRange ?? [];
       isRange = true;
       isRangeStart = start?.equals(date) ?? false;
       isRangeEnd = end?.equals(date) ?? false;

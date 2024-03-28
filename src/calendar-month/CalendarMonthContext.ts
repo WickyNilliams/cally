@@ -18,7 +18,7 @@ interface CalendarDateContext extends CalendarMonthContextBase {
 }
 
 interface CalendarRangeContext extends CalendarMonthContextBase {
-  highlightedRange: { start?: PlainDate; end?: PlainDate };
+  highlightedRange?: [PlainDate, PlainDate];
 }
 
 export type CalendarMonthContextValue =
@@ -28,7 +28,6 @@ export type CalendarMonthContextValue =
 const t = today();
 export const CalendarMonthContext = createContext<CalendarMonthContextValue>({
   firstDayOfWeek: 0,
-  highlightedRange: {},
   isDateDisallowed: () => false,
   locale: undefined,
   dateWindow: new DateWindow(t.toPlainYearMonth(), { months: 1 }, t),
