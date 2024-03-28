@@ -29,8 +29,8 @@ interface CalendarDateProps extends CalendarBaseProps {
 
 export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
   return (
-    <>
-      <div class="header">
+    <div role="group" aria-labelledby="heading" part="container">
+      <div class="header" part="header">
         <button
           part={`button previous ${props.previous ? "" : "disabled"}`}
           onclick={props.previous}
@@ -63,7 +63,7 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
       >
         <slot></slot>
       </CalendarMonthContext>
-    </>
+    </div>
   );
 }
 
@@ -106,6 +106,11 @@ export const styles = [
   reset,
   css`
     :host {
+      display: block;
+      inline-size: fit-content;
+    }
+
+    [role="group"] {
       display: flex;
       flex-direction: column;
       gap: 1em;
