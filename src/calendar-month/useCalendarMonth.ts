@@ -24,6 +24,7 @@ function cx(map: Record<string, boolean | null | undefined>) {
 }
 
 const dayFormatOptions = { month: "long", day: "numeric" } as const;
+const monthFormatOptions = { month: "long" } as const;
 const dispatchOptions = { bubbles: true };
 
 type UseCalendarMonthOptions = {
@@ -39,7 +40,8 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   const todaysDate = today();
   const dayNamesLong = useDayNames("long", firstDayOfWeek, locale);
   const dayNamesShort = useDayNames("narrow", firstDayOfWeek, locale);
-  const dayFormatter = useDateFormatter(locale, dayFormatOptions);
+  const dayFormatter = useDateFormatter(dayFormatOptions, locale);
+  const monthFormatter = useDateFormatter(monthFormatOptions, locale);
 
   const { focusedDate } = dateWindow;
   const yearMonth = useMemo(
@@ -112,7 +114,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
 
     // range
     if ("highlightedRange" in context) {
-      const [start, end] = context.highlightedRange ?? [];
+      const [start, end] = context.highlightedRange;
       isRange = true;
       isRangeStart = start?.equals(date) ?? false;
       isRangeEnd = end?.equals(date) ?? false;
@@ -161,6 +163,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     yearMonth,
     dayNamesLong,
     dayNamesShort,
+    monthFormatter,
     getDayProps,
   };
 }

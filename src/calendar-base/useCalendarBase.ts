@@ -9,6 +9,8 @@ type CalendarBaseOptions = {
   locale?: string;
 };
 
+const formatOptions = { year: "numeric" } as const;
+
 export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   const [min] = useDateProp("min");
   const [max] = useDateProp("max");
@@ -38,13 +40,13 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   }
 
   const host = useHost();
-  const formatter = useDateFormatter(locale, { year: "numeric" });
+  const format = useDateFormatter(formatOptions, locale);
 
   const canNext = max == null || !dateWindow.contains(max);
   const canPrevious = min == null || !dateWindow.contains(min);
 
   return {
-    formatter,
+    format,
     dateWindow,
     dispatch,
     setFocusedDate(day: PlainDate) {

@@ -1,17 +1,15 @@
-import { css, type Host } from "atomico";
-import { CalendarMonthContext } from "../calendar-month/CalendarMonthContext.js";
+import { css } from "atomico";
+import {
+  CalendarMonthContext,
+  type CalendarDateContext,
+  type CalendarRangeContext,
+} from "../calendar-month/CalendarMonthContext.js";
 import { reset } from "../utils/styles.js";
 import type { DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
-import type { DateWindow } from "../utils/DateWindow.js";
 
 interface CalendarBaseProps {
-  firstDayOfWeek: DaysOfWeek;
-  showOutsideDays: boolean;
-  dateWindow: DateWindow;
-  locale: string | undefined;
-  formatter: Intl.DateTimeFormat;
-  isDateDisallowed: (date: Date) => boolean;
+  format: Intl.DateTimeFormat;
   previous?: () => void;
   next?: () => void;
   onSelect: (e: CustomEvent<PlainDate>) => void;
@@ -19,13 +17,8 @@ interface CalendarBaseProps {
   onHover?: (e: CustomEvent<PlainDate>) => void;
 }
 
-interface CalendarRangeProps extends CalendarBaseProps {
-  highlightedRange?: [PlainDate, PlainDate];
-}
-
-interface CalendarDateProps extends CalendarBaseProps {
-  value?: PlainDate;
-}
+interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
+interface CalendarDateProps extends CalendarBaseProps, CalendarDateContext {}
 
 export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
   return (
@@ -40,7 +33,7 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
         </button>
 
         <div id="heading" part="heading" aria-live="polite" aria-atomic="true">
-          {props.formatter.formatRange(
+          {props.format.formatRange(
             props.dateWindow.start.toDate(),
             props.dateWindow.end.toDate()
           )}

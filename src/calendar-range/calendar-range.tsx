@@ -22,7 +22,7 @@ export const CalendarRange = c(
     // TODO: really we should have focusedDate in the deps array but it breaks the logic then
     useEffect(() => {
       if (
-        value &&
+        value.length &&
         !inRange(calendar.dateWindow.focusedDate, value[0], value[1])
       ) {
         calendar.setFocusedDate(value[1]);

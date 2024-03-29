@@ -21,7 +21,7 @@ export function useDateProp(prop: string) {
   return [date, setDate] as const;
 }
 
-function parseISORange(value?: string): [PlainDate, PlainDate] | undefined {
+function parseISORange(value?: string): [PlainDate, PlainDate] | [] {
   if (value) {
     const split = value.split("/");
     const start = safeFrom(PlainDate, split[0]);
@@ -32,7 +32,7 @@ function parseISORange(value?: string): [PlainDate, PlainDate] | undefined {
     }
   }
 
-  return undefined;
+  return [];
 }
 
 function printISORange(start?: PlainDate, end?: PlainDate): string {
@@ -54,19 +54,16 @@ type DateFormatOptions = Pick<
   "year" | "month" | "day"
 >;
 
-export function useDateFormatter(
-  locale?: string,
-  { day, month, year }: DateFormatOptions = {}
-) {
+export function useDateFormatter(options: DateFormatOptions, locale?: string) {
   return useMemo(
-    () => new Intl.DateTimeFormat(locale, { day, month, year }),
-    [locale, day, month, year]
+    () => new Intl.DateTimeFormat(locale, options),
+    [locale, options]
   );
 }
 
 export function useDayNames(
   weekday: WeekdayOption,
-  firstDayOfWeek?: DaysOfWeek,
+  firstDayOfWeek: DaysOfWeek,
   locale?: string
 ) {
   return useMemo(

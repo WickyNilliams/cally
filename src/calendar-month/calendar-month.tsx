@@ -2,7 +2,6 @@ import { c, css, useContext, useRef, type Host } from "atomico";
 import { reset } from "../utils/styles.js";
 import { useCalendarMonth } from "./useCalendarMonth.js";
 import { CalendarMonthContext } from "./CalendarMonthContext.js";
-import { useDateFormatter } from "../utils/hooks.js";
 
 export const CalendarMonth = c(
   (
@@ -16,8 +15,6 @@ export const CalendarMonth = c(
     const table = useRef<HTMLTableElement>();
     const calendar = useCalendarMonth({ props, context });
 
-    const monthFormatter = useDateFormatter(context.locale, { month: "long" });
-
     function focus() {
       table.current.querySelector<HTMLElement>("button[tabindex='0']")?.focus();
     }
@@ -25,7 +22,7 @@ export const CalendarMonth = c(
     return (
       <host shadowDom focus={focus}>
         <div id="heading" part="heading">
-          {monthFormatter.format(calendar.yearMonth.toDate())}
+          {calendar.monthFormatter.format(calendar.yearMonth.toDate())}
         </div>
 
         <table ref={table} aria-labelledby="heading" part="table">
