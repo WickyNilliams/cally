@@ -4,7 +4,7 @@ import {
   type CalendarDateContext,
   type CalendarRangeContext,
 } from "../calendar-month/CalendarMonthContext.js";
-import { reset } from "../utils/styles.js";
+import { reset, vh } from "../utils/styles.js";
 import type { DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 
@@ -27,7 +27,7 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
 
   return (
     <div role="group" aria-labelledby="label" part="container">
-      <div id="label" aria-live="polite" aria-atomic="true">
+      <div id="label" class="vh" aria-live="polite" aria-atomic="true">
         {props.formatVerbose.formatRange(start, end)}
       </div>
 
@@ -102,6 +102,7 @@ export const props = {
 
 export const styles = [
   reset,
+  vh,
   css`
     :host {
       display: block;
@@ -118,11 +119,6 @@ export const styles = [
       display: flex;
       align-items: center;
       justify-content: space-between;
-    }
-
-    #label {
-      position: absolute;
-      transform: scale(0);
     }
 
     #heading {

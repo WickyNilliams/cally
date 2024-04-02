@@ -7,3 +7,10 @@ export const reset = css`
     box-sizing: border-box;
   }
 `;
+
+export const vh = css`
+  .vh {
+    position: absolute;
+    transform: scale(0);
+  }
+`;

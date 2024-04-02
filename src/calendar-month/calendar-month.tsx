@@ -1,5 +1,5 @@
 import { c, css, useContext, useRef, type Host } from "atomico";
-import { reset } from "../utils/styles.js";
+import { reset, vh } from "../utils/styles.js";
 import { useCalendarMonth } from "./useCalendarMonth.js";
 import { CalendarMonthContext } from "./CalendarMonthContext.js";
 
@@ -72,6 +72,7 @@ export const CalendarMonth = c(
 
     styles: [
       reset,
+      vh,
       css`
         :host {
           --color-accent: black;
@@ -82,11 +83,6 @@ export const CalendarMonth = c(
           gap: 0.25rem;
           text-align: center;
           inline-size: fit-content;
-        }
-
-        .vh {
-          position: absolute;
-          scale: 0;
         }
 
         table {
