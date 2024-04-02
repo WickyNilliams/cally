@@ -3,22 +3,22 @@ import { DateWindow } from "../utils/DateWindow.js";
 import type { PlainDate } from "../utils/temporal.js";
 import { today, type DaysOfWeek } from "../utils/date.js";
 
-type CalendarMonthContextBase = {
+interface CalendarMonthContextBase {
   min?: PlainDate;
   max?: PlainDate;
   firstDayOfWeek: DaysOfWeek;
   isDateDisallowed?: (date: Date) => boolean;
   dateWindow: DateWindow;
-  locale: string | undefined;
   showOutsideDays?: boolean;
-};
+  locale?: string;
+}
 
-interface CalendarDateContext extends CalendarMonthContextBase {
+export interface CalendarDateContext extends CalendarMonthContextBase {
   value?: PlainDate;
 }
 
-interface CalendarRangeContext extends CalendarMonthContextBase {
-  highlightedRange: { start?: PlainDate; end?: PlainDate };
+export interface CalendarRangeContext extends CalendarMonthContextBase {
+  highlightedRange: [PlainDate, PlainDate] | [];
 }
 
 export type CalendarMonthContextValue =
@@ -26,11 +26,10 @@ export type CalendarMonthContextValue =
   | CalendarRangeContext;
 
 const t = today();
+
 export const CalendarMonthContext = createContext<CalendarMonthContextValue>({
   firstDayOfWeek: 0,
-  highlightedRange: {},
   isDateDisallowed: () => false,
-  locale: undefined,
   dateWindow: new DateWindow(t.toPlainYearMonth(), { months: 1 }, t),
 });
 

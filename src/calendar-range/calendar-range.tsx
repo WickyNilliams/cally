@@ -1,4 +1,4 @@
-import { c, useEffect, useMemo, useState, type Host } from "atomico";
+import { c, useEffect, useState, type Host, useEvent } from "atomico";
 import { PlainDate } from "../utils/temporal.js";
 import { inRange } from "../utils/date.js";
 import { useDateRangeProp } from "../utils/hooks.js";
@@ -7,56 +7,66 @@ import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
 
 type Tentative = { first: PlainDate; second: PlainDate };
 
-export const CalendarRange = c(
-  (props): Host<{ onChange: Event }> => {
-    const [value, setValue] = useDateRangeProp("value");
+const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
+  PlainDate.compare(a, b) < 0 ? [a, b] : [b, a];
 
+export const CalendarRange = c(
+  (
+    props
+  ): Host<{
+    onChange: Event;
+    onRangeStart: CustomEvent<Date>;
+    onRangeEnd: CustomEvent<Date>;
+    onFocusDay: CustomEvent<Date>;
+  }> => {
+    const [value, setValue] = useDateRangeProp("value");
     const calendar = useCalendarBase(props);
+    const dispatchStart = useEvent<Date>("rangestart");
+    const dispatchEnd = useEvent<Date>("rangeend");
 
     // tentative selection is not ordered, it is just a first selection and second selection
     // the second selection can come before or after the first selection for improved ux
     const [tentative, setTentative] = useState<Tentative | undefined>();
-    // but we need to sort the tentative selection to be able to display it
-    const sorted = useMemo(() => {
-      if (tentative) {
-        return [tentative.first, tentative.second].sort(PlainDate.compare);
-      }
-    }, [tentative]);
 
     // TODO: really we should have focusedDate in the deps array but it breaks the logic then
     useEffect(() => {
       if (
-        value.end &&
-        !inRange(calendar.dateWindow.focusedDate, value.start, value.end)
+        value.length &&
+        !inRange(calendar.dateWindow.focusedDate, value[0], value[1])
       ) {
-        calendar.setFocusedDate(value.end);
+        calendar.setFocusedDate(value[1]);
       }
     }, [value]);
 
     async function handleFocus(e: CustomEvent<PlainDate>) {
-      calendar.setFocusedDate(e.detail);
+      calendar.handleFocus(e);
       handleHover(e);
-      setTimeout(() => calendar.focus());
     }
 
     function handleHover(e: CustomEvent<PlainDate>) {
+      e.stopPropagation();
       setTentative((t) => {
         return t ? { ...t, second: e.detail } : t;
       });
     }
 
     function handleSelect(e: CustomEvent<PlainDate>) {
-      if (!sorted) {
-        setTentative({ first: e.detail, second: e.detail });
+      const detail = e.detail;
+      e.stopPropagation();
+
+      if (!tentative) {
+        setTentative({ first: detail, second: detail });
+        dispatchStart(detail.toDate());
       } else {
-        setValue(sorted[0]!, sorted[1]!);
+        setValue(sort(tentative.first, detail));
         setTentative(undefined);
+        dispatchEnd(detail.toDate());
         calendar.dispatch();
       }
     }
 
-    const highlightedRange = sorted
-      ? { start: sorted[0], end: sorted[1] }
+    const highlightedRange = tentative
+      ? sort(tentative.first, tentative.second)
       : value;
 
     return (
@@ -72,6 +82,7 @@ export const CalendarRange = c(
       </host>
     );
   },
+
   { props, styles }
 );
 

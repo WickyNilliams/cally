@@ -6,10 +6,11 @@ function safeFrom<T extends PlainDate | PlainYearMonth>(
   Ctr: { from(value: string): T },
   value: string | undefined
 ) {
-  if (value)
+  if (value) {
     try {
       return Ctr.from(value);
     } catch {}
+  }
 }
 
 export function useDateProp(prop: string) {
@@ -21,30 +22,30 @@ export function useDateProp(prop: string) {
   return [date, setDate] as const;
 }
 
-function parseISORange(value?: string) {
+function parseISORange(value?: string): [PlainDate, PlainDate] | [] {
   if (value) {
-    const split = value.split("/");
-    const start = safeFrom(PlainDate, split[0]);
-    const end = safeFrom(PlainDate, split[1]);
+    const [s, e] = value.split("/");
+    const start = safeFrom(PlainDate, s);
+    const end = safeFrom(PlainDate, e);
 
     if (start && end) {
-      return { start, end };
+      return [start, end];
     }
   }
 
-  return { start: undefined, end: undefined };
+  return [];
 }
 
-function printISORange(start?: PlainDate, end?: PlainDate): string {
-  return `${start ? start : ""}/${end ? end : ""}`;
+function printISORange(start: PlainDate, end: PlainDate): string {
+  return `${start}/${end}`;
 }
 
 export function useDateRangeProp(prop: string) {
   const [value, setValue] = useProp<string>(prop);
   const range = useMemo(() => parseISORange(value), [value]);
 
-  const setRange = (start: PlainDate, end: PlainDate) =>
-    setValue(printISORange(start, end));
+  const setRange = (range: [PlainDate, PlainDate]) =>
+    setValue(printISORange(range[0], range[1]));
 
   return [range, setRange] as const;
 }
@@ -54,32 +55,20 @@ type DateFormatOptions = Pick<
   "year" | "month" | "day"
 >;
 
-export function useDateFormatter(
-  locale?: string,
-  { day, month, year }: DateFormatOptions = {}
-) {
+export function useDateFormatter(options: DateFormatOptions, locale?: string) {
   return useMemo(
-    () => new Intl.DateTimeFormat(locale, { day, month, year }),
-    [locale, day, month, year]
+    () => new Intl.DateTimeFormat(locale, options),
+    [locale, options]
   );
 }
 
 export function useDayNames(
   weekday: WeekdayOption,
-  firstDayOfWeek?: DaysOfWeek,
+  firstDayOfWeek: DaysOfWeek,
   locale?: string
 ) {
   return useMemo(
     () => getDayNames(weekday, firstDayOfWeek, locale),
     [weekday, firstDayOfWeek, locale]
   );
-}
-
-export function listen<TEvent extends Event>(
-  element: EventTarget,
-  event: string,
-  handler: (e: TEvent) => void
-) {
-  element.addEventListener(event, handler as EventListener);
-  return () => element.removeEventListener(event, handler as EventListener);
 }

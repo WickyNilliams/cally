@@ -1,8 +1,7 @@
 import { c, css, useContext, useRef, type Host } from "atomico";
-import { reset } from "../utils/styles.js";
+import { reset, vh } from "../utils/styles.js";
 import { useCalendarMonth } from "./useCalendarMonth.js";
 import { CalendarMonthContext } from "./CalendarMonthContext.js";
-import { useDateFormatter } from "../utils/hooks.js";
 
 export const CalendarMonth = c(
   (
@@ -16,8 +15,6 @@ export const CalendarMonth = c(
     const table = useRef<HTMLTableElement>();
     const calendar = useCalendarMonth({ props, context });
 
-    const monthFormatter = useDateFormatter(context.locale, { month: "long" });
-
     function focus() {
       table.current.querySelector<HTMLElement>("button[tabindex='0']")?.focus();
     }
@@ -25,7 +22,7 @@ export const CalendarMonth = c(
     return (
       <host shadowDom focus={focus}>
         <div id="heading" part="heading">
-          {monthFormatter.format(calendar.yearMonth.toDate())}
+          {calendar.monthFormatter.format(calendar.yearMonth.toDate())}
         </div>
 
         <table ref={table} aria-labelledby="heading" part="table">
@@ -33,7 +30,8 @@ export const CalendarMonth = c(
             <tr part="tr head">
               {calendar.dayNamesLong.map((dayName, i) => (
                 <th part="th" scope="col">
-                  <span aria-label={dayName}>{calendar.dayNamesShort[i]}</span>
+                  <span class="vh">{dayName}</span>
+                  <span aria-hidden="true">{calendar.dayNamesShort[i]}</span>
                 </th>
               ))}
             </tr>
@@ -74,6 +72,7 @@ export const CalendarMonth = c(
 
     styles: [
       reset,
+      vh,
       css`
         :host {
           --color-accent: black;
@@ -106,6 +105,7 @@ export const CalendarMonth = c(
 
         button {
           color: inherit;
+          font-size: inherit;
           background: transparent;
           border: 0;
           cursor: pointer;

@@ -4,7 +4,8 @@ import type { VNodeAny } from "atomico/types/vnode.js";
 import { clickDay, createSpy, getGrid, getMonth } from "../utils/test.js";
 import {
   CalendarMonthContext,
-  type CalendarMonthContextValue,
+  type CalendarDateContext,
+  type CalendarRangeContext,
 } from "./CalendarMonthContext.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { fixture } from "atomico/test-dom";
@@ -14,12 +15,6 @@ import { today } from "../utils/date.js";
 
 type MonthContextInstance = InstanceType<typeof CalendarMonthContext>;
 
-type DateContext = Extract<CalendarMonthContextValue, { value?: PlainDate }>;
-type RangeContext = Extract<
-  CalendarMonthContextValue,
-  { highlightedRange: any }
->;
-
 interface TestPropsBase {
   onselectday: (e: CustomEvent<PlainDate>) => void;
   onfocusday: (e: CustomEvent<PlainDate>) => void;
@@ -27,8 +22,8 @@ interface TestPropsBase {
   dir: "ltr" | "rtl";
 }
 
-interface DateTestProps extends TestPropsBase, DateContext {}
-interface RangeTestProps extends TestPropsBase, RangeContext {}
+interface DateTestProps extends TestPropsBase, CalendarDateContext {}
+interface RangeTestProps extends TestPropsBase, CalendarRangeContext {}
 
 const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
 

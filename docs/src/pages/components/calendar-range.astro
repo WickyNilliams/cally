@@ -126,6 +126,7 @@ import Link from "../../components/Link.astro";
     <tr slot="head">
       <th>Name</th>
       <th>Description</th>
+      <th>Type</th>
     </tr>
 
     <tr>
@@ -134,6 +135,7 @@ import Link from "../../components/Link.astro";
         Emitted when the <code>value</code> changes via user interaction. Not emitted
         when <code>value</code> is programmatically changed
       </td>
+      <td><code>Event</code></td>
     </tr>
     <tr>
       <td><code>focusday</code></td>
@@ -141,6 +143,17 @@ import Link from "../../components/Link.astro";
         Emitted when the currently focused day changes. This can happen via
         keyboard commands, or clicking the next or previous buttons
       </td>
+      <td><code>CustomEvent&lt;Date&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>rangestart</code></td>
+      <td>Emitted when the user starts selecting a range</td>
+      <td><code>CustomEvent&lt;Date&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>rangeend</code></td>
+      <td>Emitted when the user finished selections a range</td>
+      <td><code>CustomEvent&lt;Date&gt;</code></td>
     </tr>
   </Table>
 
@@ -178,14 +191,14 @@ import Link from "../../components/Link.astro";
       </td>
     </tr>
     <tr>
-      <td><code>button-previous</code></td>
+      <td><code>previous</code></td>
       <td>
         The inner content of the previous page button. By default uses text
         "Previous". You will likely want to slot an icon here.
       </td>
     </tr>
     <tr>
-      <td><code>button-next</code></td>
+      <td><code>next</code></td>
       <td>
         The inner content of the next page button. By default uses text "Next".
         You will likely want to slot an icon here.
@@ -213,6 +226,14 @@ import Link from "../../components/Link.astro";
       <th>Description</th>
     </tr>
 
+    <tr>
+      <td><code>container</code></td>
+      <td>The container for the entire component</td>
+    </tr>
+    <tr>
+      <td><code>header</code></td>
+      <td>The container for <code>heading</code> and <code>button</code>s</td>
+    </tr>
     <tr>
       <td><code>button</code></td>
       <td>Any button within the component</td>

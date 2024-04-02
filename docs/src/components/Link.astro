@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"a"> {
-  href: `/${string}`;
+  href: `/${string}/` | "/";
 }
 
 const { href, ...rest } = Astro.props;

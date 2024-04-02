@@ -21,15 +21,11 @@
         gap: 1em;
         flex-wrap: wrap;
       }
-
-      calendar-date,
-      calendar-range {
-        inline-size: fit-content;
-      }
     </style>
   </head>
   <body>
     <h2>range</h2>
+    <div aria-live="polite" aria-atomic="true" id="output"></div>
     <calendar-range
       id="range"
       months="3"
@@ -38,9 +34,9 @@
       value="2024-02-12/2025-02-20"
     >
       <div class="grid">
-        <calendar-month> </calendar-month>
-        <calendar-month offset="1"> </calendar-month>
-        <calendar-month offset="2"> </calendar-month>
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+        <calendar-month offset="2"></calendar-month>
       </div>
     </calendar-range>
 
@@ -57,5 +53,29 @@
     <calendar-date value="2020-01-01" id="date2">
       <calendar-month></calendar-month>
     </calendar-date>
+
+    <script>
+      const output = document.getElementById("output");
+
+      if (window.range) {
+        let start = null;
+        const formatter = new Intl.DateTimeFormat("en", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
+        window.range.addEventListener("rangestart", (e) => {
+          const { detail } = e;
+          start = detail;
+          output.textContent = `Start of range selected. Please select another date.`;
+        });
+
+        window.range.addEventListener("rangeend", (e) => {
+          const { detail } = e;
+          output.textContent = `Range selected: ${formatter.formatRange(start, detail)}`;
+        });
+      }
+    </script>
   </body>
 </html>

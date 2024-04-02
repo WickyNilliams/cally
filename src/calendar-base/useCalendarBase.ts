@@ -9,10 +9,13 @@ type CalendarBaseOptions = {
   locale?: string;
 };
 
+const formatOptions = { year: "numeric" } as const;
+const formatVerboseOptions = { year: "numeric", month: "long" } as const;
+
 export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   const [min] = useDateProp("min");
   const [max] = useDateProp("max");
-  const dispatchFocusDay = useEvent<string>("focusday");
+  const dispatchFocusDay = useEvent<Date>("focusday");
   const dispatch = useEvent("change");
 
   const [dateWindow, setDateWindow] = useState(() => {
@@ -25,39 +28,43 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
     return new DateWindow(start, { months }, todaysDate);
   });
 
-  function next() {
-    const next = dateWindow.next();
-    setDateWindow(next);
-    dispatchFocusDay(next.focusedDate.toString());
+  function update(d: DateWindow) {
+    setDateWindow(d);
+    dispatchFocusDay(d.focusedDate.toDate());
   }
 
-  function previous() {
-    const prev = dateWindow.prev();
-    setDateWindow(prev);
-    dispatchFocusDay(prev.focusedDate.toString());
+  function setFocusedDate(day: PlainDate) {
+    setDateWindow(dateWindow.adjust(day));
   }
 
   const host = useHost();
-  const formatter = useDateFormatter(locale, { year: "numeric" });
+  function focus() {
+    host.current
+      .querySelectorAll<HTMLElement>("calendar-month")
+      .forEach((m) => m.focus());
+  }
 
+  const format = useDateFormatter(formatOptions, locale);
+  const formatVerbose = useDateFormatter(formatVerboseOptions, locale);
   const canNext = max == null || !dateWindow.contains(max);
   const canPrevious = min == null || !dateWindow.contains(min);
 
   return {
-    formatter,
+    format,
+    formatVerbose,
     dateWindow,
     dispatch,
-    setFocusedDate(day: PlainDate) {
-      setDateWindow(dateWindow.adjust(day));
+    handleFocus(e: CustomEvent<PlainDate>) {
+      e.stopPropagation();
+      setFocusedDate(e.detail);
+      dispatchFocusDay(e.detail.toDate());
+      setTimeout(focus);
     },
+    setFocusedDate,
     min,
     max,
-    next: canNext ? next : undefined,
-    previous: canPrevious ? previous : undefined,
-    focus() {
-      host.current
-        .querySelectorAll<HTMLElement>("calendar-month")
-        .forEach((m) => m.focus());
-    },
+    next: canNext ? () => update(dateWindow.next()) : undefined,
+    previous: canPrevious ? () => update(dateWindow.prev()) : undefined,
+    focus,
   };
 }

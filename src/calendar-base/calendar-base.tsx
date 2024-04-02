@@ -1,57 +1,55 @@
-import { css, type Host } from "atomico";
-import { CalendarMonthContext } from "../calendar-month/CalendarMonthContext.js";
-import { reset } from "../utils/styles.js";
+import { css } from "atomico";
+import {
+  CalendarMonthContext,
+  type CalendarDateContext,
+  type CalendarRangeContext,
+} from "../calendar-month/CalendarMonthContext.js";
+import { reset, vh } from "../utils/styles.js";
 import type { DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
-import type { DateWindow } from "../utils/DateWindow.js";
 
-type CalendarBaseProps = {
-  firstDayOfWeek: DaysOfWeek;
-  showOutsideDays: boolean;
-  dateWindow: DateWindow;
-  locale: string | undefined;
-  formatter: Intl.DateTimeFormat;
-  isDateDisallowed: (date: Date) => boolean;
+interface CalendarBaseProps {
+  format: Intl.DateTimeFormat;
+  formatVerbose: Intl.DateTimeFormat;
   previous?: () => void;
   next?: () => void;
   onSelect: (e: CustomEvent<PlainDate>) => void;
   onFocus: (e: CustomEvent<PlainDate>) => void;
   onHover?: (e: CustomEvent<PlainDate>) => void;
-};
-
-interface CalendarRangeProps extends CalendarBaseProps {
-  highlightedRange: { start?: PlainDate; end?: PlainDate };
 }
 
-interface CalendarDateProps extends CalendarBaseProps {
-  value?: PlainDate;
-}
+interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
+interface CalendarDateProps extends CalendarBaseProps, CalendarDateContext {}
 
 export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
+  const start = props.dateWindow.start.toDate();
+  const end = props.dateWindow.end.toDate();
+
   return (
-    <>
-      <div class="header">
+    <div role="group" aria-labelledby="label" part="container">
+      <div id="label" class="vh" aria-live="polite" aria-atomic="true">
+        {props.formatVerbose.formatRange(start, end)}
+      </div>
+
+      <div class="header" part="header">
         <button
           part={`button previous ${props.previous ? "" : "disabled"}`}
           onclick={props.previous}
           aria-disabled={props.previous ? null : "true"}
         >
-          <slot name="button-previous">Previous</slot>
+          <slot name="previous">Previous</slot>
         </button>
 
-        <h2 part="heading" aria-live="polite" aria-atomic="true">
-          {props.formatter.formatRange(
-            props.dateWindow.start.toDate(),
-            props.dateWindow.end.toDate()
-          )}
-        </h2>
+        <div id="heading" part="heading" aria-hidden="true">
+          {props.format.formatRange(start, end)}
+        </div>
 
         <button
           part={`button next ${props.next ? "" : "disabled"}`}
           onclick={props.next}
           aria-disabled={props.next ? null : "true"}
         >
-          <slot name="button-next">Next</slot>
+          <slot name="next">Next</slot>
         </button>
       </div>
 
@@ -63,7 +61,7 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
       >
         <slot></slot>
       </CalendarMonthContext>
-    </>
+    </div>
   );
 }
 
@@ -104,8 +102,14 @@ export const props = {
 
 export const styles = [
   reset,
+  vh,
   css`
     :host {
+      display: block;
+      inline-size: fit-content;
+    }
+
+    [role="group"] {
       display: flex;
       flex-direction: column;
       gap: 1em;
@@ -117,10 +121,9 @@ export const styles = [
       justify-content: space-between;
     }
 
-    h2 {
-      margin: 0;
+    #heading {
+      font-weight: bold;
       font-size: 1.25em;
-      text-align: center;
     }
 
     button {

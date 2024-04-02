@@ -5,15 +5,15 @@
   "license": "MIT",
   "type": "module",
   "files": [
-    "dist",
-    "types"
+    "dist"
   ],
   "module": "dist/cally.js",
   "types": "dist/cally.d.ts",
+  "unpkg": "dist/cally.js",
   "exports": {
     ".": {
-      "import": "./dist/cally.js",
-      "types": "./dist/cally.d.ts"
+      "types": "./dist/cally.d.ts",
+      "import": "./dist/cally.js"
     }
   },
   "repository": {
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "vite",
-    "clean": "rm -rf dist docs/dist types",
+    "clean": "rm -rf dist docs/dist",
     "prebuild": "npm run clean",
     "build": "vite build && npm run astro:build",
     "test": "wtr",

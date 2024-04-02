@@ -16,7 +16,9 @@ import { CalendarRange } from "./calendar-range.js";
 
 type TestProps = {
   onchange: (e: Event) => void;
-  onfocusday: (e: CustomEvent<string>) => void;
+  onfocusday: (e: CustomEvent<Date>) => any;
+  onrangestart: (e: CustomEvent<Date>) => any;
+  onrangeend: (e: CustomEvent<Date>) => any;
   value: string;
   min: string;
   max: string;
@@ -151,7 +153,7 @@ describe("CalendarRange", () => {
 
   describe("events", () => {
     it("raises a focusday event", async () => {
-      const spy = createSpy<(e: CustomEvent<string>) => void>();
+      const spy = createSpy<(e: CustomEvent<Date>) => void>();
       const calendar = await mount(
         <Fixture value="2022-01-01/2022-01-01" onfocusday={spy} />
       );
@@ -160,7 +162,7 @@ describe("CalendarRange", () => {
       await click(getNextPageButton(calendar));
 
       expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail).to.eq("2022-02-01");
+      expect(spy.last[0].detail).to.eql(new Date("2022-02-01"));
     });
 
     it("raises a change event", async () => {
@@ -180,20 +182,37 @@ describe("CalendarRange", () => {
       expect(target.value).to.eq("2021-12-30/2021-12-31");
     });
 
-    it("raises a selectionstart event");
-    it("raises a selectionend event");
+    it("raises rangestart and rangeend events", async () => {
+      const startSpy = createSpy<(e: CustomEvent<Date>) => void>();
+      const endSpy = createSpy<(e: CustomEvent<Date>) => void>();
+
+      const calendar = await mount(
+        <Fixture
+          value="2022-01-01/2022-01-01"
+          onrangestart={startSpy}
+          onrangeend={endSpy}
+        />
+      );
+
+      const month = getMonth(calendar);
+      await click(getPrevPageButton(calendar));
+
+      await clickDay(month, "31 December");
+      expect(startSpy.count).to.eq(1);
+      expect(startSpy.last[0].detail).to.eql(new Date("2021-12-31"));
+      expect(endSpy.called).to.eq(false);
+
+      await clickDay(month, "30 December");
+      expect(startSpy.count).to.eq(1);
+      expect(endSpy.count).to.eq(1);
+      expect(endSpy.last[0].detail).to.eql(new Date("2021-12-30"));
+    });
   });
 
   describe("multiple months", () => {
-    it("supports multiple months", async () => {
-      // ...
-    });
-    it("supports a year", async () => {
-      // ...
-    });
-    it("paginates with respect to duration", async () => {
-      // ...
-    });
+    it("supports multiple months");
+    it("supports a year");
+    it("paginates with respect to duration");
   });
 
   describe("localization", () => {
