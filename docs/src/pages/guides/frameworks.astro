@@ -333,7 +333,7 @@ const selected = ref("")
 <template>
   <p>Selected range: {{ selected }}</p>
 
-  <calendar-range :months="2" v-model="selected">
+  <calendar-range :months="2" v-model.lazy="selected">
     <calendar-month />
     <calendar-month :offset="1" />
   </calendar-range>
