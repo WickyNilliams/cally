@@ -15,12 +15,6 @@ import Note from "../components/Note.astro";
   <h1 slot="intro">Accessibility</h1>
   <PageIntro slot="intro">What has been tested, and how?</PageIntro>
 
-  <Note>
-    <strong>This page is a work in progress</strong>. Eventually, it will detail
-    what testing has been done, which tools and assistive technology were used,
-    and list any known issues.
-  </Note>
-
   <p>
     These components aim to be accessible to all users, whether they are using
     touch screens, keyboards, screen readers, or other assistive technology.
@@ -35,21 +29,58 @@ import Note from "../components/Note.astro";
     In some regards the components offered here are akin to design system
     components. They are low-level pieces to a larger puzzle. The components
     themselves strive to offer the best possible accessible <em>baseline</em>.
-    But beyond that, the guarantees that can be made regarding accessibility are
+    But beyond that, any guarantees that can be made regarding accessibility are
     limited. The way the components get used and combined can still lead to
     inaccessible outcomes.
   </p>
 
   <p>
-    If you are building more complex interfaces atop these components, you will
+    If you are composing these components into more complex interfaces, you will
     need to test and evaluate accessibility yourself.
+  </p>
+
+  <Heading level={2}>Approach</Heading>
+
+  <p>
+    The <code>{`<calendar-month>`}</code> component uses a standard
+    <code>{`<table>`}</code> to display a grid of dates. Notably, the
+    <code>grid</code> role is not used. Therefore, to navigate the columns, rows,
+    and cells, users can use standard table navigation commands.
+  </p>
+
+  <p>
+    Each <code>{`<table>`}</code> is labelled with the month name. Each column is
+    labelled with the day name. Each cell contains a button, which displays the date
+    as a number, but is labelled non-visually with the full date e.g.
+    <em>"19 April"</em>. The format of the date label depends on the given
+    locale.
+  </p>
+
+  <p>
+    <code>aria-pressed</code> is used on buttons to mark selected dates. For single
+    date selection, only one day will ever be marked as pressed. For date ranges,
+    a contiguous set of days will be marked as pressed.
+  </p>
+
+  <p>
+    The <code>{`<calendar-date>`}</code> and <code>{`<calendar-range>`}</code> components
+    use a <code>group</code> role, which is labelled with the month and year(s) currently
+    displayed e.g. <em>"April &ndash; June 2024"</em>. This is marked as a live
+    region, so changes are communicated to users as they navigate through dates.
+    How this is formatted depends on the given locale.
+  </p>
+
+  <p>
+    The "Previous" and "Next" buttons are marked as disabled via
+    <code>aria-disabled</code>, so that focus does not get lost when users reach
+    the <code>min</code> or <code>max</code> date.
   </p>
 
   <Heading level={2}>Testing</Heading>
 
   <p>
     At a minimum testing will be done with the following browser and screen
-    reader combinations
+    reader combinations:
   </p>
 
   <ul>
@@ -59,7 +90,25 @@ import Note from "../components/Note.astro";
     <li>Safari + VoiceOver</li>
   </ul>
 
+  <p>These combinations were last tested April 2024.</p>
+
   <Heading level={2}>Known issues</Heading>
 
-  <p>Coming soon (but hopefully not!)</p>
+  <p>
+    There are some minor issues in how date ranges formatted via
+    <code>Intl.DateTimeFormat</code> (e.g.
+    <em>"April &ndash; June 2024"</em>) get announced. JAWS announces
+    <em>"April en dash June 2024"</em>. This may be confusing to users if they
+    do not understand what an "en dash" is. In contrast, VoiceOver and NVDA do
+    not announce the dash at all, announcing <em>"April June 2024"</em>. This
+    may obscure the fact that a date range is being announced. There is no
+    viable mitigation for this right now. Locale-aware date formatting is
+    complex, and so we must rely on the native <code>Intl.DateTimeFormat</code> API.
+  </p>
+
+  <p>
+    If you have found a bug related to accessibility, please
+    <a href="https://github.com/WickyNilliams/cally/issues">report an issue</a> on
+    github.
+  </p>
 </Layout>
