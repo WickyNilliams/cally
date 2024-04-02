@@ -29,7 +29,7 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
           onclick={props.previous}
           aria-disabled={props.previous ? null : "true"}
         >
-          <slot name="button-previous">Previous</slot>
+          <slot name="previous">Previous</slot>
         </button>
 
         <div id="heading" part="heading" aria-live="polite" aria-atomic="true">
@@ -44,7 +44,7 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
           onclick={props.next}
           aria-disabled={props.next ? null : "true"}
         >
-          <slot name="button-next">Next</slot>
+          <slot name="next">Next</slot>
         </button>
       </div>
 

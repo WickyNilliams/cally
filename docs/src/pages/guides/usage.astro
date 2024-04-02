@@ -109,9 +109,8 @@ import Link from "../../components/Link.astro";
   >
     <sl-card>
       <calendar-range months="2">
-        <sl-icon slot="button-previous" name="chevron-left" label="Previous"
-        ></sl-icon>
-        <sl-icon slot="button-next" name="chevron-right" label="Next"></sl-icon>
+        <sl-icon slot="previous" name="chevron-left" label="Previous"></sl-icon>
+        <sl-icon slot="next" name="chevron-right" label="Next"></sl-icon>
 
         <div class="flex gap-l flex-wrap justify-center">
           <calendar-month></calendar-month>
@@ -189,9 +188,8 @@ import Link from "../../components/Link.astro";
 
     <sl-card>
       <calendar-range months="2">
-        <sl-icon slot="button-previous" name="chevron-left" label="Previous"
-        ></sl-icon>
-        <sl-icon slot="button-next" name="chevron-right" label="Next"></sl-icon>
+        <sl-icon slot="previous" name="chevron-left" label="Previous"></sl-icon>
+        <sl-icon slot="next" name="chevron-right" label="Next"></sl-icon>
 
         <div class="flex gap-l flex-wrap justify-center">
           <calendar-month></calendar-month>
@@ -271,10 +269,9 @@ import Link from "../../components/Link.astro";
     <sl-popup placement="bottom-end" distance="8" auto-size="horizontal">
       <sl-card>
         <calendar-range months="2">
-          <sl-icon slot="button-previous" name="chevron-left" label="Previous"
+          <sl-icon slot="previous" name="chevron-left" label="Previous"
           ></sl-icon>
-          <sl-icon slot="button-next" name="chevron-right" label="Next"
-          ></sl-icon>
+          <sl-icon slot="next" name="chevron-right" label="Next"></sl-icon>
 
           <div class="flex gap-l flex-wrap justify-center">
             <calendar-month></calendar-month>
@@ -364,10 +361,9 @@ import Link from "../../components/Link.astro";
         style="max-inline-size: calc(var(--auto-size-available-width) - 20px)"
       >
         <calendar-range months="2">
-          <sl-icon slot="button-previous" name="chevron-left" label="Previous"
+          <sl-icon slot="previous" name="chevron-left" label="Previous"
           ></sl-icon>
-          <sl-icon slot="button-next" name="chevron-right" label="Next"
-          ></sl-icon>
+          <sl-icon slot="next" name="chevron-right" label="Next"></sl-icon>
 
           <div class="flex gap-l flex-wrap justify-center">
             <calendar-month></calendar-month>
