@@ -126,6 +126,7 @@ import Link from "../../components/Link.astro";
     <tr slot="head">
       <th>Name</th>
       <th>Description</th>
+      <th>Type</th>
     </tr>
 
     <tr>
@@ -134,6 +135,7 @@ import Link from "../../components/Link.astro";
         Emitted when the <code>value</code> changes via user interaction. Not emitted
         when <code>value</code> is programmatically changed
       </td>
+      <td><code>Event</code></td>
     </tr>
     <tr>
       <td><code>focusday</code></td>
@@ -141,6 +143,17 @@ import Link from "../../components/Link.astro";
         Emitted when the currently focused day changes. This can happen via
         keyboard commands, or clicking the next or previous buttons
       </td>
+      <td><code>CustomEvent&lt;Date&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>rangestart</code></td>
+      <td>Emitted when the user starts selecting a range</td>
+      <td><code>CustomEvent&lt;Date&gt;</code></td>
+    </tr>
+    <tr>
+      <td><code>rangeend</code></td>
+      <td>Emitted when the user finished selections a range</td>
+      <td><code>CustomEvent&lt;Date&gt;</code></td>
     </tr>
   </Table>
 

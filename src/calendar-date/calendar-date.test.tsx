@@ -14,11 +14,10 @@ import {
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { CalendarDate } from "./calendar-date.js";
-import type { PlainDate } from "../utils/temporal.js";
 
 type TestProps = {
   onchange: (e: Event) => void;
-  onfocusday: (e: CustomEvent<PlainDate>) => void;
+  onfocusday: (e: CustomEvent<Date>) => void;
   value: string;
   min: string;
   max: string;
@@ -195,7 +194,7 @@ describe("CalendarDate", () => {
 
   describe("events", () => {
     it("raises a focusday event", async () => {
-      const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
+      const spy = createSpy<(e: CustomEvent<Date>) => void>();
       const calendar = await mount(
         <Fixture value="2022-01-01" onfocusday={spy} />
       );
@@ -204,7 +203,7 @@ describe("CalendarDate", () => {
       await click(getNextPageButton(calendar));
 
       expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2022-02-01");
+      expect(spy.last[0].detail).to.eql(new Date("2022-02-01"));
     });
 
     it("raises a change event", async () => {

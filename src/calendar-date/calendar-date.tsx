@@ -5,7 +5,7 @@ import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
 
 export const CalendarDate = c(
-  (props): Host<{ onChange: Event }> => {
+  (props): Host<{ onChange: Event; onFocusDay: CustomEvent<Date> }> => {
     const [value, setValue] = useDateProp("value");
     const calendar = useCalendarBase(props);
 
@@ -14,11 +14,6 @@ export const CalendarDate = c(
         calendar.setFocusedDate(value);
       }
     }, [value]);
-
-    async function handleFocus(e: CustomEvent<PlainDate>) {
-      calendar.setFocusedDate(e.detail);
-      setTimeout(() => calendar.focus());
-    }
 
     function handleSelect(e: CustomEvent<PlainDate>) {
       setValue(e.detail);
@@ -31,7 +26,7 @@ export const CalendarDate = c(
           {...props}
           {...calendar}
           value={value}
-          onFocus={handleFocus}
+          onFocus={calendar.handleFocus}
           onSelect={handleSelect}
         />
       </host>
