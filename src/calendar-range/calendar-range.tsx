@@ -1,4 +1,4 @@
-import { c, useEffect, useMemo, useState, type Host } from "atomico";
+import { c, useEffect, useState, type Host } from "atomico";
 import { PlainDate } from "../utils/temporal.js";
 import { inRange } from "../utils/date.js";
 import { useDateRangeProp } from "../utils/hooks.js";
@@ -69,6 +69,7 @@ export const CalendarRange = c(
       </host>
     );
   },
+
   { props, styles }
 );
 

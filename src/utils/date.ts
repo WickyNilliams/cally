@@ -23,21 +23,23 @@ export function endOfWeek(
   date: PlainDate,
   firstDayOfWeek: DaysOfWeek = 0
 ): PlainDate {
-  const d = date.toDate();
-  const day = d.getUTCDay();
-  const diff = (day < firstDayOfWeek ? -7 : 0) + 6 - (day - firstDayOfWeek);
-
-  d.setUTCDate(d.getUTCDate() + diff);
-  return PlainDate.from(d);
+  return startOfWeek(date, firstDayOfWeek).add({ days: 6 });
 }
 
 export function endOfMonth(date: { year: number; month: number }): PlainDate {
   return PlainDate.from(new Date(Date.UTC(date.year, date.month, 0)));
 }
 
-export function compare(a: Date, b: Date) {
-  if (a < b) return -1;
-  if (a > b) return 1;
+interface ToDate {
+  toDate(): Date;
+}
+
+export function compare(a: ToDate, b: ToDate) {
+  const aDate = a.toDate();
+  const bDate = b.toDate();
+
+  if (aDate < bDate) return -1;
+  if (aDate > bDate) return 1;
   return 0;
 }
 
@@ -46,15 +48,15 @@ export function compare(a: Date, b: Date) {
  */
 export function clamp(
   date: PlainDate,
-  minDate?: PlainDate,
-  maxDate?: PlainDate
+  min?: PlainDate,
+  max?: PlainDate
 ): PlainDate {
-  if (minDate && PlainDate.compare(date, minDate) < 0) {
-    return minDate;
+  if (min && PlainDate.compare(date, min) < 0) {
+    return min;
   }
 
-  if (maxDate && PlainDate.compare(date, maxDate) > 0) {
-    return maxDate;
+  if (max && PlainDate.compare(date, max) > 0) {
+    return max;
   }
 
   return date;

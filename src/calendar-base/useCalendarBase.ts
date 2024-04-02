@@ -27,16 +27,9 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
     return new DateWindow(start, { months }, todaysDate);
   });
 
-  function next() {
-    const next = dateWindow.next();
-    setDateWindow(next);
-    dispatchFocusDay(next.focusedDate.toString());
-  }
-
-  function previous() {
-    const prev = dateWindow.prev();
-    setDateWindow(prev);
-    dispatchFocusDay(prev.focusedDate.toString());
+  function update(d: DateWindow) {
+    setDateWindow(d);
+    dispatchFocusDay(d.focusedDate.toString());
   }
 
   const host = useHost();
@@ -54,8 +47,8 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
     },
     min,
     max,
-    next: canNext ? next : undefined,
-    previous: canPrevious ? previous : undefined,
+    next: canNext ? () => update(dateWindow.next()) : undefined,
+    previous: canPrevious ? () => update(dateWindow.prev()) : undefined,
     focus() {
       host.current
         .querySelectorAll<HTMLElement>("calendar-month")

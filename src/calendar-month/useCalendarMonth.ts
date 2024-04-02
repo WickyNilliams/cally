@@ -23,6 +23,8 @@ function cx(map: Record<string, boolean | null | undefined>) {
   return result;
 }
 
+const isLTR = (e: Event) => (e.target as HTMLElement).matches(":dir(ltr)");
+
 const dayFormatOptions = { month: "long", day: "numeric" } as const;
 const monthFormatOptions = { month: "long" } as const;
 const dispatchOptions = { bubbles: true };
@@ -63,15 +65,14 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   }
 
   function onKeyDown(e: KeyboardEvent) {
-    const isLTR = (e.target as HTMLElement).matches(":dir(ltr)");
     let date: PlainDate;
 
     switch (e.key) {
       case "ArrowRight":
-        date = focusedDate.add({ days: isLTR ? 1 : -1 });
+        date = focusedDate.add({ days: isLTR(e) ? 1 : -1 });
         break;
       case "ArrowLeft":
-        date = focusedDate.add({ days: isLTR ? -1 : 1 });
+        date = focusedDate.add({ days: isLTR(e) ? -1 : 1 });
         break;
       case "ArrowDown":
         date = focusedDate.add({ days: 7 });

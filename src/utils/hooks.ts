@@ -6,10 +6,11 @@ function safeFrom<T extends PlainDate | PlainYearMonth>(
   Ctr: { from(value: string): T },
   value: string | undefined
 ) {
-  if (value)
+  if (value) {
     try {
       return Ctr.from(value);
     } catch {}
+  }
 }
 
 export function useDateProp(prop: string) {
@@ -23,9 +24,9 @@ export function useDateProp(prop: string) {
 
 function parseISORange(value?: string): [PlainDate, PlainDate] | [] {
   if (value) {
-    const split = value.split("/");
-    const start = safeFrom(PlainDate, split[0]);
-    const end = safeFrom(PlainDate, split[1]);
+    const [s, e] = value.split("/");
+    const start = safeFrom(PlainDate, s);
+    const end = safeFrom(PlainDate, e);
 
     if (start && end) {
       return [start, end];
@@ -35,8 +36,8 @@ function parseISORange(value?: string): [PlainDate, PlainDate] | [] {
   return [];
 }
 
-function printISORange(start?: PlainDate, end?: PlainDate): string {
-  return `${start ? start : ""}/${end ? end : ""}`;
+function printISORange(start: PlainDate, end: PlainDate): string {
+  return `${start}/${end}`;
 }
 
 export function useDateRangeProp(prop: string) {
@@ -70,13 +71,4 @@ export function useDayNames(
     () => getDayNames(weekday, firstDayOfWeek, locale),
     [weekday, firstDayOfWeek, locale]
   );
-}
-
-export function listen<TEvent extends Event>(
-  element: EventTarget,
-  event: string,
-  handler: (e: TEvent) => void
-) {
-  element.addEventListener(event, handler as EventListener);
-  return () => element.removeEventListener(event, handler as EventListener);
 }

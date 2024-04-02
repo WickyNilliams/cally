@@ -1,14 +1,12 @@
 import { type PlainDate, PlainYearMonth } from "./temporal.js";
 
-export type Duration = { months: number };
-
 export class DateWindow {
-  public end: PlainYearMonth;
+  public readonly end: PlainYearMonth;
 
   constructor(
-    public start: PlainYearMonth,
-    public duration: Duration,
-    public focusedDate: PlainDate
+    public readonly start: PlainYearMonth,
+    public readonly duration: { months: number },
+    public readonly focusedDate: PlainDate
   ) {
     // TODO: center around focusedDate?
     this.end = start.add({ months: duration.months - 1 });

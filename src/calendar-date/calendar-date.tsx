@@ -37,6 +37,7 @@ export const CalendarDate = c(
       </host>
     );
   },
+
   { props, styles }
 );
 

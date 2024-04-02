@@ -83,8 +83,7 @@ export class PlainDate {
   }
 
   toString(): string {
-    const { month, year, day } = this;
-    return `${padZero(year, 4)}-${padZero(month, 2)}-${padZero(day, 2)}`;
+    return `${padZero(this.year, 4)}-${padZero(this.month, 2)}-${padZero(this.day, 2)}`;
   }
 
   toDate(): Date {
@@ -104,13 +103,13 @@ export class PlainDate {
   }
 
   static compare(one: PlainDate, two: PlainDate): CompareResult {
-    return compare(one.toDate(), two.toDate());
+    return compare(one, two);
   }
 
   static from(item: string | Date): PlainDate {
     return typeof item === "string"
-      ? PlainDate.fromString(item)
-      : PlainDate.fromDate(item);
+      ? this.fromString(item)
+      : this.fromDate(item);
   }
 
   private static fromString(str: string): PlainDate {
@@ -183,6 +182,7 @@ export class PlainYearMonth {
       one instanceof PlainDate ? one.toPlainYearMonth() : one;
     const twoYearMonth =
       two instanceof PlainDate ? two.toPlainYearMonth() : two;
-    return compare(oneYearMonth.toDate(), twoYearMonth.toDate());
+
+    return compare(oneYearMonth, twoYearMonth);
   }
 }
