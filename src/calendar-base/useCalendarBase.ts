@@ -10,6 +10,7 @@ type CalendarBaseOptions = {
 };
 
 const formatOptions = { year: "numeric" } as const;
+const formatVerboseOptions = { year: "numeric", month: "long" } as const;
 
 export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   const [min] = useDateProp("min");
@@ -44,11 +45,13 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
   }
 
   const format = useDateFormatter(formatOptions, locale);
+  const formatVerbose = useDateFormatter(formatVerboseOptions, locale);
   const canNext = max == null || !dateWindow.contains(max);
   const canPrevious = min == null || !dateWindow.contains(min);
 
   return {
     format,
+    formatVerbose,
     dateWindow,
     dispatch,
     handleFocus(e: CustomEvent<PlainDate>) {

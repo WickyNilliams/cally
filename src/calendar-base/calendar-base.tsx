@@ -10,6 +10,7 @@ import type { PlainDate } from "../utils/temporal.js";
 
 interface CalendarBaseProps {
   format: Intl.DateTimeFormat;
+  formatVerbose: Intl.DateTimeFormat;
   previous?: () => void;
   next?: () => void;
   onSelect: (e: CustomEvent<PlainDate>) => void;
@@ -21,8 +22,15 @@ interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
 interface CalendarDateProps extends CalendarBaseProps, CalendarDateContext {}
 
 export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
+  const start = props.dateWindow.start.toDate();
+  const end = props.dateWindow.end.toDate();
+
   return (
-    <div role="group" aria-labelledby="heading" part="container">
+    <div role="group" aria-labelledby="label" part="container">
+      <div id="label" aria-live="polite" aria-atomic="true">
+        {props.formatVerbose.formatRange(start, end)}
+      </div>
+
       <div class="header" part="header">
         <button
           part={`button previous ${props.previous ? "" : "disabled"}`}
@@ -32,11 +40,8 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
           <slot name="previous">Previous</slot>
         </button>
 
-        <div id="heading" part="heading" aria-live="polite" aria-atomic="true">
-          {props.format.formatRange(
-            props.dateWindow.start.toDate(),
-            props.dateWindow.end.toDate()
-          )}
+        <div id="heading" part="heading" aria-hidden="true">
+          {props.format.formatRange(start, end)}
         </div>
 
         <button
@@ -113,6 +118,11 @@ export const styles = [
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    #label {
+      position: absolute;
+      transform: scale(0);
     }
 
     #heading {
