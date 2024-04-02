@@ -19,14 +19,25 @@ npm install cally
 
 ## Usage
 
+### Via module
+
 ```js
 import "cally";
 ```
 
-## Usage with CDN
+### Via CDN
 
 ```html
-<script src="https://unpkg.com/cally"></script>
+<script type="module" src="https://unpkg.com/cally"></script>
+```
+
+### Using the components
+
+```html
+<calendar-range months="2">
+  <calendar-month></calendar-month>
+  <calendar-month offset="1"></calendar-month>
+</calendar-range>
 ```
 
 ## Docs

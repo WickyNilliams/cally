@@ -9,6 +9,7 @@
   ],
   "module": "dist/cally.js",
   "types": "dist/cally.d.ts",
+  "unpkg": "dist/cally.js",
   "exports": {
     ".": {
       "types": "./dist/cally.d.ts",
