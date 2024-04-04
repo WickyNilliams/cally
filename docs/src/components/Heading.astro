@@ -30,12 +30,12 @@ const id = Astro.props.id ?? children.toLowerCase().replace(/\s/g, "-");
   }
 
   .hash {
-    display: none;
+    visibility: hidden;
     opacity: 0.5;
-    padding-inline: var(--space-3xs);
+    padding-inline-start: var(--space-3xs);
   }
 
   a:is(:hover, :focus-visible) .hash {
-    display: unset;
+    visibility: visible;
   }
 </style>
