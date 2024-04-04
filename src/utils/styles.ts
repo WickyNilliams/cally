@@ -6,6 +6,11 @@ export const reset = css`
   *::after {
     box-sizing: border-box;
   }
+
+  button {
+    padding: 0;
+    touch-action: manipulation;
+  }
 `;
 
 export const vh = css`
