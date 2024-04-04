@@ -36,18 +36,18 @@ import LogoGithub from "./LogoGithub.astro";
   nav {
     --icon-size: var(--space-s);
     --icon-color: var(--color-body);
-
-    svg {
-      width: var(--icon-size);
-      height: var(--icon-size);
-      fill: var(--icon-color);
-
-      /* fix alignment */
-      margin-block-start: 1px;
-    }
   }
 
-  a {
+  nav :global(svg) {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    fill: var(--icon-color);
+
+    /* fix alignment */
+    margin-block-start: 1px;
+  }
+
+  nav :global(a) {
     display: flex;
     gap: var(--space-3xs);
     align-items: center;

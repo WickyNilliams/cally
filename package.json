@@ -48,6 +48,7 @@
     "@web/test-runner-playwright": "^0.11.0",
     "@web/test-runner-visual-regression": "^0.9.0",
     "astro": "^4.5.10",
+    "postcss-nesting": "^12.1.1",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3",
     "vite": "^5.1.4",
