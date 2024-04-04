@@ -14,28 +14,27 @@
     border-collapse: collapse;
     min-inline-size: var(--container-size);
 
-    th,
-    td {
+    :global(th, td) {
       padding-block: var(--space-xs);
       padding-inline: var(--space-2xs);
     }
 
-    td {
+    :global(td) {
       border-block-end: 1px solid var(--color-border);
       vertical-align: top;
     }
 
-    th {
+    :global(th) {
       text-align: start;
       font-weight: 500;
       border-block-end: 1px solid var(--color-heading);
     }
 
-    :is(td, th):first-child {
+    :global(:is(td, th):first-child) {
       padding-inline-start: 0;
     }
 
-    :is(td, th):last-child {
+    :global(:is(td, th):last-child) {
       padding-inline-end: 0;
     }
   }

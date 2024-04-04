@@ -1,6 +1,8 @@
 ---
 import { Code } from "astro:components";
 import * as prettier from "prettier";
+import postcss from "postcss";
+import nesting from "postcss-nesting";
 
 interface Props {
   lineLength?: number;
@@ -28,23 +30,30 @@ function cyrb53(str: string, seed = 0) {
 }
 
 const { css, lineLength = 80, class: className, ...rest } = Astro.props;
-
 const html = await Astro.slots.render("default");
-const source = `
-  ${css ? `<style>${css}</style>` : ""}
-  ${html}
-`;
 
-const id = `id-${cyrb53(source)}`;
+// ID used for scoping
+const id = `id-${cyrb53(css + html)}`;
+
+// compile away CSS nesting
+let compiledCss = css;
+if (css) {
+  const scoped = `#${id} { ${css} }`;
+  const result = await postcss([nesting]).process(scoped, { from: undefined });
+  compiledCss = result.css;
+}
+
+// the example to be rendered
 const output = `
-  ${css ? `<style>#${id}{ ${css} }</style>` : ""}
+  ${compiledCss ? `<style>${compiledCss}</style>` : ""}
   <div id="${id}">${html}</div>
 `;
 
-const formatted = await prettier.format(source, {
-  parser: "html",
-  printWidth: lineLength,
-});
+// the code shown to the user
+const formatted = await prettier.format(
+  `${css ? `<style>${css}</style>` : ""}${html}`,
+  { parser: "html", printWidth: lineLength }
+);
 
 // TODO: remove when this bug is resolved
 // https://github.com/withastro/compiler/issues/984
