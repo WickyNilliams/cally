@@ -57,7 +57,7 @@ type DateFormatOptions = Pick<
 
 export function useDateFormatter(options: DateFormatOptions, locale?: string) {
   return useMemo(
-    () => new Intl.DateTimeFormat(locale, options),
+    () => new Intl.DateTimeFormat(locale, { timeZone: "UTC", ...options }),
     [locale, options]
   );
 }
