@@ -14,7 +14,7 @@ import { Code } from "astro:components";
   }}
 >
   <h1 slot="intro">Integrating with frameworks</h1>
-  <PageIntro slot="intro">How to use with React/Vue/etc</PageIntro>
+  <PageIntro slot="intro">How to use with React/Vue/Svelte</PageIntro>
 
   <p>
     It is not necessary to use a framework with Cally. However, by virtue of
@@ -24,8 +24,8 @@ import { Code } from "astro:components";
 
   <p>
     Most frameworks support web components out of the box, requiring
-    little-to-no setup. Here we will walk through how to use Cally in React and
-    Vue. The process should be similar for other frameworks.
+    little-to-no setup. Here we will walk through how to use Cally in React,
+    Vue, and Svelte. The process should be similar for other frameworks.
   </p>
 
   <Heading level={2}>React</Heading>
@@ -122,7 +122,7 @@ export const CalendarDate = forwardRef(function CalendarDate(
 `.trim()}
   />
 
-  <Heading level={3}>Usage</Heading>
+  <Heading id="react-usage" level={3}>Usage</Heading>
 
   <p>
     You can now use these components as you would any other React component.
@@ -161,7 +161,7 @@ root.render(<App />)
 `.trim()}
   />
 
-  <Heading level={3}>TypeScript</Heading>
+  <Heading id="react-typescript" level={3}>TypeScript</Heading>
 
   <p>
     Cally exports types for each component's props. We can use these types to
@@ -307,7 +307,7 @@ import 'cally';
 `.trim()}
   />
 
-  <Heading level={3}>Usage with <code>v-model</code></Heading>
+  <Heading id="vue-usage" level={3}>Usage with <code>v-model</code></Heading>
 
   <p>
     The <code>{`<calendar-date>`}</code> and <code>{`<calendar-range>`}</code> components
@@ -368,7 +368,7 @@ function onChange(event) {
 `.trim()}
   />
 
-  <Heading level={3}>TypeScript</Heading>
+  <Heading id="vue-typescript" level={3}>TypeScript</Heading>
 
   <p>
     If you are using TypeScript, you can augment Vue's types to add
@@ -405,6 +405,99 @@ declare module "vue" {
 declare global {
   namespace JSX {
     interface IntrinsicElements extends CallyComponents {}
+  }
+}
+`.trim()}
+  />
+
+  <Note>
+    <p>
+      This uses TypeScript's declaration merging feature. You can read more
+      about it in the <a
+        href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html"
+        >TypeScript Handbook</a
+      >.
+    </p>
+  </Note>
+
+  <p>
+    Finally, you must add this to the <code>compilerOptions.types</code> field in
+    your
+    <code>tsconfig.json</code>:
+  </p>
+
+  <Code
+    lang="json"
+    code={`
+{
+  // ...
+  "compilerOptions": {
+    // ...
+    "types": ["./globals.d.ts"]
+  }
+}
+`.trim()}
+  />
+
+  <p>
+    Now you will get type-checking for both props and events, along with
+    auto-complete in your editor.
+  </p>
+
+  <Heading level={2}>Svelte</Heading>
+
+  <p>
+    Svelte has <a href="https://custom-elements-everywhere.com/#svelte"
+      >good support for web components</a
+    >. There is no setup required to start using Web Components.
+  </p>
+
+  <Code
+    lang="svelte"
+    code={`
+<script lang="ts">
+  import "cally";
+</script>
+
+<calendar-range months={2}>
+  <calendar-month></calendar-month>
+  <calendar-month offset={1}></calendar-month>
+</calendar-range>
+`.trim()}
+  />
+
+  <Heading id="svelte-typescript" level={3}>TypeScript</Heading>
+
+  <p>
+    If you are using TypeScript, you can augment Svelte's types to add
+    type-checking and improve your editor experience. Cally exports types for
+    each component's props making this a simple, one-time procedure.
+  </p>
+
+  <p>
+    First you should create a <code>d.ts</code> file in your Svelte project, with
+    any name you like. For this example let's call it <code>globals.d.ts</code>.
+    In that file, paste the following code:
+  </p>
+
+  <Code
+    lang="typescript"
+    code={`
+import type {
+  CalendarRangeProps,
+  CalendarMonthProps,
+  CalendarDateProps,
+} from "cally";
+
+type MapEvents<T> = {
+  [K in keyof T as K extends \`on\${infer E}\` ? \`on:\${Lowercase<E>}\` : K]: T[K];
+};
+
+declare module "svelte/elements" {
+  interface SvelteHTMLElements {
+    "calendar-range": MapEvents<CalendarRangeProps>;
+    "calendar-month": MapEvents<CalendarMonthProps>;
+    "calendar-date": MapEvents<CalendarDateProps>;
   }
 }
 `.trim()}
