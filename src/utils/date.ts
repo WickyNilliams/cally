@@ -3,8 +3,7 @@ import { PlainDate, type PlainYearMonth } from "./temporal.js";
 export type DaysOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export function today() {
-  const d = new Date(Date.now());
-  return new PlainDate(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
+  return PlainDate.from(new Date());
 }
 
 export function startOfWeek(
@@ -111,24 +110,4 @@ export function getViewOfMonth(
   const end = endOfWeek(endOfMonth(yearMonth), firstDayOfWeek);
 
   return chunk(getDaysInRange(start, end), 7);
-}
-
-export type WeekdayOption = NonNullable<Intl.DateTimeFormatOptions["weekday"]>;
-
-export function getDayNames(
-  weekday: WeekdayOption,
-  firstDayOfWeek?: DaysOfWeek,
-  locale?: string
-): string[] {
-  const days: string[] = [];
-  const options = { weekday };
-  const day = startOfWeek(today(), firstDayOfWeek).toDate();
-  const formatter = new Intl.DateTimeFormat(locale, options);
-
-  for (let i = 0; i < 7; i++) {
-    days[i] = formatter.format(day);
-    day.setDate(day.getDate() + 1);
-  }
-
-  return days;
 }

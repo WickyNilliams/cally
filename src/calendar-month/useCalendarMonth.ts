@@ -25,8 +25,10 @@ function cx(map: Record<string, boolean | null | undefined>) {
 
 const isLTR = (e: Event) => (e.target as HTMLElement).matches(":dir(ltr)");
 
-const dayFormatOptions = { month: "long", day: "numeric" } as const;
-const monthFormatOptions = { month: "long" } as const;
+const dayOptions = { month: "long", day: "numeric" } as const;
+const monthOptions = { month: "long" } as const;
+const shortDayOptions = { weekday: "narrow" } as const;
+const longDayOptions = { weekday: "long" } as const;
 const dispatchOptions = { bubbles: true };
 
 type UseCalendarMonthOptions = {
@@ -40,10 +42,10 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     context;
 
   const todaysDate = today();
-  const dayNamesLong = useDayNames("long", firstDayOfWeek, locale);
-  const dayNamesShort = useDayNames("narrow", firstDayOfWeek, locale);
-  const dayFormatter = useDateFormatter(dayFormatOptions, locale);
-  const monthFormatter = useDateFormatter(monthFormatOptions, locale);
+  const dayNamesLong = useDayNames(longDayOptions, firstDayOfWeek, locale);
+  const dayNamesShort = useDayNames(shortDayOptions, firstDayOfWeek, locale);
+  const dayFormatter = useDateFormatter(dayOptions, locale);
+  const monthFormatter = useDateFormatter(monthOptions, locale);
 
   const { focusedDate } = dateWindow;
   const yearMonth = useMemo(

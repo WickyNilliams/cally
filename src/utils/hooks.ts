@@ -1,6 +1,6 @@
 import { useProp, useMemo } from "atomico";
 import { PlainDate, type PlainYearMonth } from "./temporal.js";
-import { getDayNames, type DaysOfWeek, type WeekdayOption } from "./date.js";
+import { type DaysOfWeek } from "./date.js";
 
 function safeFrom<T extends PlainDate | PlainYearMonth>(
   Ctr: { from(value: string): T },
@@ -52,7 +52,7 @@ export function useDateRangeProp(prop: string) {
 
 type DateFormatOptions = Pick<
   Intl.DateTimeFormatOptions,
-  "year" | "month" | "day"
+  "year" | "month" | "day" | "weekday"
 >;
 
 export function useDateFormatter(options: DateFormatOptions, locale?: string) {
@@ -62,13 +62,27 @@ export function useDateFormatter(options: DateFormatOptions, locale?: string) {
   );
 }
 
+export type WeekdayOption = {
+  weekday: NonNullable<Intl.DateTimeFormatOptions["weekday"]>;
+};
+
 export function useDayNames(
-  weekday: WeekdayOption,
+  options: WeekdayOption,
   firstDayOfWeek: DaysOfWeek,
   locale?: string
 ) {
-  return useMemo(
-    () => getDayNames(weekday, firstDayOfWeek, locale),
-    [weekday, firstDayOfWeek, locale]
-  );
+  const formatter = useDateFormatter(options, locale);
+
+  return useMemo(() => {
+    const days = [];
+    const day = new Date();
+
+    for (var i = 0; i < 7; i++) {
+      const index = (day.getDay() - firstDayOfWeek + 7) % 7;
+      days[index] = formatter.format(day);
+      day.setDate(day.getDate() + 1);
+    }
+
+    return days;
+  }, [firstDayOfWeek, formatter]);
 }
