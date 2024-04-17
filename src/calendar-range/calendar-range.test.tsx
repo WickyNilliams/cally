@@ -5,7 +5,9 @@ import {
   click,
   clickDay,
   createSpy,
+  getDayButton,
   getMonth,
+  getMonthHeading,
   getNextPageButton,
   getPrevPageButton,
   mount,
@@ -22,6 +24,7 @@ type TestProps = {
   value: string;
   min: string;
   max: string;
+  months?: number;
   children?: VNodeAny;
 };
 
@@ -209,30 +212,26 @@ describe("CalendarRange", () => {
     });
   });
 
-  describe("multiple months", () => {
-    it("supports multiple months");
-    it("supports a year");
-    it("paginates with respect to duration");
-  });
-
   describe("localization", () => {
     it("localizes all days, months, years");
   });
 
-  describe("methods", () => {
-    it("allows focusing today");
-    it("allows setting a month");
-    it("allows setting a year");
-  });
+  describe("grid", () => {
+    it("allows arbitrary DOM structure", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-05/2020-01-10">
+          <div>
+            <div>
+              <div>
+                <CalendarMonth />
+              </div>
+            </div>
+          </div>
+        </Fixture>
+      );
 
-  describe("custom layout", () => {
-    describe("header", () => {
-      it("allows arbitrary DOM structure");
-      it("allow configurable formatting options");
-    });
-
-    describe("grid", () => {
-      it("allows arbitrary DOM structure");
+      const month = getMonth(calendar);
+      expect(getMonthHeading(month)).to.have.text("January");
     });
   });
 });

@@ -1,4 +1,4 @@
-import { expect } from "@open-wc/testing";
+import { expect, nextFrame } from "@open-wc/testing";
 import { sendKeys } from "@web/test-runner-commands";
 import type { VNodeAny } from "atomico/types/vnode.js";
 import {
@@ -7,13 +7,18 @@ import {
   createSpy,
   getActiveElement,
   getDayButton,
+  getMonthHeading,
   getMonth,
+  getMonths,
   getNextPageButton,
   getPrevPageButton,
   mount,
+  getCalendarHeading,
+  getGrid,
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { CalendarDate } from "./calendar-date.js";
+import { PlainYearMonth } from "../utils/temporal.js";
 
 type TestProps = {
   onchange: (e: Event) => void;
@@ -23,11 +28,13 @@ type TestProps = {
   max: string;
   children?: VNodeAny;
   showOutsideDays?: boolean;
+  months?: number;
+  locale?: string;
 };
 
 function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
   return (
-    <CalendarDate {...props} locale="en-GB">
+    <CalendarDate locale="en-GB" {...props}>
       {children ?? <CalendarMonth />}
     </CalendarDate>
   );
@@ -50,6 +57,42 @@ describe("CalendarDate", () => {
         const calendar = await mount(<Fixture />);
         expect(getPrevPageButton(calendar)).to.have.text("Previous");
       });
+    });
+
+    it("has a label for the group", async () => {
+      const calendar = await mount(<Fixture value="2020-01-01" />);
+      const group = calendar.shadowRoot!.querySelector("[role='group']");
+      expect(group).to.have.attribute("aria-labelledby");
+
+      const yearMonth = new PlainYearMonth(2020, 1).toDate();
+      const formatter = new Intl.DateTimeFormat("en-GB", {
+        month: "long",
+        year: "numeric",
+      });
+
+      const heading = getCalendarHeading(calendar);
+      expect(heading).to.have.text(formatter.format(yearMonth));
+    });
+
+    it("correctly labels a range of months", async () => {
+      const calendar = await mount(
+        <Fixture months={2} value="2023-12-01">
+          <CalendarMonth />
+          <CalendarMonth offset={1} />
+        </Fixture>
+      );
+
+      const start = new PlainYearMonth(2023, 12);
+      const end = new PlainYearMonth(2024, 1);
+      const formatter = new Intl.DateTimeFormat("en-GB", {
+        month: "long",
+        year: "numeric",
+      });
+
+      const heading = getCalendarHeading(calendar);
+      expect(heading).to.have.text(
+        formatter.formatRange(start.toDate(), end.toDate())
+      );
     });
   });
 
@@ -87,7 +130,7 @@ describe("CalendarDate", () => {
     });
   });
 
-  describe.skip("keyboard interaction", () => {
+  describe("keyboard interaction", () => {
     it("can select a date in the future", async () => {
       const spy = createSpy();
       await mount(<Fixture value="2020-01-01" onchange={spy} />);
@@ -249,7 +292,7 @@ describe("CalendarDate", () => {
 
       // try clicking a day outside the range
       await clickDay(month, "1 February");
-      await calendar.updated;
+      await nextFrame();
 
       expect(spy.count).to.eq(1);
       expect(calendar.value).to.eq("2020-02-01");
@@ -282,18 +325,99 @@ describe("CalendarDate", () => {
   });
 
   describe("multiple months", () => {
-    it("supports multiple months");
-    it("supports a year");
-  });
+    it("supports multiple months", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01" months={2}>
+          <CalendarMonth />
+          <CalendarMonth offset={1} />
+        </Fixture>
+      );
 
-  describe("custom layout", () => {
-    describe("header", () => {
-      it("allows arbitrary DOM structure");
-      it("allow configurable formatting options");
+      const [first, second] = getMonths(calendar);
+      expect(getMonthHeading(first!)).to.have.text("December");
+      expect(getMonthHeading(second!)).to.have.text("January");
     });
 
-    describe("grid", () => {
-      it("allows arbitrary DOM structure");
+    it("respects `months` when paginating", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01" months={2}>
+          <CalendarMonth />
+          <CalendarMonth offset={1} />
+        </Fixture>
+      );
+
+      const [first, second] = getMonths(calendar);
+
+      await click(getNextPageButton(calendar));
+      expect(getMonthHeading(first!)).to.have.text("February");
+      expect(getMonthHeading(second!)).to.have.text("March");
+
+      await click(getPrevPageButton(calendar));
+      expect(getMonthHeading(first!)).to.have.text("December");
+      expect(getMonthHeading(second!)).to.have.text("January");
+    });
+  });
+
+  describe("localization", () => {
+    it("localizes heading", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01" locale="de-DE" />
+      );
+
+      const heading = getCalendarHeading(calendar);
+      expect(heading).to.have.text("Januar 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("Februar 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("März 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("April 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("Mai 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("Juni 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("Juli 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("August 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("September 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("Oktober 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("November 2020");
+
+      await click(getNextPageButton(calendar));
+      expect(heading).to.have.text("Dezember 2020");
+    });
+  });
+
+  describe("grid", () => {
+    it("allows arbitrary DOM structure", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01">
+          <div>
+            <div>
+              <div>
+                <CalendarMonth />
+              </div>
+            </div>
+          </div>
+        </Fixture>
+      );
+
+      const month = getMonth(calendar);
+      expect(getMonthHeading(month)).to.have.text("January");
     });
   });
 });

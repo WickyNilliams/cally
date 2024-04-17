@@ -4,6 +4,7 @@ import type { VNodeAny } from "atomico/types/vnode.js";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
+import { nextFrame } from "@open-wc/testing";
 
 type SpySubject = (...args: any[]) => any;
 
@@ -52,11 +53,7 @@ type CalendarInstance =
 
 export async function mount(node: VNodeAny) {
   const calendar = fixture<CalendarInstance>(node);
-  await calendar.updated;
-
-  const month = getMonth(calendar);
-  await month.updated;
-
+  await nextFrame();
   return calendar;
 }
 
@@ -71,12 +68,48 @@ export async function click(element: Element) {
   await sendMouse({ type: "click", position });
 }
 
+export function getMonths(calendar: HTMLElement): MonthInstance[] {
+  return [...calendar.querySelectorAll<MonthInstance>("calendar-month")!];
+}
+
 export function getMonth(calendar: HTMLElement): MonthInstance {
-  return calendar.querySelector("calendar-month")!;
+  return getMonths(calendar)[0]!;
 }
 
 export function getGrid(month: MonthInstance): HTMLTableElement {
   return month.shadowRoot!.querySelector(`[part="table"]`)!;
+}
+
+export function getCalendarHeading(calendar: CalendarInstance): HTMLElement {
+  const group = calendar.shadowRoot!.querySelector(`[role="group"]`)!;
+
+  const labelledById = group.getAttribute("aria-labelledby");
+  if (!labelledById) {
+    throw new Error("No aria-labelledby attribute found on group");
+  }
+
+  const heading = calendar.shadowRoot!.getElementById(labelledById);
+  if (!heading) {
+    throw new Error("No heading found for calendar");
+  }
+
+  return heading;
+}
+
+export function getMonthHeading(month: MonthInstance): HTMLElement {
+  const table = getGrid(month);
+
+  const labelledById = table.getAttribute("aria-labelledby");
+  if (!labelledById) {
+    throw new Error("No aria-labelledby attribute found on table");
+  }
+
+  const heading = month.shadowRoot!.getElementById(labelledById);
+  if (!heading) {
+    throw new Error("No heading found for month");
+  }
+
+  return heading;
 }
 
 export function getPrevPageButton(calendar: CalendarInstance) {
