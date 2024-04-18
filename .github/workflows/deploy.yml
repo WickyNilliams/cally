@@ -4,7 +4,7 @@ on:
   # Trigger the workflow every time there's a semantic version tag
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v*"
   # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
 
