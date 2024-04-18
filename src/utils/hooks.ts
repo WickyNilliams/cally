@@ -36,16 +36,12 @@ function parseISORange(value?: string): [PlainDate, PlainDate] | [] {
   return [];
 }
 
-function printISORange(start: PlainDate, end: PlainDate): string {
-  return `${start}/${end}`;
-}
-
 export function useDateRangeProp(prop: string) {
   const [value, setValue] = useProp<string>(prop);
   const range = useMemo(() => parseISORange(value), [value]);
 
   const setRange = (range: [PlainDate, PlainDate]) =>
-    setValue(printISORange(range[0], range[1]));
+    setValue(`${range[0]}/${range[1]}`);
 
   return [range, setRange] as const;
 }

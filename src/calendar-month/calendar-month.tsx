@@ -22,17 +22,17 @@ export const CalendarMonth = c(
 
     return (
       <host shadowDom focus={focus}>
-        <div id="heading" part="heading">
-          {calendar.monthFormatter.format(toDate(calendar.yearMonth))}
+        <div id="h" part="heading">
+          {calendar.formatter.format(toDate(calendar.yearMonth))}
         </div>
 
-        <table ref={table} aria-labelledby="heading" part="table">
+        <table ref={table} aria-labelledby="h" part="table">
           <thead>
             <tr part="tr head">
-              {calendar.dayNamesLong.map((dayName, i) => (
+              {calendar.daysLong.map((dayName, i) => (
                 <th part="th" scope="col">
                   <span class="vh">{dayName}</span>
-                  <span aria-hidden="true">{calendar.dayNamesShort[i]}</span>
+                  <span aria-hidden="true">{calendar.daysShort[i]}</span>
                 </th>
               ))}
             </tr>
@@ -42,16 +42,11 @@ export const CalendarMonth = c(
             {calendar.weeks.map((week, i) => (
               <tr key={i} part="tr week">
                 {week.map((date, j) => {
-                  const withinMonth = calendar.yearMonth.equals(date);
-                  const showDay = context.showOutsideDays || withinMonth;
+                  const props = calendar.getDayProps(date);
 
                   return (
                     <td part="td" key={j}>
-                      {showDay && (
-                        <button {...calendar.getDayProps(date)}>
-                          {date.day}
-                        </button>
-                      )}
+                      {props && <button {...props}>{date.day}</button>}
                     </td>
                   );
                 })}
@@ -88,9 +83,6 @@ export const CalendarMonth = c(
 
         table {
           border-collapse: collapse;
-          border-spacing: 0;
-          table-layout: fixed;
-          inline-size: max-content;
           font-size: 0.875rem;
         }
 
@@ -101,7 +93,6 @@ export const CalendarMonth = c(
 
         td {
           padding-inline: 0;
-          padding-block: 1px;
         }
 
         button {
@@ -109,14 +100,13 @@ export const CalendarMonth = c(
           font-size: inherit;
           background: transparent;
           border: 0;
-          cursor: pointer;
           font-variant-numeric: tabular-nums;
           block-size: 2.25rem;
           inline-size: 2.25rem;
         }
 
         button:hover:where(:not(:disabled)) {
-          background: rgba(0, 0, 0, 0.05);
+          background: #0000000d;
         }
 
         button:is([aria-pressed="true"], :focus-visible) {

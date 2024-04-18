@@ -5,7 +5,7 @@ import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
 import { toDate } from "../utils/date.js";
 
-type Tentative = { first: PlainDate; second: PlainDate };
+type Tentative = { a: PlainDate; b: PlainDate };
 
 const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
   PlainDate.compare(a, b) < 0 ? [a, b] : [b, a];
@@ -18,7 +18,6 @@ export const CalendarRange = c(
     onRangeStart: CustomEvent<Date>;
     onRangeEnd: CustomEvent<Date>;
     onFocusDay: CustomEvent<Date>;
-    focusDate: (date: Date) => void;
   }> => {
     const [value, setValue] = useDateRangeProp("value");
     const [focusedDate = value[0], setFocusedDate] = useDateProp("focusedDate");
@@ -34,15 +33,15 @@ export const CalendarRange = c(
     // the second selection can come before or after the first selection for improved ux
     const [tentative, setTentative] = useState<Tentative | undefined>();
 
-    async function handleFocus(e: CustomEvent<PlainDate>) {
-      calendar.handleFocus(e);
+    function handleFocus(e: CustomEvent<PlainDate>) {
+      calendar.onFocus(e);
       handleHover(e);
     }
 
     function handleHover(e: CustomEvent<PlainDate>) {
       e.stopPropagation();
       setTentative((t) => {
-        return t ? { ...t, second: e.detail } : t;
+        return t ? { ...t, b: e.detail } : t;
       });
     }
 
@@ -51,19 +50,17 @@ export const CalendarRange = c(
       e.stopPropagation();
 
       if (!tentative) {
-        setTentative({ first: detail, second: detail });
+        setTentative({ a: detail, b: detail });
         dispatchStart(toDate(detail));
       } else {
-        setValue(sort(tentative.first, detail));
+        setValue(sort(tentative.a, detail));
         setTentative(undefined);
         dispatchEnd(toDate(detail));
         calendar.dispatch();
       }
     }
 
-    const highlightedRange = tentative
-      ? sort(tentative.first, tentative.second)
-      : value;
+    const highlightedRange = tentative ? sort(tentative.a, tentative.b) : value;
 
     return (
       <host shadowDom focus={calendar.focus}>

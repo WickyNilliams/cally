@@ -30,7 +30,6 @@ export const CalendarDate = c(
           {...props}
           {...calendar}
           value={value}
-          onFocus={calendar.handleFocus}
           onSelect={handleSelect}
         />
       </host>
