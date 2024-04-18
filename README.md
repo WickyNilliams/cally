@@ -1,6 +1,6 @@
 # Cally
 
-Small, feature-rich of calendar components
+Small, feature-rich calendar components
 
 - **Small bundle size** - less than 8.5kb min/gzip
 - **Full feature set** - single dates, ranges, display multiple months
