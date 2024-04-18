@@ -212,6 +212,16 @@ describe("CalendarRange", () => {
     });
   });
 
+  describe("focused date", () => {
+    it("defaults to the first date in the range if not set", async () => {
+      const calendar = await mount(<Fixture value="2020-01-05/2020-01-10" />);
+      const month = getMonth(calendar);
+
+      const day = getDayButton(month, "5 January");
+      expect(day).to.have.attribute("tabindex", "0");
+    });
+  });
+
   describe("localization", () => {
     it("localizes all days, months, years");
   });

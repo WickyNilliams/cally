@@ -17,7 +17,6 @@ import {
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { fixture } from "atomico/test-dom";
 import { PlainDate } from "../utils/temporal.js";
-import { DateWindow } from "../utils/DateWindow.js";
 import { today } from "../utils/date.js";
 
 type MonthContextInstance = InstanceType<typeof CalendarMonthContext>;
@@ -41,12 +40,6 @@ function Fixture({
   dir,
   ...props
 }: Partial<DateTestProps> | Partial<RangeTestProps>): VNodeAny {
-  const dateWindow = new DateWindow(
-    focusedDate.toPlainYearMonth(),
-    { months: 1 },
-    focusedDate
-  );
-
   return (
     <CalendarMonthContext
       onselectday={onselectday}
@@ -55,7 +48,11 @@ function Fixture({
       value={{
         firstDayOfWeek: 1,
         locale: "en-GB",
-        dateWindow,
+        page: {
+          start: focusedDate.toPlainYearMonth(),
+          end: focusedDate.toPlainYearMonth(),
+        },
+        focusedDate,
         ...props,
       }}
     >

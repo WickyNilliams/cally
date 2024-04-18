@@ -5,7 +5,7 @@ import {
   type CalendarRangeContext,
 } from "../calendar-month/CalendarMonthContext.js";
 import { reset, vh } from "../utils/styles.js";
-import type { DaysOfWeek } from "../utils/date.js";
+import { type DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 
 interface CalendarBaseProps {
@@ -22,8 +22,8 @@ interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
 interface CalendarDateProps extends CalendarBaseProps, CalendarDateContext {}
 
 export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
-  const start = props.dateWindow.start.toDate();
-  const end = props.dateWindow.end.toDate();
+  const start = props.page.start.toDate();
+  const end = props.page.end.toDate();
 
   return (
     <div role="group" aria-labelledby="label" part="container">
@@ -97,6 +97,10 @@ export const props = {
   months: {
     type: Number,
     value: 1,
+  },
+  focusedDate: {
+    type: String,
+    value: (): string | undefined => undefined,
   },
 };
 

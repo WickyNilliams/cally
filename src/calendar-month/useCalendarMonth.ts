@@ -38,8 +38,15 @@ type UseCalendarMonthOptions = {
 
 export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   const { offset } = props;
-  const { firstDayOfWeek, isDateDisallowed, min, max, dateWindow, locale } =
-    context;
+  const {
+    firstDayOfWeek,
+    isDateDisallowed,
+    min,
+    max,
+    page,
+    locale,
+    focusedDate,
+  } = context;
 
   const todaysDate = today();
   const dayNamesLong = useDayNames(longDayOptions, firstDayOfWeek, locale);
@@ -47,10 +54,9 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   const dayFormatter = useDateFormatter(dayOptions, locale);
   const monthFormatter = useDateFormatter(monthOptions, locale);
 
-  const { focusedDate } = dateWindow;
   const yearMonth = useMemo(
-    () => dateWindow.start.add({ months: offset }),
-    [dateWindow, offset]
+    () => page.start.add({ months: offset }),
+    [page, offset]
   );
 
   const weeks = useMemo(

@@ -14,11 +14,11 @@ import {
   getPrevPageButton,
   mount,
   getCalendarHeading,
-  getGrid,
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { CalendarDate } from "./calendar-date.js";
 import { PlainYearMonth } from "../utils/temporal.js";
+import { today } from "../utils/date.js";
 
 type TestProps = {
   onchange: (e: Event) => void;
@@ -30,6 +30,7 @@ type TestProps = {
   showOutsideDays?: boolean;
   months?: number;
   locale?: string;
+  focusedDate?: string;
 };
 
 function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
@@ -334,8 +335,8 @@ describe("CalendarDate", () => {
       );
 
       const [first, second] = getMonths(calendar);
-      expect(getMonthHeading(first!)).to.have.text("December");
-      expect(getMonthHeading(second!)).to.have.text("January");
+      expect(getMonthHeading(first!)).to.have.text("January");
+      expect(getMonthHeading(second!)).to.have.text("February");
     });
 
     it("respects `months` when paginating", async () => {
@@ -349,12 +350,71 @@ describe("CalendarDate", () => {
       const [first, second] = getMonths(calendar);
 
       await click(getNextPageButton(calendar));
-      expect(getMonthHeading(first!)).to.have.text("February");
-      expect(getMonthHeading(second!)).to.have.text("March");
+      expect(getMonthHeading(first!)).to.have.text("March");
+      expect(getMonthHeading(second!)).to.have.text("April");
 
       await click(getPrevPageButton(calendar));
-      expect(getMonthHeading(first!)).to.have.text("December");
-      expect(getMonthHeading(second!)).to.have.text("January");
+      expect(getMonthHeading(first!)).to.have.text("January");
+      expect(getMonthHeading(second!)).to.have.text("February");
+    });
+  });
+
+  describe("focused date", () => {
+    it("defaults to `value` if not set", async () => {
+      const calendar = await mount(<Fixture value="2020-01-01" />);
+      const day = getDayButton(getMonth(calendar), "1 January");
+      expect(day).to.have.attribute("tabindex", "0");
+    });
+
+    it("defaults to today if no value set", async () => {
+      const calendar = await mount(<Fixture />);
+      const todaysDate = today().toDate();
+      const month = getMonth(calendar);
+
+      const heading = getMonthHeading(month);
+      expect(heading).to.have.text(
+        todaysDate.toLocaleDateString("en-GB", {
+          month: "long",
+        })
+      );
+
+      const button = getDayButton(
+        month,
+        todaysDate.toLocaleDateString("en-GB", {
+          month: "long",
+          day: "numeric",
+        })
+      );
+      expect(button).to.have.attribute("tabindex", "0");
+    });
+
+    it("can be changed via props", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01" focusedDate="2020-02-15" />
+      );
+      const month = getMonth(calendar);
+
+      const day = getDayButton(month, "15 February");
+      expect(day).to.have.attribute("tabindex", "0");
+
+      calendar.focusedDate = "2020-04-15";
+      await nextFrame();
+
+      const newDay = getDayButton(month, "15 April");
+      expect(newDay).to.have.attribute("tabindex", "0");
+    });
+
+    it("updates as user navigates", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01" focusedDate="2020-02-15" />
+      );
+      const month = getMonth(calendar);
+
+      await click(getPrevPageButton(calendar));
+
+      const day = getDayButton(month, "15 January");
+      expect(day).to.have.attribute("tabindex", "0");
+      expect(calendar.focusedDate).to.eq("2020-01-15");
     });
   });
 

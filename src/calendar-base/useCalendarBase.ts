@@ -1,41 +1,67 @@
-import { useState, useEvent, useHost } from "atomico";
-import { DateWindow } from "../utils/DateWindow.js";
-import { type PlainDate, PlainYearMonth } from "../utils/temporal.js";
+import { useState, useEvent, useHost, useEffect, useMemo } from "atomico";
+import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { useDateProp, useDateFormatter } from "../utils/hooks.js";
-import { today } from "../utils/date.js";
+import { clamp, today } from "../utils/date.js";
 
 type CalendarBaseOptions = {
   months: number;
   locale?: string;
+  focusedDate: PlainDate | undefined;
+  setFocusedDate: (date: PlainDate) => void;
 };
 
 const formatOptions = { year: "numeric" } as const;
 const formatVerboseOptions = { year: "numeric", month: "long" } as const;
 
-export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
+function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
+  return (b.year - a.year) * 12 + b.month - a.month;
+}
+
+const createPage = (start: PlainYearMonth, months: number) => {
+  start = months === 12 ? new PlainYearMonth(start.year, 1) : start;
+  return {
+    start,
+    end: start.add({ months: months - 1 }),
+  };
+};
+
+export function useCalendarBase({
+  months,
+  locale,
+  focusedDate: focusedDateProp,
+  setFocusedDate,
+}: CalendarBaseOptions) {
   const [min] = useDateProp("min");
   const [max] = useDateProp("max");
   const dispatchFocusDay = useEvent<Date>("focusday");
   const dispatch = useEvent("change");
 
-  const [dateWindow, setDateWindow] = useState(() => {
-    const todaysDate = today();
-    const start =
-      months === 12
-        ? new PlainYearMonth(todaysDate.year, 1)
-        : todaysDate.toPlainYearMonth();
+  const focusedDate = useMemo(
+    () => clamp(focusedDateProp ?? today(), min, max),
+    [focusedDateProp, min, max]
+  );
 
-    return new DateWindow(start, { months }, todaysDate);
-  });
+  const [page, setPage] = useState(() =>
+    createPage(focusedDate.toPlainYearMonth(), months)
+  );
 
-  function update(d: DateWindow) {
-    setDateWindow(d);
-    dispatchFocusDay(d.focusedDate.toDate());
-  }
+  const contains = (date: PlainDate) => {
+    const diff = diffInMonths(page.start, date.toPlainYearMonth());
+    return diff >= 0 && diff < months;
+  };
 
-  function setFocusedDate(day: PlainDate) {
-    setDateWindow(dateWindow.adjust(day));
-  }
+  useEffect(() => {
+    let start = page.start;
+
+    // ensure we only move the start date in multiples of `months`
+    if (!contains(focusedDate)) {
+      const diff = diffInMonths(start, focusedDate.toPlainYearMonth());
+      const pages = Math.floor(diff / months);
+      start = start.add({ months: pages * months });
+    }
+
+    setPage(createPage(start, months));
+  }, [focusedDate, months]);
 
   const host = useHost();
   function focus() {
@@ -46,25 +72,31 @@ export function useCalendarBase({ months, locale }: CalendarBaseOptions) {
 
   const format = useDateFormatter(formatOptions, locale);
   const formatVerbose = useDateFormatter(formatVerboseOptions, locale);
-  const canNext = max == null || !dateWindow.contains(max);
-  const canPrevious = min == null || !dateWindow.contains(min);
+  const canNext = max == null || !contains(max);
+  const canPrevious = min == null || !contains(min);
+
+  function goto(date: PlainDate) {
+    setFocusedDate(date);
+    dispatchFocusDay(date.toDate());
+  }
 
   return {
     format,
     formatVerbose,
-    dateWindow,
+    page,
+    focusedDate,
     dispatch,
     handleFocus(e: CustomEvent<PlainDate>) {
       e.stopPropagation();
-      setFocusedDate(e.detail);
-      dispatchFocusDay(e.detail.toDate());
+      goto(e.detail);
       setTimeout(focus);
     },
-    setFocusedDate,
     min,
     max,
-    next: canNext ? () => update(dateWindow.next()) : undefined,
-    previous: canPrevious ? () => update(dateWindow.prev()) : undefined,
+    next: canNext ? () => goto(focusedDate.add({ months })) : undefined,
+    previous: canPrevious
+      ? () => goto(focusedDate.subtract({ months }))
+      : undefined,
     focus,
   };
 }
