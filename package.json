@@ -1,6 +1,6 @@
 {
   "name": "cally",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "small, feature-rich calendar components",
   "license": "MIT",
   "type": "module",
