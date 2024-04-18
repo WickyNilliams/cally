@@ -10,6 +10,8 @@ export const reset = css`
   button {
     padding: 0;
     touch-action: manipulation;
+    cursor: pointer;
+    user-select: none;
   }
 `;
 

@@ -21,36 +21,44 @@ interface CalendarBaseProps {
 interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
 interface CalendarDateProps extends CalendarBaseProps, CalendarDateContext {}
 
+function Button(props: {
+  name: string;
+  onclick: (() => void) | undefined;
+  children?: unknown;
+}) {
+  return (
+    <button
+      part={`button ${props.name} ${!props.onclick ? "disabled" : ""}`}
+      onclick={props.onclick}
+      aria-disabled={!props.onclick ? "true" : null}
+    >
+      <slot name={props.name}>{props.children}</slot>
+    </button>
+  );
+}
+
 export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
   const start = toDate(props.page.start);
   const end = toDate(props.page.end);
 
   return (
-    <div role="group" aria-labelledby="label" part="container">
-      <div id="label" class="vh" aria-live="polite" aria-atomic="true">
+    <div role="group" aria-labelledby="h" part="container">
+      <div id="h" class="vh" aria-live="polite" aria-atomic="true">
         {props.formatVerbose.formatRange(start, end)}
       </div>
 
-      <div class="header" part="header">
-        <button
-          part={`button previous ${props.previous ? "" : "disabled"}`}
-          onclick={props.previous}
-          aria-disabled={props.previous ? null : "true"}
-        >
-          <slot name="previous">Previous</slot>
-        </button>
+      <div part="header">
+        <Button name="previous" onclick={props.previous}>
+          Previous
+        </Button>
 
-        <div id="heading" part="heading" aria-hidden="true">
+        <div part="heading" aria-hidden="true">
           {props.format.formatRange(start, end)}
         </div>
 
-        <button
-          part={`button next ${props.next ? "" : "disabled"}`}
-          onclick={props.next}
-          aria-disabled={props.next ? null : "true"}
-        >
-          <slot name="next">Next</slot>
-        </button>
+        <Button name="next" onclick={props.next}>
+          Next
+        </Button>
       </div>
 
       <CalendarMonthContext
@@ -88,7 +96,7 @@ export const props = {
   },
   showOutsideDays: {
     type: Boolean,
-    value: (): boolean => false,
+    value: false,
   },
   locale: {
     type: String,
@@ -119,20 +127,18 @@ export const styles = [
       gap: 1em;
     }
 
-    .header {
+    :host::part(header) {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    #heading {
+    :host::part(heading) {
       font-weight: bold;
       font-size: 1.25em;
     }
 
     button {
-      cursor: pointer;
-      user-select: none;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -140,7 +146,7 @@ export const styles = [
 
     button[aria-disabled] {
       cursor: default;
-      opacity: 0.4;
+      opacity: 0.5;
     }
   `,
 ];

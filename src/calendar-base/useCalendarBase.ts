@@ -70,15 +70,13 @@ export function useCalendarBase({
       .forEach((m) => m.focus());
   }
 
-  const format = useDateFormatter(formatOptions, locale);
-  const formatVerbose = useDateFormatter(formatVerboseOptions, locale);
-  const canNext = max == null || !contains(max);
-  const canPrevious = min == null || !contains(min);
-
   function goto(date: PlainDate) {
     setFocusedDate(date);
     dispatchFocusDay(toDate(date));
   }
+
+  const format = useDateFormatter(formatOptions, locale);
+  const formatVerbose = useDateFormatter(formatVerboseOptions, locale);
 
   return {
     format,
@@ -86,17 +84,21 @@ export function useCalendarBase({
     page,
     focusedDate,
     dispatch,
-    handleFocus(e: CustomEvent<PlainDate>) {
+    onFocus(e: CustomEvent<PlainDate>) {
       e.stopPropagation();
       goto(e.detail);
       setTimeout(focus);
     },
     min,
     max,
-    next: canNext ? () => goto(focusedDate.add({ months })) : undefined,
-    previous: canPrevious
-      ? () => goto(focusedDate.subtract({ months }))
-      : undefined,
+    next:
+      max == null || !contains(max)
+        ? () => goto(focusedDate.add({ months }))
+        : undefined,
+    previous:
+      min == null || !contains(min)
+        ? () => goto(focusedDate.add({ months: -months }))
+        : undefined,
     focus,
   };
 }
