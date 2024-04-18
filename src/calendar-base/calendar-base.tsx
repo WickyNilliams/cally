@@ -5,7 +5,7 @@ import {
   type CalendarRangeContext,
 } from "../calendar-month/CalendarMonthContext.js";
 import { reset, vh } from "../utils/styles.js";
-import { type DaysOfWeek } from "../utils/date.js";
+import { toDate, type DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 
 interface CalendarBaseProps {
@@ -22,8 +22,8 @@ interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
 interface CalendarDateProps extends CalendarBaseProps, CalendarDateContext {}
 
 export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
-  const start = props.page.start.toDate();
-  const end = props.page.end.toDate();
+  const start = toDate(props.page.start);
+  const end = toDate(props.page.end);
 
   return (
     <div role="group" aria-labelledby="label" part="container">

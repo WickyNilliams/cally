@@ -18,7 +18,7 @@ import {
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { CalendarDate } from "./calendar-date.js";
 import { PlainYearMonth } from "../utils/temporal.js";
-import { today } from "../utils/date.js";
+import { today, toDate } from "../utils/date.js";
 
 type TestProps = {
   onchange: (e: Event) => void;
@@ -65,7 +65,7 @@ describe("CalendarDate", () => {
       const group = calendar.shadowRoot!.querySelector("[role='group']");
       expect(group).to.have.attribute("aria-labelledby");
 
-      const yearMonth = new PlainYearMonth(2020, 1).toDate();
+      const yearMonth = toDate(new PlainYearMonth(2020, 1));
       const formatter = new Intl.DateTimeFormat("en-GB", {
         month: "long",
         year: "numeric",
@@ -92,7 +92,7 @@ describe("CalendarDate", () => {
 
       const heading = getCalendarHeading(calendar);
       expect(heading).to.have.text(
-        formatter.formatRange(start.toDate(), end.toDate())
+        formatter.formatRange(toDate(start), toDate(end))
       );
     });
   });
@@ -368,7 +368,7 @@ describe("CalendarDate", () => {
 
     it("defaults to today if no value set", async () => {
       const calendar = await mount(<Fixture />);
-      const todaysDate = today().toDate();
+      const todaysDate = toDate(today());
       const month = getMonth(calendar);
 
       const heading = getMonthHeading(month);

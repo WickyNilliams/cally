@@ -6,6 +6,7 @@ import {
   getViewOfMonth,
   inRange,
   startOfWeek,
+  toDate,
   today,
 } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
@@ -112,7 +113,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     const isInMonth = yearMonth.equals(date);
     const isFocusedDay = date.equals(focusedDate);
     const isToday = date.equals(todaysDate);
-    const asDate = date.toDate();
+    const asDate = toDate(date);
     const isDisallowed = isDateDisallowed?.(asDate);
     const isDisabled = !inRange(date, min, max);
 

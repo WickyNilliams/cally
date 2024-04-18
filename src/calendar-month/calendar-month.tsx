@@ -2,6 +2,7 @@ import { c, css, useContext, useRef, type Host } from "atomico";
 import { reset, vh } from "../utils/styles.js";
 import { useCalendarMonth } from "./useCalendarMonth.js";
 import { CalendarMonthContext } from "./CalendarMonthContext.js";
+import { toDate } from "../utils/date.js";
 
 export const CalendarMonth = c(
   (
@@ -22,7 +23,7 @@ export const CalendarMonth = c(
     return (
       <host shadowDom focus={focus}>
         <div id="heading" part="heading">
-          {calendar.monthFormatter.format(calendar.yearMonth.toDate())}
+          {calendar.monthFormatter.format(toDate(calendar.yearMonth))}
         </div>
 
         <table ref={table} aria-labelledby="heading" part="table">

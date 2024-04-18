@@ -10,7 +10,7 @@ export function startOfWeek(
   date: PlainDate,
   firstDayOfWeek: DaysOfWeek = 0
 ): PlainDate {
-  const d = date.toDate();
+  const d = toDate(date);
   const day = d.getUTCDay();
   const diff = (day < firstDayOfWeek ? 7 : 0) + day - firstDayOfWeek;
 
@@ -29,13 +29,15 @@ export function endOfMonth(date: { year: number; month: number }): PlainDate {
   return PlainDate.from(new Date(Date.UTC(date.year, date.month, 0)));
 }
 
-interface ToDate {
-  toDate(): Date;
+interface DateLike {
+  year: number;
+  month: number;
+  day?: number;
 }
 
-export function compare(a: ToDate, b: ToDate) {
-  const aDate = a.toDate();
-  const bDate = b.toDate();
+export function compare(a: DateLike, b: DateLike) {
+  const aDate = toDate(a);
+  const bDate = toDate(b);
 
   if (aDate < bDate) return -1;
   if (aDate > bDate) return 1;
@@ -110,4 +112,8 @@ export function getViewOfMonth(
   const end = endOfWeek(endOfMonth(yearMonth), firstDayOfWeek);
 
   return chunk(getDaysInRange(start, end), 7);
+}
+
+export function toDate(date: DateLike): Date {
+  return new Date(Date.UTC(date.year, date.month - 1, date.day ?? 1));
 }

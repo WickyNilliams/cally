@@ -1,7 +1,7 @@
 import { useState, useEvent, useHost, useEffect, useMemo } from "atomico";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { useDateProp, useDateFormatter } from "../utils/hooks.js";
-import { clamp, today } from "../utils/date.js";
+import { clamp, toDate, today } from "../utils/date.js";
 
 type CalendarBaseOptions = {
   months: number;
@@ -77,7 +77,7 @@ export function useCalendarBase({
 
   function goto(date: PlainDate) {
     setFocusedDate(date);
-    dispatchFocusDay(date.toDate());
+    dispatchFocusDay(toDate(date));
   }
 
   return {

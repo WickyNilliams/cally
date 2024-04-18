@@ -3,6 +3,7 @@ import { PlainDate } from "../utils/temporal.js";
 import { useDateProp, useDateRangeProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
+import { toDate } from "../utils/date.js";
 
 type Tentative = { first: PlainDate; second: PlainDate };
 
@@ -51,11 +52,11 @@ export const CalendarRange = c(
 
       if (!tentative) {
         setTentative({ first: detail, second: detail });
-        dispatchStart(detail.toDate());
+        dispatchStart(toDate(detail));
       } else {
         setValue(sort(tentative.first, detail));
         setTentative(undefined);
-        dispatchEnd(detail.toDate());
+        dispatchEnd(toDate(detail));
         calendar.dispatch();
       }
     }
