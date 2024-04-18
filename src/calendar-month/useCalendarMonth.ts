@@ -6,6 +6,7 @@ import {
   getViewOfMonth,
   inRange,
   startOfWeek,
+  toDate,
   today,
 } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
@@ -38,8 +39,15 @@ type UseCalendarMonthOptions = {
 
 export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   const { offset } = props;
-  const { firstDayOfWeek, isDateDisallowed, min, max, dateWindow, locale } =
-    context;
+  const {
+    firstDayOfWeek,
+    isDateDisallowed,
+    min,
+    max,
+    page,
+    locale,
+    focusedDate,
+  } = context;
 
   const todaysDate = today();
   const dayNamesLong = useDayNames(longDayOptions, firstDayOfWeek, locale);
@@ -47,10 +55,9 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   const dayFormatter = useDateFormatter(dayOptions, locale);
   const monthFormatter = useDateFormatter(monthOptions, locale);
 
-  const { focusedDate } = dateWindow;
   const yearMonth = useMemo(
-    () => dateWindow.start.add({ months: offset }),
-    [dateWindow, offset]
+    () => page.start.add({ months: offset }),
+    [page, offset]
   );
 
   const weeks = useMemo(
@@ -106,7 +113,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     const isInMonth = yearMonth.equals(date);
     const isFocusedDay = date.equals(focusedDate);
     const isToday = date.equals(todaysDate);
-    const asDate = date.toDate();
+    const asDate = toDate(date);
     const isDisallowed = isDateDisallowed?.(asDate);
     const isDisabled = !inRange(date, min, max);
 

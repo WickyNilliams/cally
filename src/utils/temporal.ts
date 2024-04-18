@@ -1,4 +1,4 @@
-import { endOfMonth, clamp, compare } from "./date.js";
+import { endOfMonth, clamp, compare, toDate } from "./date.js";
 
 type Duration = { months: number } | { years: number } | { days: number };
 type CompareResult = -1 | 0 | 1;
@@ -27,7 +27,7 @@ function setYear(plainDate: PlainDate, year: number): PlainDate {
   const min = new PlainDate(year, plainDate.month, 1);
   const max = endOfMonth(min);
 
-  const date = plainDate.toDate();
+  const date = toDate(plainDate);
   date.setUTCFullYear(year);
 
   return clamp(PlainDate.from(date), min, max);
@@ -39,7 +39,7 @@ function setMonth(plainDate: PlainDate, month: number): PlainDate {
   const min = new PlainDate(plainDate.year, month, 1);
   const max = endOfMonth(min);
 
-  const date = plainDate.toDate();
+  const date = toDate(plainDate);
   date.setUTCMonth(month - 1);
 
   return clamp(PlainDate.from(date), min, max);
@@ -84,10 +84,6 @@ export class PlainDate {
 
   toString(): string {
     return `${padZero(this.year, 4)}-${padZero(this.month, 2)}-${padZero(this.day, 2)}`;
-  }
-
-  toDate(): Date {
-    return new Date(Date.UTC(this.year, this.month - 1, this.day, 0, 0, 0));
   }
 
   toPlainYearMonth() {
@@ -138,16 +134,6 @@ export class PlainDate {
 
 type YearMonthDuration = { months?: number; years?: number };
 
-function durationToMonths(duration: YearMonthDuration): number {
-  return (duration.months ?? 0) + (duration.years ?? 0) * 12;
-}
-
-function addMonths(yearMonth: PlainYearMonth, months: number): PlainYearMonth {
-  const date = yearMonth.toDate();
-  date.setUTCMonth(date.getUTCMonth() + months);
-  return new PlainYearMonth(date.getUTCFullYear(), date.getUTCMonth() + 1);
-}
-
 export class PlainYearMonth {
   constructor(
     public readonly year: number,
@@ -155,15 +141,11 @@ export class PlainYearMonth {
   ) {}
 
   add(duration: YearMonthDuration) {
-    return addMonths(this, durationToMonths(duration));
-  }
+    const date = toDate(this);
+    const months = (duration.months ?? 0) + (duration.years ?? 0) * 12;
+    date.setUTCMonth(date.getUTCMonth() + months);
 
-  subtract(duration: YearMonthDuration) {
-    return addMonths(this, -durationToMonths(duration));
-  }
-
-  toDate() {
-    return new Date(Date.UTC(this.year, this.month - 1, 1));
+    return new PlainYearMonth(date.getUTCFullYear(), date.getUTCMonth() + 1);
   }
 
   equals(date: { year: number; month: number }) {
@@ -172,17 +154,5 @@ export class PlainYearMonth {
 
   toPlainDate() {
     return new PlainDate(this.year, this.month, 1);
-  }
-
-  static compare(
-    one: PlainYearMonth | PlainDate,
-    two: PlainYearMonth | PlainDate
-  ): CompareResult {
-    const oneYearMonth =
-      one instanceof PlainDate ? one.toPlainYearMonth() : one;
-    const twoYearMonth =
-      two instanceof PlainDate ? two.toPlainYearMonth() : two;
-
-    return compare(oneYearMonth, twoYearMonth);
   }
 }
