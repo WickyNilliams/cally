@@ -1,7 +1,14 @@
-import { expect } from "@open-wc/testing";
+import { expect, nextFrame } from "@open-wc/testing";
 import { sendKeys } from "@web/test-runner-commands";
 import type { VNodeAny } from "atomico/types/vnode.js";
-import { clickDay, createSpy, getGrid, getMonth } from "../utils/test.js";
+import {
+  clickDay,
+  createSpy,
+  getGrid,
+  getMonthHeading,
+  getMonth,
+  getDayButton,
+} from "../utils/test.js";
 import {
   CalendarMonthContext,
   type CalendarDateContext,
@@ -60,9 +67,7 @@ function Fixture({
 export async function mount(node: VNodeAny) {
   const context = fixture<MonthContextInstance>(node);
   const month = getMonth(context);
-
-  await context.updated;
-  await month.updated;
+  await nextFrame();
 
   return month;
 }
@@ -77,11 +82,9 @@ describe("CalendarMonth", () => {
     describe("grid", () => {
       it("is labelled", async () => {
         const month = await mount(<Fixture />);
-        const grid = getGrid(month);
 
         // has accessible label
-        const labelledById = grid.getAttribute("aria-labelledby");
-        const title = month.shadowRoot!.getElementById(labelledById!);
+        const title = getMonthHeading(month);
         expect(title).not.to.eq(undefined);
       });
 
@@ -461,6 +464,43 @@ describe("CalendarMonth", () => {
       await clickDay(month, "30 January");
       expect(spy.count).to.eq(1);
       expect(spy.last[0].detail.toString()).to.eq("2020-01-30");
+    });
+  });
+
+  describe("localization", async () => {
+    it("localizes days and months", async () => {
+      const month = await mount(
+        <Fixture focusedDate={PlainDate.from("2020-01-15")} locale="fr-FR" />
+      );
+      const grid = getGrid(month);
+
+      const accessibleHeadings = grid.querySelectorAll(
+        "th span:not([aria-hidden])"
+      );
+      expect(accessibleHeadings[0]).to.have.trimmed.text("lundi");
+      expect(accessibleHeadings[1]).to.have.trimmed.text("mardi");
+      expect(accessibleHeadings[2]).to.have.trimmed.text("mercredi");
+      expect(accessibleHeadings[3]).to.have.trimmed.text("jeudi");
+      expect(accessibleHeadings[4]).to.have.trimmed.text("vendredi");
+      expect(accessibleHeadings[5]).to.have.trimmed.text("samedi");
+      expect(accessibleHeadings[6]).to.have.trimmed.text("dimanche");
+
+      const visualHeadings = grid.querySelectorAll(
+        "th span[aria-hidden='true']"
+      );
+      expect(visualHeadings[0]).to.have.trimmed.text("L");
+      expect(visualHeadings[1]).to.have.trimmed.text("M");
+      expect(visualHeadings[2]).to.have.trimmed.text("M");
+      expect(visualHeadings[3]).to.have.trimmed.text("J");
+      expect(visualHeadings[4]).to.have.trimmed.text("V");
+      expect(visualHeadings[5]).to.have.trimmed.text("S");
+      expect(visualHeadings[6]).to.have.trimmed.text("D");
+
+      const title = getMonthHeading(month);
+      expect(title).to.have.trimmed.text("janvier");
+
+      const button = getDayButton(month, "15 janvier");
+      expect(button).to.exist;
     });
   });
 });
