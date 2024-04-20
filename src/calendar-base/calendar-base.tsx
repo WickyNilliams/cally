@@ -2,6 +2,7 @@ import { css } from "atomico";
 import {
   CalendarMonthContext,
   type CalendarDateContext,
+  type CalendarMultiContext,
   type CalendarRangeContext,
 } from "../calendar-month/CalendarMonthContext.js";
 import { reset, vh } from "../utils/styles.js";
@@ -20,6 +21,7 @@ interface CalendarBaseProps {
 
 interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
 interface CalendarDateProps extends CalendarBaseProps, CalendarDateContext {}
+interface CalendarMultiProps extends CalendarBaseProps, CalendarMultiContext {}
 
 function Button(props: {
   name: string;
@@ -37,7 +39,9 @@ function Button(props: {
   );
 }
 
-export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
+export function CalendarBase(
+  props: CalendarDateProps | CalendarRangeProps | CalendarMultiProps
+) {
   const start = toDate(props.page.start);
   const end = toDate(props.page.end);
 

@@ -1,7 +1,9 @@
 import { CalendarMonth } from "./calendar-month/calendar-month";
 import { CalendarDate } from "./calendar-date/calendar-date";
 import { CalendarRange } from "./calendar-range/calendar-range";
-export { CalendarMonth, CalendarDate, CalendarRange };
+import { CalendarMulti } from "./calendar-multi/calendar-multi";
+
+export { CalendarMonth, CalendarDate, CalendarRange, CalendarMulti };
 
 import type { AtomicoThis } from "atomico/types/dom.js";
 
@@ -17,3 +19,4 @@ type ComponentProps<T extends abstract new (...args: any) => any> = Simplify<
 export type CalendarMonthProps = ComponentProps<typeof CalendarMonth>;
 export type CalendarDateProps = ComponentProps<typeof CalendarDate>;
 export type CalendarRangeProps = ComponentProps<typeof CalendarRange>;
+export type CalendarMultiProps = ComponentProps<typeof CalendarMulti>;

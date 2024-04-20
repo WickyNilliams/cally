@@ -22,28 +22,42 @@ export function useDateProp(prop: string) {
   return [date, setDate] as const;
 }
 
-function parseISORange(value?: string): [PlainDate, PlainDate] | [] {
-  if (value) {
+export function useDateRangeProp(prop: string) {
+  const [value = "", setValue] = useProp<string>(prop);
+
+  const range = useMemo(() => {
     const [s, e] = value.split("/");
     const start = safeFrom(PlainDate, s);
     const end = safeFrom(PlainDate, e);
-
-    if (start && end) {
-      return [start, end];
-    }
-  }
-
-  return [];
-}
-
-export function useDateRangeProp(prop: string) {
-  const [value, setValue] = useProp<string>(prop);
-  const range = useMemo(() => parseISORange(value), [value]);
+    return start && end ? [start, end] : [];
+  }, [value]);
 
   const setRange = (range: [PlainDate, PlainDate]) =>
     setValue(`${range[0]}/${range[1]}`);
 
   return [range, setRange] as const;
+}
+
+export function useDateMultiProp(prop: string) {
+  const [value = "", setValue] = useProp<string>(prop);
+
+  const multi = useMemo(() => {
+    const result = [];
+
+    for (const date of value.trim().split(/\s+/)) {
+      const parsed = safeFrom(PlainDate, date);
+
+      if (parsed) {
+        result.push(parsed);
+      }
+    }
+
+    return result;
+  }, [value]);
+
+  const setMulti = (dates: PlainDate[]) => setValue(dates.join(" "));
+
+  return [multi, setMulti] as const;
 }
 
 type DateFormatOptions = Pick<

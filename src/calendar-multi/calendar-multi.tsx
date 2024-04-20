@@ -1,18 +1,18 @@
 import { c, type Host } from "atomico";
-import type { PlainDate } from "../utils/temporal.js";
-import { useDateProp } from "../utils/hooks.js";
+import { PlainDate } from "../utils/temporal.js";
+import { useDateMultiProp, useDateProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
 
-export const CalendarDate = c(
+export const CalendarMulti = c(
   (
     props
   ): Host<{
     onChange: Event;
     onFocusDay: CustomEvent<Date>;
   }> => {
-    const [value, setValue] = useDateProp("value");
-    const [focusedDate = value, setFocusedDate] = useDateProp("focusedDate");
+    const [value, setValue] = useDateMultiProp("value");
+    const [focusedDate = value[0], setFocusedDate] = useDateProp("focusedDate");
     const calendar = useCalendarBase({
       ...props,
       focusedDate,
@@ -20,7 +20,12 @@ export const CalendarDate = c(
     });
 
     function handleSelect(e: CustomEvent<PlainDate>) {
-      setValue(e.detail);
+      const newValues = [...value];
+
+      const idx = value.findIndex((date) => date.equals(e.detail));
+      idx < 0 ? newValues.push(e.detail) : newValues.splice(idx, 1);
+
+      setValue(newValues);
       calendar.dispatch();
     }
 
@@ -29,7 +34,7 @@ export const CalendarDate = c(
         <CalendarBase
           {...props}
           {...calendar}
-          type="date"
+          type="multi"
           value={value}
           onSelect={handleSelect}
         />
@@ -40,4 +45,4 @@ export const CalendarDate = c(
   { props, styles }
 );
 
-customElements.define("calendar-date", CalendarDate);
+customElements.define("calendar-multi", CalendarMulti);
