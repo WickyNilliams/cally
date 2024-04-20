@@ -26,6 +26,7 @@ interface TestPropsBase {
   onfocusday: (e: CustomEvent<PlainDate>) => void;
   focusedDate: PlainDate;
   dir: "ltr" | "rtl";
+  showOutsideDays?: boolean;
 }
 
 interface DateTestProps extends TestPropsBase, CalendarDateContext {}
@@ -462,6 +463,18 @@ describe("CalendarMonth", () => {
       expect(spy.count).to.eq(1);
       expect(spy.last[0].detail.toString()).to.eq("2020-01-30");
     });
+  });
+
+  it("can show outside days", async () => {
+    const month = await mount(
+      <Fixture focusedDate={PlainDate.from("2020-04-01")} showOutsideDays />
+    );
+
+    const outsideMarch = getDayButton(month, "30 March");
+    const outsideMay = getDayButton(month, "3 May");
+
+    expect(outsideMarch.part.contains("outside")).to.eq(true);
+    expect(outsideMay.part.contains("outside")).to.eq(true);
   });
 
   describe("localization", async () => {
