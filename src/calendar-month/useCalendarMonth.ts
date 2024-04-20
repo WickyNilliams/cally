@@ -138,7 +138,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     }
 
     return {
-      part: `button day ${isInMonth && isSelected ? "selected" : ""} ${parts}`,
+      part: `button day ${isInMonth ? (isSelected ? "selected" : "") : "outside"} ${parts}`,
       tabindex: isInMonth && isFocusedDay ? 0 : -1,
       disabled: isDisabled,
       "aria-disabled": isDisallowed ? "true" : undefined,
