@@ -124,6 +124,14 @@ export function getNextPageButton(calendar: CalendarInstance) {
   )!;
 }
 
+export function getSelectedDays(month: MonthInstance) {
+  return [
+    ...month.shadowRoot!.querySelectorAll<HTMLButtonElement>(
+      `button[aria-pressed="true"]`
+    ),
+  ];
+}
+
 export function getDayButton(month: MonthInstance, dateLabel: string) {
   const grid = getGrid(month);
 

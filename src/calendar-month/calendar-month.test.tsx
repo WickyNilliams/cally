@@ -8,6 +8,7 @@ import {
   getMonthHeading,
   getMonth,
   getDayButton,
+  getSelectedDays,
 } from "../utils/test.js";
 import {
   CalendarMonthContext,
@@ -76,6 +77,64 @@ describe("CalendarMonth", () => {
     expect(calendar).to.be.instanceOf(CalendarMonth);
   });
 
+  describe("value types", () => {
+    describe("range", () => {
+      it("handles an empty value", async () => {
+        const month = await mount(
+          <Fixture
+            highlightedRange={[]}
+            focusedDate={PlainDate.from("2024-01-01")}
+          />
+        );
+
+        const selected = getSelectedDays(month);
+        expect(selected.length).to.eq(0);
+      });
+
+      it("marks a range as selected", async () => {
+        const month = await mount(
+          <Fixture
+            focusedDate={PlainDate.from("2020-01-01")}
+            highlightedRange={[
+              PlainDate.from("2020-01-01"),
+              PlainDate.from("2020-01-03"),
+            ]}
+          />
+        );
+
+        const selected = getSelectedDays(month);
+        expect(selected.length).to.eq(3);
+        expect(selected[0]).to.have.attribute("aria-label", "1 January");
+        expect(selected[1]).to.have.attribute("aria-label", "2 January");
+        expect(selected[2]).to.have.attribute("aria-label", "3 January");
+      });
+    });
+
+    describe("single date", () => {
+      it("handles an empty value", async () => {
+        const month = await mount(
+          <Fixture focusedDate={PlainDate.from("2024-01-01")} />
+        );
+
+        const selected = getSelectedDays(month);
+        expect(selected.length).to.eq(0);
+      });
+
+      it("marks a single date as selected", async () => {
+        const month = await mount(
+          <Fixture
+            focusedDate={PlainDate.from("2020-01-01")}
+            value={PlainDate.from("2020-01-01")}
+          />
+        );
+
+        const selected = getSelectedDays(month);
+        expect(selected.length).to.eq(1);
+        expect(selected[0]).to.have.attribute("aria-label", "1 January");
+      });
+    });
+  });
+
   describe("a11y/ARIA requirements", () => {
     describe("grid", () => {
       it("is labelled", async () => {
@@ -96,9 +155,7 @@ describe("CalendarMonth", () => {
         const grid = getGrid(month);
 
         // should be single selected element
-        const selected = grid.querySelectorAll<HTMLButtonElement>(
-          `[aria-pressed="true"]`
-        );
+        const selected = getSelectedDays(month);
 
         expect(selected.length).to.eq(1);
         expect(selected[0]).to.have.trimmed.text("2");
@@ -124,8 +181,6 @@ describe("CalendarMonth", () => {
         expect(focusable[0]).to.have.trimmed.text("1");
         expect(focusable[0]).to.have.attribute("aria-label", "1 January");
       });
-
-      it("correctly abbreviates the shortened day names");
     });
   });
 
