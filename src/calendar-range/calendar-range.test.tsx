@@ -10,6 +10,7 @@ import {
   getMonthHeading,
   getNextPageButton,
   getPrevPageButton,
+  getSelectedDays,
   mount,
 } from "../utils/test.js";
 
@@ -24,6 +25,7 @@ type TestProps = {
   value: string;
   min: string;
   max: string;
+  focusedDate?: string;
   months?: number;
   children?: VNodeAny;
 };

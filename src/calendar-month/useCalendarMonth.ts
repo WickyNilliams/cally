@@ -121,7 +121,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       const [start, end] = context.highlightedRange;
       const isRangeStart = start?.equals(date);
       const isRangeEnd = end?.equals(date);
-      isSelected = inRange(date, start, end);
+      isSelected = start && end && inRange(date, start, end);
 
       // prettier-ignore
       parts = `${
