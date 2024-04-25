@@ -137,8 +137,18 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       isSelected = context.value?.equals(date);
     }
 
+    // prettier-ignore
+    const commonParts = `button day ${
+      // we don't want outside days to ever be shown as selected
+      isInMonth ? (isSelected ? "selected" : "") : "outside"
+    } ${
+      isDisallowed ? "disallowed" : ""
+    } ${
+      isToday ? "today" : ""
+    }`;
+
     return {
-      part: `button day ${isInMonth ? (isSelected ? "selected" : "") : "outside"} ${parts}`,
+      part: `${commonParts} ${parts}`,
       tabindex: isInMonth && isFocusedDay ? 0 : -1,
       disabled: isDisabled,
       "aria-disabled": isDisallowed ? "true" : undefined,

@@ -9,6 +9,7 @@ import {
   getMonth,
   getDayButton,
   getSelectedDays,
+  click,
 } from "../utils/test.js";
 import {
   CalendarMonthContext,
@@ -207,8 +208,10 @@ describe("CalendarMonth", () => {
         />
       );
 
-      await clickDay(calendar, "4 January");
+      const day = getDayButton(calendar, "4 January")!;
+      expect(day.part.contains("disallowed")).to.eq(true);
 
+      await click(day);
       expect(spy.called).to.eq(false);
     });
   });
