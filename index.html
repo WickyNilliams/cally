@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cally dev</title>
 
-    <script async type="module" src="./src/index.ts"></script>
-
     <style>
       * {
         box-sizing: border-box;
@@ -88,7 +86,9 @@
       </div>
     </calendar-date>
 
-    <script>
+    <script type="module">
+      import "./src/index.ts";
+
       const output = document.getElementById("output");
       const formatter = new Intl.DateTimeFormat("en", {
         year: "numeric",
@@ -96,9 +96,7 @@
         day: "numeric",
       });
 
-      function toIso(date) {
-        return date.toISOString().split("T")[0];
-      }
+      const toIso = (date) => date.toISOString().split("T")[0];
 
       if (window.range) {
         let start = null;
@@ -116,6 +114,9 @@
       }
 
       if (window.date) {
+        date.isDateDisallowed = (date) =>
+          date.getDay() === 0 || date.getDay() === 6;
+
         yearSelect.value = new Date(
           date.getAttribute("value")
         ).getUTCFullYear();

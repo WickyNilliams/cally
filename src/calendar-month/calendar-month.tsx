@@ -105,7 +105,7 @@ export const CalendarMonth = c(
           inline-size: 2.25rem;
         }
 
-        button:hover:where(:not(:disabled)) {
+        button:hover:where(:not(:disabled, [aria-disabled])) {
           background: #0000000d;
         }
 
