@@ -19,7 +19,7 @@ import {
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { fixture } from "atomico/test-dom";
 import { PlainDate } from "../utils/temporal.js";
-import { today } from "../utils/date.js";
+import { toDate, today } from "../utils/date.js";
 
 type MonthContextInstance = InstanceType<typeof CalendarMonthContext>;
 
@@ -105,9 +105,18 @@ describe("CalendarMonth", () => {
 
         const selected = getSelectedDays(month);
         expect(selected.length).to.eq(3);
+
         expect(selected[0]).to.have.attribute("aria-label", "1 January");
+        expect(selected[0]!.part.contains("selected")).to.eq(true);
+        expect(selected[0]!.part.contains("range-start"));
+
         expect(selected[1]).to.have.attribute("aria-label", "2 January");
+        expect(selected[1]!.part.contains("selected")).to.eq(true);
+        expect(selected[1]!.part.contains("range-inner"));
+
         expect(selected[2]).to.have.attribute("aria-label", "3 January");
+        expect(selected[2]!.part.contains("selected")).to.eq(true);
+        expect(selected[2]!.part.contains("range-end"));
       });
     });
 
@@ -132,6 +141,7 @@ describe("CalendarMonth", () => {
         const selected = getSelectedDays(month);
         expect(selected.length).to.eq(1);
         expect(selected[0]).to.have.attribute("aria-label", "1 January");
+        expect(selected[0]!.part.contains("selected")).to.eq(true);
       });
     });
   });
@@ -146,21 +156,17 @@ describe("CalendarMonth", () => {
         expect(title).not.to.eq(undefined);
       });
 
-      it("marks selected day as pressed", async () => {
-        const month = await mount(
-          <Fixture
-            focusedDate={PlainDate.from("2020-01-01")}
-            value={PlainDate.from("2020-01-02")}
-          />
-        );
-        const grid = getGrid(month);
+      it("marks today", async () => {
+        const month = await mount(<Fixture />);
 
-        // should be single selected element
-        const selected = getSelectedDays(month);
+        const todaysDate = toDate(today()).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+        });
+        const button = getDayButton(month, todaysDate)!;
 
-        expect(selected.length).to.eq(1);
-        expect(selected[0]).to.have.trimmed.text("2");
-        expect(selected[0]).to.have.attribute("aria-label", "2 January");
+        expect(button.part.contains("today")).to.eq(true);
+        expect(button).to.have.attribute("aria-current", "date");
       });
 
       it("uses a roving tab index", async () => {
@@ -198,7 +204,7 @@ describe("CalendarMonth", () => {
       expect(spy.last[0].detail.toString()).to.eq("2020-04-19");
     });
 
-    it("cannot select a disabled date", async () => {
+    it("cannot select a disallowed date", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       const calendar = await mount(
         <Fixture
@@ -210,6 +216,7 @@ describe("CalendarMonth", () => {
 
       const day = getDayButton(calendar, "4 January")!;
       expect(day.part.contains("disallowed")).to.eq(true);
+      expect(day).to.have.attribute("aria-disabled", "true");
 
       await click(day);
       expect(spy.called).to.eq(false);
