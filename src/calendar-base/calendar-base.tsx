@@ -52,9 +52,9 @@ export function CalendarBase(props: CalendarDateProps | CalendarRangeProps) {
           Previous
         </Button>
 
-        <div part="heading" aria-hidden="true">
-          {props.format.formatRange(start, end)}
-        </div>
+        <slot part="heading" name="heading">
+          <div aria-hidden="true">{props.format.formatRange(start, end)}</div>
+        </slot>
 
         <Button name="next" onclick={props.next}>
           Next
