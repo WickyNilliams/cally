@@ -12,6 +12,7 @@ import {
   click,
   sendShiftPress,
   getTodayButton,
+  type MonthInstance,
 } from "../utils/test.js";
 import {
   CalendarContext,
@@ -37,6 +38,11 @@ interface RangeTestProps extends TestPropsBase, CalendarRangeContext {}
 interface MultiTestProps extends TestPropsBase, CalendarMultiContext {}
 
 const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
+
+function getWeekNumbers(month: MonthInstance) {
+  const grid = getGrid(month);
+  return grid.querySelectorAll("tbody tr th");
+}
 
 function Fixture({
   onselectday,
@@ -696,6 +702,29 @@ describe("CalendarMonth", () => {
           true,
           `expected part to contain "${part}, got "${day.part}"`
         );
+      }
+    });
+  });
+
+  describe("week numbers", () => {
+    it("supports week numbering", async () => {
+      const month = await mount(
+        <Fixture focusedDate={PlainDate.from("2020-04-01")} showWeekNumbers />
+      );
+
+      const weekNumbers = getWeekNumbers(month);
+
+      // 5 weeks in this month
+      expect(weekNumbers).to.have.length(5);
+
+      // from: https://weeknumber.co.uk/?q=2020-04-01
+      let current = 14;
+      for (const weekNumber of weekNumbers) {
+        expect(weekNumber.part.contains("th")).to.eq(true);
+        expect(weekNumber.part.contains("weeknumber")).to.eq(true);
+        expect(weekNumber).to.have.attribute("scope", "row");
+        expect(weekNumber).to.have.trimmed.text(current.toString());
+        current++;
       }
     });
   });
