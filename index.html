@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cally dev</title>
 
-    <script async type="module" src="./src/index.ts"></script>
-
     <style>
       * {
         box-sizing: border-box;
@@ -25,6 +23,18 @@
       .vh {
         position: absolute;
         transform: scale(0);
+      }
+
+      #date::part(header) {
+        gap: 1em;
+      }
+      #date::part(heading) {
+        flex: 1;
+      }
+
+      #date select {
+        width: 100%;
+        text-align: center;
       }
     </style>
   </head>
@@ -54,19 +64,21 @@
       months="2"
       show-outside-days
     >
-      <label for="yearSelect" class="vh">Year:</label>
-      <select id="yearSelect">
-        <option value="2019">2019</option>
-        <option value="2020" selected>2020</option>
-        <option value="2021">2021</option>
-        <option value="2022">2022</option>
-        <option value="2023">2023</option>
-        <option value="2024">2024</option>
-        <option value="2025">2025</option>
-        <option value="2026">2026</option>
-        <option value="2027">2027</option>
-        <option value="2028">2028</option>
-      </select>
+      <div slot="heading">
+        <label for="yearSelect" class="vh">Year:</label>
+        <select id="yearSelect">
+          <option value="2019">2019</option>
+          <option value="2020" selected>2020</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+        </select>
+      </div>
 
       <div class="grid">
         <calendar-month></calendar-month>
@@ -74,7 +86,9 @@
       </div>
     </calendar-date>
 
-    <script>
+    <script type="module">
+      import "./src/index.ts";
+
       const output = document.getElementById("output");
       const formatter = new Intl.DateTimeFormat("en", {
         year: "numeric",
@@ -82,9 +96,7 @@
         day: "numeric",
       });
 
-      function toIso(date) {
-        return date.toISOString().split("T")[0];
-      }
+      const toIso = (date) => date.toISOString().split("T")[0];
 
       if (window.range) {
         let start = null;
@@ -102,6 +114,9 @@
       }
 
       if (window.date) {
+        date.isDateDisallowed = (date) =>
+          date.getDay() === 0 || date.getDay() === 6;
+
         yearSelect.value = new Date(
           date.getAttribute("value")
         ).getUTCFullYear();
