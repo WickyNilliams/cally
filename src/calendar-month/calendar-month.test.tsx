@@ -14,6 +14,7 @@ import {
 import {
   CalendarMonthContext,
   type CalendarDateContext,
+  type CalendarMultiContext,
   type CalendarRangeContext,
 } from "./CalendarMonthContext.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
@@ -24,15 +25,14 @@ import { toDate, today } from "../utils/date.js";
 type MonthContextInstance = InstanceType<typeof CalendarMonthContext>;
 
 interface TestPropsBase {
-  onselectday: (e: CustomEvent<PlainDate>) => void;
-  onfocusday: (e: CustomEvent<PlainDate>) => void;
-  focusedDate: PlainDate;
-  dir: "ltr" | "rtl";
-  showOutsideDays?: boolean;
+  onselectday?: (e: CustomEvent<PlainDate>) => void;
+  onfocusday?: (e: CustomEvent<PlainDate>) => void;
+  dir?: "rtl" | "ltr";
 }
 
 interface DateTestProps extends TestPropsBase, CalendarDateContext {}
 interface RangeTestProps extends TestPropsBase, CalendarRangeContext {}
+interface MultiTestProps extends TestPropsBase, CalendarMultiContext {}
 
 const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
 
@@ -41,8 +41,9 @@ function Fixture({
   onfocusday,
   focusedDate = today(),
   dir,
+  type = "date",
   ...props
-}: Partial<DateTestProps> | Partial<RangeTestProps>): VNodeAny {
+}: Partial<DateTestProps | RangeTestProps | MultiTestProps>): VNodeAny {
   return (
     <CalendarMonthContext
       onselectday={onselectday}
@@ -56,6 +57,8 @@ function Fixture({
           end: focusedDate.toPlainYearMonth(),
         },
         focusedDate,
+        // @ts-expect-error - not sure why this is a problem
+        type,
         ...props,
       }}
     >
@@ -83,7 +86,8 @@ describe("CalendarMonth", () => {
       it("handles an empty value", async () => {
         const month = await mount(
           <Fixture
-            highlightedRange={[]}
+            type="range"
+            value={[]}
             focusedDate={PlainDate.from("2024-01-01")}
           />
         );
@@ -96,10 +100,8 @@ describe("CalendarMonth", () => {
         const month = await mount(
           <Fixture
             focusedDate={PlainDate.from("2020-01-01")}
-            highlightedRange={[
-              PlainDate.from("2020-01-01"),
-              PlainDate.from("2020-01-03"),
-            ]}
+            type="range"
+            value={[PlainDate.from("2020-01-01"), PlainDate.from("2020-01-03")]}
           />
         );
 
@@ -142,6 +144,41 @@ describe("CalendarMonth", () => {
         expect(selected.length).to.eq(1);
         expect(selected[0]).to.have.attribute("aria-label", "1 January");
         expect(selected[0]!.part.contains("selected")).to.eq(true);
+      });
+    });
+
+    describe("multi date", () => {
+      it("handles an empty value", async () => {
+        const month = await mount(
+          <Fixture
+            type="multi"
+            value={[]}
+            focusedDate={PlainDate.from("2024-01-01")}
+          />
+        );
+
+        const selected = getSelectedDays(month);
+        expect(selected.length).to.eq(0);
+      });
+
+      it("marks multiple dates as selected", async () => {
+        const month = await mount(
+          <Fixture
+            focusedDate={PlainDate.from("2020-01-01")}
+            type="multi"
+            value={[
+              PlainDate.from("2020-01-01"),
+              PlainDate.from("2020-01-02"),
+              PlainDate.from("2020-01-03"),
+            ]}
+          />
+        );
+
+        const selected = getSelectedDays(month);
+        expect(selected.length).to.eq(3);
+        expect(selected[0]).to.have.attribute("aria-label", "1 January");
+        expect(selected[1]).to.have.attribute("aria-label", "2 January");
+        expect(selected[2]).to.have.attribute("aria-label", "3 January");
       });
     });
   });

@@ -86,6 +86,19 @@
       </div>
     </calendar-date>
 
+    <h2>multi</h2>
+    <calendar-multi
+      id="date"
+      months="2"
+      show-outside-days
+      value="2024-05-07 2024-05-09"
+    >
+      <div class="grid">
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
+      </div>
+    </calendar-multi>
+
     <script type="module">
       import "./src/index.ts";
 

@@ -14,20 +14,29 @@ interface CalendarMonthContextBase {
 }
 
 export interface CalendarDateContext extends CalendarMonthContextBase {
+  type: "date";
   value?: PlainDate;
 }
 
 export interface CalendarRangeContext extends CalendarMonthContextBase {
-  highlightedRange: [PlainDate, PlainDate] | [];
+  type: "range";
+  value: [PlainDate, PlainDate] | [];
+}
+
+export interface CalendarMultiContext extends CalendarMonthContextBase {
+  type: "multi";
+  value: PlainDate[];
 }
 
 export type CalendarMonthContextValue =
   | CalendarDateContext
-  | CalendarRangeContext;
+  | CalendarRangeContext
+  | CalendarMultiContext;
 
 const t = today();
 
 export const CalendarMonthContext = createContext<CalendarMonthContextValue>({
+  type: "date",
   firstDayOfWeek: 1,
   isDateDisallowed: () => false,
   focusedDate: t,

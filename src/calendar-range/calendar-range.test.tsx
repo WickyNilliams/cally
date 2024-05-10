@@ -224,14 +224,10 @@ describe("CalendarRange", () => {
     });
   });
 
-  describe("localization", () => {
-    it("localizes all days, months, years");
-  });
-
   describe("grid", () => {
     it("allows arbitrary DOM structure", async () => {
       const calendar = await mount(
-        <Fixture value="2020-01-05/2020-01-10">
+        <Fixture value="2020-01-05/2020-01-07">
           <div>
             <div>
               <div>
@@ -243,7 +239,14 @@ describe("CalendarRange", () => {
       );
 
       const month = getMonth(calendar);
+      const fifth = getDayButton(month, "5 January");
+      const sixth = getDayButton(month, "6 January");
+      const seventh = getDayButton(month, "7 January");
+
       expect(getMonthHeading(month)).to.have.text("January");
+      expect(fifth).to.have.attribute("aria-pressed", "true");
+      expect(sixth).to.have.attribute("aria-pressed", "true");
+      expect(seventh).to.have.attribute("aria-pressed", "true");
     });
   });
 });

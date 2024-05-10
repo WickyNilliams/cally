@@ -60,14 +60,15 @@ export const CalendarRange = c(
       }
     }
 
-    const highlightedRange = tentative ? sort(tentative.a, tentative.b) : value;
+    const range = tentative ? sort(tentative.a, tentative.b) : value;
 
     return (
       <host shadowDom focus={calendar.focus}>
         <CalendarBase
           {...props}
           {...calendar}
-          highlightedRange={highlightedRange}
+          type="range"
+          value={range}
           onFocus={handleFocus}
           onHover={handleHover}
           onSelect={handleSelect}

@@ -103,7 +103,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     const isInMonth = yearMonth.equals(date);
 
     // days outside of month are only shown if `showOutsideDays` is true
-    if (!isInMonth && !context.showOutsideDays) {
+    if (!context.showOutsideDays && !isInMonth) {
       return;
     }
 
@@ -116,9 +116,8 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     let parts = "";
     let isSelected: boolean | undefined;
 
-    // range
-    if ("highlightedRange" in context) {
-      const [start, end] = context.highlightedRange;
+    if (context.type === "range") {
+      const [start, end] = context.value;
       const isRangeStart = start?.equals(date);
       const isRangeEnd = end?.equals(date);
       isSelected = start && end && inRange(date, start, end);
@@ -131,9 +130,9 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       } ${
         isSelected && !isRangeStart && !isRangeEnd ? "range-inner" : ""
       }`;
-    }
-    // date
-    else {
+    } else if (context.type === "multi") {
+      isSelected = context.value.some((d) => d.equals(date));
+    } else {
       isSelected = context.value?.equals(date);
     }
 

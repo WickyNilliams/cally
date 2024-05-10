@@ -7,39 +7,35 @@ import Link from "../../components/Link.astro";
 ---
 
 <ApiLayout
-  heading="<calendar-range>"
+  heading="<calendar-multi>"
   meta={{
-    title: "<calendar-range> API",
+    title: "<calendar-multi> API",
     description:
-      "The calendar-range component is used to select a date range. Find out how to use its properties, methods, events, and styling options.",
+      "The calendar-multi component is used to select multiple individual dates. Find out how to use its properties, methods, events, and styling options.",
   }}
 >
   <p>
     This component, combined with
     <Link href="/components/calendar-month/"
       ><code>{`<calendar-month>`}</code></Link
-    >, is used to select a date range. It shows one or more months at a time.
+    >, is used to select multiple individual dates. It can display one or more
+    months at a time.
   </p>
 
   <Example>
-    <calendar-range
-      value="2024-01-10/2024-01-20"
+    <calendar-multi
+      value="2024-01-10 2024-01-20"
       min="2024-01-01"
       max="2024-12-31"
       locale="en-GB"
     >
       <calendar-month></calendar-month>
-    </calendar-range>
+    </calendar-multi>
   </Example>
 
   <Heading level={2}>Properties and attributes</Heading>
 
-  <p>
-    The <code>value</code> property is expected in ISO-8601 range format (<code
-      >YYYY-MM-DD/YYYY-MM-DD</code
-    >). All other dates are expected in ISO-8601 format (<code>YYYY-MM-DD</code
-    >).
-  </p>
+  <p>All dates are expected in ISO-8601 format (<code>YYYY-MM-DD</code>).</p>
 
   <Table>
     <tr slot="head">
@@ -53,7 +49,7 @@ import Link from "../../components/Link.astro";
     <tr>
       <td><code>value</code></td>
       <td><code>value</code></td>
-      <td>The currently selected range</td>
+      <td>A space-separated list of selected dates</td>
       <td><code>string</code></td>
       <td><code>""</code></td>
     </tr>
@@ -151,16 +147,6 @@ import Link from "../../components/Link.astro";
         Emitted when the currently focused day changes. This can happen via
         keyboard commands, or clicking the next or previous buttons
       </td>
-      <td><code>CustomEvent&lt;Date&gt;</code></td>
-    </tr>
-    <tr>
-      <td><code>rangestart</code></td>
-      <td>Emitted when the user starts selecting a range</td>
-      <td><code>CustomEvent&lt;Date&gt;</code></td>
-    </tr>
-    <tr>
-      <td><code>rangeend</code></td>
-      <td>Emitted when the user finished selections a range</td>
       <td><code>CustomEvent&lt;Date&gt;</code></td>
     </tr>
   </Table>
@@ -274,7 +260,7 @@ import Link from "../../components/Link.astro";
 </ApiLayout>
 
 <style is:global>
-  calendar-range {
+  calendar-multi {
     margin-inline: auto;
   }
 </style>

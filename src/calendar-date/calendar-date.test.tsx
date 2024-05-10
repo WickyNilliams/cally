@@ -477,7 +477,10 @@ describe("CalendarDate", () => {
       );
 
       const month = getMonth(calendar);
+      const firstJan = getDayButton(month, "1 January");
+
       expect(getMonthHeading(month)).to.have.text("January");
+      expect(firstJan).to.have.attribute("aria-pressed", "true");
     });
   });
 });
