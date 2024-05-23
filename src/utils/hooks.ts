@@ -88,9 +88,9 @@ export function useDayNames(
     const day = new Date();
 
     for (var i = 0; i < 7; i++) {
-      const index = (day.getDay() - firstDayOfWeek + 7) % 7;
+      const index = (day.getUTCDay() - firstDayOfWeek + 7) % 7;
       days[index] = formatter.format(day);
-      day.setDate(day.getDate() + 1);
+      day.setUTCDate(day.getUTCDate() + 1);
     }
 
     return days;
