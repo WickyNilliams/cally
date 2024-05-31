@@ -25,6 +25,7 @@ type TestProps = {
   value: string;
   min: string;
   max: string;
+  tentative?: string;
   focusedDate?: string;
   months?: number;
   children?: VNodeAny;
@@ -221,6 +222,44 @@ describe("CalendarRange", () => {
 
       const day = getDayButton(month, "5 January");
       expect(day).to.have.attribute("tabindex", "0");
+    });
+  });
+
+  describe("tentative date", () => {
+    it("can be set", async () => {
+      const calendar = await mount(
+        <Fixture focusedDate="2024-04-01" tentative="2024-04-19" />
+      );
+      const month = getMonth(calendar);
+
+      const day = getDayButton(month, "19 April");
+      expect(day.part.contains("selected")).to.eq(true);
+      expect(day.part.contains("range-start")).to.eq(true);
+      expect(day.part.contains("range-end")).to.eq(true);
+    });
+
+    it("can be cleared", async () => {
+      const calendar = await mount<InstanceType<typeof CalendarRange>>(
+        <Fixture focusedDate="2024-04-01" />
+      );
+      const month = getMonth(calendar);
+
+      await clickDay(month, "19 April");
+      expect(calendar.tentative).to.eq("2024-04-19");
+      await sendKeys({ press: "ArrowRight" });
+
+      const before = getSelectedDays(month);
+
+      expect(before[0]!.part.contains("selected")).to.eq(true);
+      expect(before[0]!.part.contains("range-start")).to.eq(true);
+      expect(before[1]!.part.contains("selected")).to.eq(true);
+      expect(before[1]!.part.contains("range-end")).to.eq(true);
+
+      calendar.tentative = undefined;
+      await calendar.updated;
+
+      const after = getSelectedDays(month);
+      expect(after).to.have.length(0);
     });
   });
 

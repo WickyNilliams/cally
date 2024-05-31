@@ -51,8 +51,8 @@ type CalendarInstance =
   | InstanceType<typeof CalendarDate>
   | InstanceType<typeof CalendarRange>;
 
-export async function mount(node: VNodeAny) {
-  const calendar = fixture<CalendarInstance>(node);
+export async function mount<T extends CalendarInstance>(node: VNodeAny) {
+  const calendar = fixture<T>(node);
   await nextFrame();
   return calendar;
 }
