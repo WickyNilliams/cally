@@ -1,10 +1,20 @@
-import { useState, useEvent, useHost, useEffect, useMemo } from "atomico";
+import {
+  useState,
+  useEvent,
+  useHost,
+  useEffect,
+  useMemo,
+  useRef,
+} from "atomico";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { useDateProp, useDateFormatter } from "../utils/hooks.js";
 import { clamp, toDate, today } from "../utils/date.js";
 
+export type Pagination = "single" | "months";
+
 type CalendarBaseOptions = {
   months: number;
+  pageBy: Pagination;
   locale?: string;
   focusedDate: PlainDate | undefined;
   setFocusedDate: (date: PlainDate) => void;
@@ -25,8 +35,69 @@ const createPage = (start: PlainYearMonth, months: number) => {
   };
 };
 
+type UsePaginationOptions = {
+  pageBy: Pagination;
+  focusedDate: PlainDate;
+  months: number;
+  min?: PlainDate;
+  max?: PlainDate;
+  goto: (date: PlainDate) => void;
+};
+
+function usePagination({
+  pageBy,
+  focusedDate,
+  months,
+  max,
+  min,
+  goto,
+}: UsePaginationOptions) {
+  const isPaging = useRef<boolean>(false);
+  const [page, setPage] = useState(() =>
+    createPage(focusedDate.toPlainYearMonth(), months)
+  );
+
+  const contains = (date: PlainDate) => {
+    const diff = diffInMonths(page.start, date.toPlainYearMonth());
+    return diff >= 0 && diff < months;
+  };
+
+  useEffect(() => {
+    let start = page.start;
+
+    // when paging by month, hitting next/prev button is a special case...
+    // if you hit PageUp/PageDown on the keyboard you want to move _within_ the page
+    // but if you hit next/prev, as here, you want to move the page itself
+    if (isPaging.current && pageBy === "single") {
+      start = focusedDate.toPlainYearMonth();
+    }
+    // ensure we only move the start date in multiples of `months`
+    else if (!contains(focusedDate)) {
+      const diff = diffInMonths(start, focusedDate.toPlainYearMonth());
+      const pages = Math.floor(diff / months);
+      start = start.add({ months: pages * months });
+    }
+
+    isPaging.current = false;
+    setPage(createPage(start, months));
+  }, [page.start, focusedDate, months, pageBy]);
+
+  const step = pageBy === "single" ? 1 : months;
+  const paginate = (months: number) => () => {
+    isPaging.current = true;
+    goto(focusedDate.add({ months }));
+  };
+
+  return {
+    page,
+    previous: min == null || !contains(min) ? paginate(-step) : undefined,
+    next: max == null || !contains(max) ? paginate(step) : undefined,
+  };
+}
+
 export function useCalendarBase({
   months,
+  pageBy,
   locale,
   focusedDate: focusedDateProp,
   setFocusedDate,
@@ -41,38 +112,25 @@ export function useCalendarBase({
     [focusedDateProp, min, max]
   );
 
-  const [page, setPage] = useState(() =>
-    createPage(focusedDate.toPlainYearMonth(), months)
-  );
+  function goto(date: PlainDate) {
+    setFocusedDate(date);
+    dispatchFocusDay(toDate(date));
+  }
 
-  const contains = (date: PlainDate) => {
-    const diff = diffInMonths(page.start, date.toPlainYearMonth());
-    return diff >= 0 && diff < months;
-  };
-
-  useEffect(() => {
-    let start = page.start;
-
-    // ensure we only move the start date in multiples of `months`
-    if (!contains(focusedDate)) {
-      const diff = diffInMonths(start, focusedDate.toPlainYearMonth());
-      const pages = Math.floor(diff / months);
-      start = start.add({ months: pages * months });
-    }
-
-    setPage(createPage(start, months));
-  }, [focusedDate, months]);
+  const { next, previous, page } = usePagination({
+    pageBy,
+    focusedDate,
+    months,
+    min,
+    max,
+    goto,
+  });
 
   const host = useHost();
   function focus() {
     host.current
       .querySelectorAll<HTMLElement>("calendar-month")
       .forEach((m) => m.focus());
-  }
-
-  function goto(date: PlainDate) {
-    setFocusedDate(date);
-    dispatchFocusDay(toDate(date));
   }
 
   const format = useDateFormatter(formatOptions, locale);
@@ -91,14 +149,8 @@ export function useCalendarBase({
     },
     min,
     max,
-    next:
-      max == null || !contains(max)
-        ? () => goto(focusedDate.add({ months }))
-        : undefined,
-    previous:
-      min == null || !contains(min)
-        ? () => goto(focusedDate.add({ months: -months }))
-        : undefined,
+    next,
+    previous,
     focus,
   };
 }

@@ -16,6 +16,7 @@ import {
   getCalendarHeading,
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
+import type { Pagination } from "../calendar-base/useCalendarBase.js";
 import { CalendarDate } from "./calendar-date.js";
 import { PlainYearMonth } from "../utils/temporal.js";
 import { today, toDate } from "../utils/date.js";
@@ -26,11 +27,12 @@ type TestProps = {
   value: string;
   min: string;
   max: string;
-  children?: VNodeAny;
-  showOutsideDays?: boolean;
-  months?: number;
-  locale?: string;
-  focusedDate?: string;
+  children: VNodeAny;
+  showOutsideDays: boolean;
+  months: number;
+  locale: string;
+  focusedDate: string;
+  pageBy: Pagination;
 };
 
 function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
@@ -233,6 +235,63 @@ describe("CalendarDate", () => {
 
       expect(spy.count).to.eq(1);
       expect(calendar.value).to.eq("2020-04-06");
+    });
+  });
+
+  describe("pagination", () => {
+    it("can page by duration", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01" months={2}>
+          <CalendarMonth />
+          <CalendarMonth offset={1} />
+        </Fixture>
+      );
+      const [first, second] = getMonths(calendar);
+
+      await click(getNextPageButton(calendar));
+      expect(getMonthHeading(first!)).to.have.text("March");
+      expect(getMonthHeading(second!)).to.have.text("April");
+    });
+
+    it("can page by month", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01" months={2} pageBy="single">
+          <CalendarMonth />
+          <CalendarMonth offset={1} />
+        </Fixture>
+      );
+      const [first, second] = getMonths(calendar);
+
+      await click(getNextPageButton(calendar));
+      expect(getMonthHeading(first!)).to.have.text("February");
+      expect(getMonthHeading(second!)).to.have.text("March");
+    });
+
+    it("treats PageUp/PageDown keys as a special case when paging by month", async () => {
+      const calendar = await mount(
+        <Fixture value="2020-01-01" months={2} pageBy="single">
+          <CalendarMonth />
+          <CalendarMonth offset={1} />
+        </Fixture>
+      );
+      const [first, second] = getMonths(calendar);
+
+      // tab to grid
+      await sendKeys({ press: "Tab" });
+      await sendKeys({ press: "Tab" });
+      await sendKeys({ press: "Tab" });
+
+      // move one month
+      await sendKeys({ press: "PageDown" });
+
+      // we should stay within the page
+      expect(getMonthHeading(first!)).to.have.text("January");
+      expect(getMonthHeading(second!)).to.have.text("February");
+
+      // until the page doesn't contain the new date
+      await sendKeys({ press: "PageDown" });
+      expect(getMonthHeading(first!)).to.have.text("March");
+      expect(getMonthHeading(second!)).to.have.text("April");
     });
   });
 
