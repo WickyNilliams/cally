@@ -35,6 +35,15 @@ const createPage = (start: PlainYearMonth, months: number) => {
   };
 };
 
+type UsePaginationOptions = {
+  pageBy: Pagination;
+  focusedDate: PlainDate;
+  months: number;
+  min?: PlainDate;
+  max?: PlainDate;
+  goto: (date: PlainDate) => void;
+};
+
 function usePagination({
   pageBy,
   focusedDate,
@@ -42,15 +51,8 @@ function usePagination({
   max,
   min,
   goto,
-}: {
-  pageBy: Pagination;
-  focusedDate: PlainDate;
-  months: number;
-  min?: PlainDate;
-  max?: PlainDate;
-  goto: (date: PlainDate) => void;
-}) {
-  const nextOrPrev = useRef<boolean>(false);
+}: UsePaginationOptions) {
+  const isPaging = useRef<boolean>(false);
   const [page, setPage] = useState(() =>
     createPage(focusedDate.toPlainYearMonth(), months)
   );
@@ -66,7 +68,7 @@ function usePagination({
     // when paging by month, hitting next/prev button is a special case...
     // if you hit PageUp/PageDown on the keyboard you want to move _within_ the page
     // but if you hit next/prev, as here, you want to move the page itself
-    if (nextOrPrev.current && pageBy === "single") {
+    if (isPaging.current && pageBy === "single") {
       start = focusedDate.toPlainYearMonth();
     }
     // ensure we only move the start date in multiples of `months`
@@ -76,31 +78,20 @@ function usePagination({
       start = start.add({ months: pages * months });
     }
 
-    nextOrPrev.current = false;
+    isPaging.current = false;
     setPage(createPage(start, months));
   }, [page.start, focusedDate, months, pageBy]);
 
   const step = pageBy === "single" ? 1 : months;
-  const next =
-    max == null || !contains(max)
-      ? () => {
-          nextOrPrev.current = true;
-          goto(focusedDate.add({ months: step }));
-        }
-      : undefined;
-  const previous =
-    min == null || !contains(min)
-      ? () => {
-          nextOrPrev.current = true;
-          return goto(focusedDate.add({ months: -step }));
-        }
-      : undefined;
+  const paginate = (months: number) => () => {
+    isPaging.current = true;
+    goto(focusedDate.add({ months }));
+  };
 
   return {
     page,
-    setPage,
-    previous,
-    next,
+    previous: min == null || !contains(min) ? paginate(-step) : undefined,
+    next: max == null || !contains(max) ? paginate(step) : undefined,
   };
 }
 
