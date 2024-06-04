@@ -1,11 +1,9 @@
-import { c, useState, type Host, useEvent } from "atomico";
+import { c, useState, type Host, useEvent, useEffect } from "atomico";
 import { PlainDate } from "../utils/temporal.js";
 import { useDateProp, useDateRangeProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
 import { toDate } from "../utils/date.js";
-
-type Tentative = { a: PlainDate; b: PlainDate };
 
 const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
   PlainDate.compare(a, b) < 0 ? [a, b] : [b, a];
@@ -29,9 +27,13 @@ export const CalendarRange = c(
     const dispatchStart = useEvent<Date>("rangestart");
     const dispatchEnd = useEvent<Date>("rangeend");
 
-    // tentative selection is not ordered, it is just a first selection and second selection
-    // the second selection can come before or after the first selection for improved ux
-    const [tentative, setTentative] = useState<Tentative | undefined>();
+    const [tentative, setTentative] = useDateProp<PlainDate | undefined>(
+      "tentative"
+    );
+    const [hovered, setHovered] = useState<PlainDate | undefined>();
+
+    // reset whenever tentative changes
+    useEffect(() => setHovered(undefined), [tentative]);
 
     function handleFocus(e: CustomEvent<PlainDate>) {
       calendar.onFocus(e);
@@ -40,9 +42,9 @@ export const CalendarRange = c(
 
     function handleHover(e: CustomEvent<PlainDate>) {
       e.stopPropagation();
-      setTentative((t) => {
-        return t ? { ...t, b: e.detail } : t;
-      });
+      if (tentative) {
+        setHovered(e.detail);
+      }
     }
 
     function handleSelect(e: CustomEvent<PlainDate>) {
@@ -50,17 +52,17 @@ export const CalendarRange = c(
       e.stopPropagation();
 
       if (!tentative) {
-        setTentative({ a: detail, b: detail });
+        setTentative(detail);
         dispatchStart(toDate(detail));
       } else {
-        setValue(sort(tentative.a, detail));
+        setValue(sort(tentative, detail));
         setTentative(undefined);
         dispatchEnd(toDate(detail));
         calendar.dispatch();
       }
     }
 
-    const range = tentative ? sort(tentative.a, tentative.b) : value;
+    const range = tentative ? sort(tentative, hovered ?? tentative) : value;
 
     return (
       <host shadowDom focus={calendar.focus}>
@@ -77,7 +79,16 @@ export const CalendarRange = c(
     );
   },
 
-  { props, styles }
+  {
+    props: {
+      ...props,
+      tentative: {
+        type: String,
+        value: "",
+      },
+    },
+    styles,
+  }
 );
 
 customElements.define("calendar-range", CalendarRange);

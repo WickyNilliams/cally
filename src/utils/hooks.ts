@@ -13,11 +13,13 @@ function safeFrom<T extends PlainDate | PlainYearMonth>(
   }
 }
 
-export function useDateProp(prop: string) {
+export function useDateProp<T extends PlainDate | undefined = PlainDate>(
+  prop: string
+) {
   const [value, setValue] = useProp<string>(prop);
 
   const date = useMemo(() => safeFrom(PlainDate, value), [value]);
-  const setDate = (date: PlainDate) => setValue(date.toString());
+  const setDate = (date: T) => setValue(date?.toString());
 
   return [date, setDate] as const;
 }
@@ -25,7 +27,7 @@ export function useDateProp(prop: string) {
 export function useDateRangeProp(prop: string) {
   const [value = "", setValue] = useProp<string>(prop);
 
-  const range = useMemo(() => {
+  const range = useMemo((): [PlainDate, PlainDate] | [] => {
     const [s, e] = value.split("/");
     const start = safeFrom(PlainDate, s);
     const end = safeFrom(PlainDate, e);
