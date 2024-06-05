@@ -14,6 +14,9 @@ import {
   getPrevPageButton,
   mount,
   getCalendarHeading,
+  type MonthInstance,
+  sendShiftPress,
+  getCalendarVisibleHeading,
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { Pagination } from "../calendar-base/useCalendarBase.js";
@@ -238,60 +241,317 @@ describe("CalendarDate", () => {
     });
   });
 
-  describe("pagination", () => {
-    it("can page by duration", async () => {
-      const calendar = await mount(
-        <Fixture value="2020-01-01" months={2}>
-          <CalendarMonth />
-          <CalendarMonth offset={1} />
-        </Fixture>
-      );
-      const [first, second] = getMonths(calendar);
+  describe("page by", () => {
+    describe("months", () => {
+      it("can page by months", async () => {
+        const calendar = await mount(
+          <Fixture value="2020-01-01" months={2}>
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
+        const [first, second] = getMonths(calendar) as [
+          MonthInstance,
+          MonthInstance,
+        ];
 
-      await click(getNextPageButton(calendar));
-      expect(getMonthHeading(first!)).to.have.text("March");
-      expect(getMonthHeading(second!)).to.have.text("April");
+        await click(getNextPageButton(calendar));
+        expect(getMonthHeading(first!)).to.have.text("March");
+        expect(getMonthHeading(second!)).to.have.text("April");
+      });
+
+      it("updates page as user navigates dates", async () => {
+        const calendar = await mount(
+          <Fixture value="2020-01-01" months={2}>
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
+        const [first, second] = getMonths(calendar) as [
+          MonthInstance,
+          MonthInstance,
+        ];
+
+        // tab to grid
+        await sendKeys({ press: "Tab" });
+        await sendKeys({ press: "Tab" });
+        await sendKeys({ press: "Tab" });
+
+        // move to feb, within page
+        await sendKeys({ press: "PageDown" });
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
+
+        // move to march, out of page
+        await sendKeys({ press: "PageDown" });
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
+
+        // move to april, should be on same page
+        await sendKeys({ press: "PageDown" });
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
+
+        // move to march, within page
+        await sendKeys({ press: "PageUp" });
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
+
+        // move to feb, out of page
+        await sendKeys({ press: "PageUp" });
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
+
+        // move to jan, within page
+        await sendKeys({ press: "PageUp" });
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
+
+        // move to dec, out of page
+        await sendKeys({ press: "PageUp" });
+        expect(getMonthHeading(first)).to.have.text("November");
+        expect(getMonthHeading(second)).to.have.text("December");
+
+        // sanity check
+        expect(calendar.focusedDate).to.eq("2019-12-01");
+
+        // move one year ahead
+        await sendShiftPress("PageDown");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2020");
+        expect(getMonthHeading(first)).to.have.text("November");
+        expect(getMonthHeading(second)).to.have.text("December");
+
+        // move one year back
+        await sendShiftPress("PageUp");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2019");
+        expect(getMonthHeading(first)).to.have.text("November");
+        expect(getMonthHeading(second)).to.have.text("December");
+      });
+
+      it("pages by number of months", async () => {
+        const calendar = await mount(
+          <Fixture value="2020-01-01" months={2}>
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
+
+        const next = getNextPageButton(calendar);
+        const prev = getPrevPageButton(calendar);
+        const [first, second] = getMonths(calendar) as [
+          MonthInstance,
+          MonthInstance,
+        ];
+
+        await click(next);
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
+
+        await click(next);
+        expect(getMonthHeading(first)).to.have.text("May");
+        expect(getMonthHeading(second)).to.have.text("June");
+
+        await click(prev);
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
+
+        await click(prev);
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
+
+        await click(prev);
+        expect(getMonthHeading(first)).to.have.text("November");
+        expect(getMonthHeading(second)).to.have.text("December");
+      });
+
+      it("handles focused date prop changing", async () => {
+        const calendar = await mount(
+          <Fixture value="2020-01-01" months={2}>
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
+        const [first, second] = getMonths(calendar) as [
+          MonthInstance,
+          MonthInstance,
+        ];
+
+        // one year ahead
+        calendar.focusedDate = "2021-01-01";
+        await nextFrame();
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2021");
+
+        // one month outside of page
+        calendar.focusedDate = "2021-03-01";
+        await nextFrame();
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2021");
+
+        // a few months ahead
+        calendar.focusedDate = "2021-05-01";
+        await nextFrame();
+        expect(getMonthHeading(first)).to.have.text("May");
+        expect(getMonthHeading(second)).to.have.text("June");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2021");
+
+        // a few months back
+        calendar.focusedDate = "2020-12-01";
+        await nextFrame();
+        expect(getMonthHeading(first)).to.have.text("November");
+        expect(getMonthHeading(second)).to.have.text("December");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2020");
+      });
     });
 
-    it("can page by month", async () => {
-      const calendar = await mount(
-        <Fixture value="2020-01-01" months={2} pageBy="single">
-          <CalendarMonth />
-          <CalendarMonth offset={1} />
-        </Fixture>
-      );
-      const [first, second] = getMonths(calendar);
+    describe("single", () => {
+      it("updates page as user navigates dates", async () => {
+        const calendar = await mount(
+          <Fixture value="2020-01-01" months={2} pageBy="single">
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
 
-      await click(getNextPageButton(calendar));
-      expect(getMonthHeading(first!)).to.have.text("February");
-      expect(getMonthHeading(second!)).to.have.text("March");
-    });
+        const [first, second] = getMonths(calendar) as [
+          MonthInstance,
+          MonthInstance,
+        ];
 
-    it("treats PageUp/PageDown keys as a special case when paging by month", async () => {
-      const calendar = await mount(
-        <Fixture value="2020-01-01" months={2} pageBy="single">
-          <CalendarMonth />
-          <CalendarMonth offset={1} />
-        </Fixture>
-      );
-      const [first, second] = getMonths(calendar);
+        // tab to grid
+        await sendKeys({ press: "Tab" });
+        await sendKeys({ press: "Tab" });
+        await sendKeys({ press: "Tab" });
 
-      // tab to grid
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "Tab" });
+        // move to feb, within page
+        await sendKeys({ press: "PageDown" });
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
 
-      // move one month
-      await sendKeys({ press: "PageDown" });
+        // move to march, out of page
+        await sendKeys({ press: "PageDown" });
+        expect(getMonthHeading(first)).to.have.text("February");
+        expect(getMonthHeading(second)).to.have.text("March");
 
-      // we should stay within the page
-      expect(getMonthHeading(first!)).to.have.text("January");
-      expect(getMonthHeading(second!)).to.have.text("February");
+        // move to april, should be on same page
+        await sendKeys({ press: "PageDown" });
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
 
-      // until the page doesn't contain the new date
-      await sendKeys({ press: "PageDown" });
-      expect(getMonthHeading(first!)).to.have.text("March");
-      expect(getMonthHeading(second!)).to.have.text("April");
+        // move to march, within page
+        await sendKeys({ press: "PageUp" });
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
+
+        // move to feb, out of page
+        await sendKeys({ press: "PageUp" });
+        expect(getMonthHeading(first)).to.have.text("February");
+        expect(getMonthHeading(second)).to.have.text("March");
+
+        // move to jan, within page
+        await sendKeys({ press: "PageUp" });
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
+
+        // move to dec, out of page
+        await sendKeys({ press: "PageUp" });
+        expect(getMonthHeading(first)).to.have.text("December");
+        expect(getMonthHeading(second)).to.have.text("January");
+
+        // sanity check
+        expect(calendar.focusedDate).to.eq("2019-12-01");
+
+        // move one year ahead
+        await sendShiftPress("PageDown");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2020–2021");
+        expect(getMonthHeading(first)).to.have.text("December");
+        expect(getMonthHeading(second)).to.have.text("January");
+
+        // move one year back
+        await sendShiftPress("PageUp");
+        expect(getMonthHeading(first)).to.have.text("December");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2019–2020");
+        expect(getMonthHeading(second)).to.have.text("January");
+      });
+
+      it("pages by single month", async () => {
+        const calendar = await mount(
+          <Fixture value="2020-01-01" months={2} pageBy="single">
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
+        const [first, second] = getMonths(calendar) as [
+          MonthInstance,
+          MonthInstance,
+        ];
+
+        const next = getNextPageButton(calendar);
+        const prev = getPrevPageButton(calendar);
+
+        await click(next);
+        expect(getMonthHeading(first)).to.have.text("February");
+        expect(getMonthHeading(second)).to.have.text("March");
+
+        await click(next);
+        expect(getMonthHeading(first)).to.have.text("March");
+        expect(getMonthHeading(second)).to.have.text("April");
+
+        await click(prev);
+        expect(getMonthHeading(first)).to.have.text("February");
+        expect(getMonthHeading(second)).to.have.text("March");
+
+        await click(prev);
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
+
+        await click(prev);
+        expect(getMonthHeading(first)).to.have.text("December");
+        expect(getMonthHeading(second)).to.have.text("January");
+      });
+
+      it("handles focused date prop changing", async () => {
+        const calendar = await mount(
+          <Fixture value="2020-01-01" months={2} pageBy="single">
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
+        const [first, second] = getMonths(calendar) as [
+          MonthInstance,
+          MonthInstance,
+        ];
+
+        // one year ahead
+        calendar.focusedDate = "2021-01-01";
+        await nextFrame();
+        expect(getMonthHeading(first)).to.have.text("January");
+        expect(getMonthHeading(second)).to.have.text("February");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2021");
+
+        // one month outside of page
+        calendar.focusedDate = "2021-03-01";
+        await nextFrame();
+        expect(getMonthHeading(first)).to.have.text("February");
+        expect(getMonthHeading(second)).to.have.text("March");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2021");
+
+        // a few months ahead
+        calendar.focusedDate = "2021-05-01";
+        await nextFrame();
+        expect(getMonthHeading(first)).to.have.text("April");
+        expect(getMonthHeading(second)).to.have.text("May");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2021");
+
+        // a few months back
+        calendar.focusedDate = "2020-12-01";
+        await nextFrame();
+        expect(getMonthHeading(first)).to.have.text("December");
+        expect(getMonthHeading(second)).to.have.text("January");
+        expect(getCalendarVisibleHeading(calendar)).to.have.text("2020–2021");
+      });
     });
   });
 

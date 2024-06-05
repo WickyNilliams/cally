@@ -1,4 +1,8 @@
-import { sendMouse } from "@web/test-runner-commands";
+import {
+  sendKeys,
+  sendMouse,
+  type SendKeysPayload,
+} from "@web/test-runner-commands";
 import { fixture } from "atomico/test-dom";
 import type { VNodeAny } from "atomico/types/vnode.js";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
@@ -18,6 +22,12 @@ const defineGetter = <TObj, TReturn>(
     get: getter,
   });
 };
+
+export async function sendShiftPress(key: string) {
+  await sendKeys({ down: "Shift" });
+  await sendKeys({ press: key });
+  await sendKeys({ up: "Shift" });
+}
 
 /**
  * Creates a spy for use in tests.
@@ -46,8 +56,8 @@ export function createSpy<T extends SpySubject>(fn?: T) {
   };
 }
 
-type MonthInstance = InstanceType<typeof CalendarMonth>;
-type CalendarInstance =
+export type MonthInstance = InstanceType<typeof CalendarMonth>;
+export type CalendarInstance =
   | InstanceType<typeof CalendarDate>
   | InstanceType<typeof CalendarRange>;
 
@@ -78,6 +88,19 @@ export function getMonth(calendar: HTMLElement): MonthInstance {
 
 export function getGrid(month: MonthInstance): HTMLTableElement {
   return month.shadowRoot!.querySelector(`[part="table"]`)!;
+}
+
+export function getCalendarVisibleHeading(
+  calendar: CalendarInstance
+): HTMLElement {
+  const slot = calendar.shadowRoot!.querySelector(`[part=heading]`);
+  const heading = slot?.querySelector<HTMLElement>(`[aria-hidden]`);
+
+  if (!heading) {
+    throw new Error("Could not find visible heading for calendar");
+  }
+
+  return heading;
 }
 
 export function getCalendarHeading(calendar: CalendarInstance): HTMLElement {

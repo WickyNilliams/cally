@@ -10,6 +10,7 @@ import {
   getDayButton,
   getSelectedDays,
   click,
+  sendShiftPress,
 } from "../utils/test.js";
 import {
   CalendarMonthContext,
@@ -401,9 +402,7 @@ describe("CalendarMonth", () => {
       );
 
       await sendKeys({ press: "Tab" });
-      await sendKeys({ down: "Shift" });
-      await sendKeys({ press: "PageUp" });
-      await sendKeys({ up: "Shift" });
+      await sendShiftPress("PageUp");
 
       expect(spy.count).to.eq(1);
       expect(spy.last[0].detail.toString()).to.eq("2019-04-19");

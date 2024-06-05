@@ -52,46 +52,52 @@ function usePagination({
   min,
   goto,
 }: UsePaginationOptions) {
-  const isPaging = useRef<boolean>(false);
+  const step = pageBy === "single" ? 1 : months;
   const [page, setPage] = useState(() =>
     createPage(focusedDate.toPlainYearMonth(), months)
   );
+
+  const updatePageBy = (by: number) =>
+    setPage(createPage(page.start.add({ months: by }), months));
 
   const contains = (date: PlainDate) => {
     const diff = diffInMonths(page.start, date.toPlainYearMonth());
     return diff >= 0 && diff < months;
   };
 
+  // page change -> update focused date
   useEffect(() => {
-    let start = page.start;
-
-    // when paging by month, hitting next/prev button is a special case...
-    // if you hit PageUp/PageDown on the keyboard you want to move _within_ the page
-    // but if you hit next/prev, as here, you want to move the page itself
-    if (isPaging.current && pageBy === "single") {
-      start = focusedDate.toPlainYearMonth();
-    }
-    // ensure we only move the start date in multiples of `months`
-    else if (!contains(focusedDate)) {
-      const diff = diffInMonths(start, focusedDate.toPlainYearMonth());
-      const pages = Math.floor(diff / months);
-      start = start.add({ months: pages * months });
+    if (contains(focusedDate)) {
+      return;
     }
 
-    isPaging.current = false;
-    setPage(createPage(start, months));
-  }, [page.start, focusedDate, months, pageBy]);
+    const diff = diffInMonths(focusedDate.toPlainYearMonth(), page.start);
+    goto(focusedDate.add({ months: diff }));
+  }, [page.start]);
 
-  const step = pageBy === "single" ? 1 : months;
-  const paginate = (months: number) => () => {
-    isPaging.current = true;
-    goto(focusedDate.add({ months }));
-  };
+  // focused date change -> update page
+  useEffect(() => {
+    if (contains(focusedDate)) {
+      return;
+    }
+
+    const diff = diffInMonths(page.start, focusedDate.toPlainYearMonth());
+
+    // if we only move one month either way, move by step
+    if (diff === -1) {
+      updatePageBy(-step);
+    } else if (diff === months) {
+      updatePageBy(step);
+    } else {
+      // anything else, move in steps of months
+      updatePageBy(Math.floor(diff / months) * months);
+    }
+  }, [focusedDate, step, months]);
 
   return {
     page,
-    previous: min == null || !contains(min) ? paginate(-step) : undefined,
-    next: max == null || !contains(max) ? paginate(step) : undefined,
+    previous: !min || !contains(min) ? () => updatePageBy(-step) : undefined,
+    next: !max || !contains(max) ? () => updatePageBy(step) : undefined,
   };
 }
 
@@ -133,12 +139,9 @@ export function useCalendarBase({
       .forEach((m) => m.focus());
   }
 
-  const format = useDateFormatter(formatOptions, locale);
-  const formatVerbose = useDateFormatter(formatVerboseOptions, locale);
-
   return {
-    format,
-    formatVerbose,
+    format: useDateFormatter(formatOptions, locale),
+    formatVerbose: useDateFormatter(formatVerboseOptions, locale),
     page,
     focusedDate,
     dispatch,
