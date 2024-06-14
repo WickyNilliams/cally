@@ -1,6 +1,6 @@
 import { expect, nextFrame } from "@open-wc/testing";
 import { sendKeys } from "@web/test-runner-commands";
-import type { VNodeAny } from "atomico/types/vnode.js";
+import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
   createSpy,
