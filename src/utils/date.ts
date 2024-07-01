@@ -6,6 +6,28 @@ export function today() {
   return PlainDate.from(new Date());
 }
 
+const DAY_MS = 86400000;
+
+// slightly modified from https://weeknumber.co.uk/how-to/javascript
+export function getWeekNumber(plainDate: PlainDate) {
+  const date = toDate(plainDate);
+  // Thursday in current week decides the year.
+  date.setDate(date.getUTCDate() + 3 - ((date.getUTCDay() + 6) % 7));
+  // January 4 is always in week 1.
+  const week1 = new Date(date.getUTCFullYear(), 0, 4);
+
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return (
+    1 +
+    Math.round(
+      ((date.getTime() - week1.getTime()) / DAY_MS -
+        3 +
+        ((week1.getUTCDay() + 6) % 7)) /
+        7
+    )
+  );
+}
+
 export function startOfWeek(
   date: PlainDate,
   firstDayOfWeek: DaysOfWeek = 0
@@ -44,17 +66,27 @@ export function clamp(
 
 const oneDay = { days: 1 };
 
+type Week = [
+  PlainDate,
+  PlainDate,
+  PlainDate,
+  PlainDate,
+  PlainDate,
+  PlainDate,
+  PlainDate,
+];
+
 /**
  * given a date, return an array of dates from a calendar perspective
  */
 export function getViewOfMonth(
   yearMonth: PlainYearMonth,
   firstDayOfWeek: DaysOfWeek = 0
-): PlainDate[][] {
+): Week[] {
   let start = startOfWeek(yearMonth.toPlainDate(), firstDayOfWeek);
   const end = endOfWeek(endOfMonth(yearMonth), firstDayOfWeek);
 
-  const weeks: PlainDate[][] = [];
+  const weeks = [];
 
   // get all days in range
   while (PlainDate.compare(start, end) < 0) {
@@ -66,7 +98,7 @@ export function getViewOfMonth(
       start = start.add(oneDay);
     }
 
-    weeks.push(week);
+    weeks.push(week as Week);
   }
 
   return weeks;

@@ -2,7 +2,7 @@ import { c, css, useContext, useRef, type Host } from "atomico";
 import { reset, vh } from "../utils/styles.js";
 import { useCalendarMonth } from "./useCalendarMonth.js";
 import { CalendarMonthContext } from "./CalendarMonthContext.js";
-import { toDate } from "../utils/date.js";
+import { getWeekNumber, toDate } from "../utils/date.js";
 
 export const CalendarMonth = c(
   (
@@ -27,10 +27,25 @@ export const CalendarMonth = c(
         </div>
 
         <table ref={table} aria-labelledby="h" part="table">
+          <colgroup>
+            {context.showWeekNumbers && <col part="col-weeknumber" />}
+            <col part="col-1" />
+            <col part="col-2" />
+            <col part="col-3" />
+            <col part="col-4" />
+            <col part="col-5" />
+            <col part="col-6" />
+            <col part="col-7" />
+          </colgroup>
           <thead>
             <tr part="tr head">
+              {context.showWeekNumbers && (
+                <th part="th weeknumber">
+                  <slot name="weeknumber">#</slot>
+                </th>
+              )}
               {calendar.daysLong.map((dayName, i) => (
-                <th part="th" scope="col">
+                <th part="th weekday" scope="col">
                   <span class="vh">{dayName}</span>
                   <span aria-hidden="true">{calendar.daysShort[i]}</span>
                 </th>
@@ -41,12 +56,22 @@ export const CalendarMonth = c(
           <tbody>
             {calendar.weeks.map((week, i) => (
               <tr key={i} part="tr week">
+                {context.showWeekNumbers && (
+                  <th class="num" part="th weeknumber" scope="row">
+                    {getWeekNumber(week[0])}
+                  </th>
+                )}
+
                 {week.map((date, j) => {
                   const props = calendar.getDayProps(date);
 
                   return (
                     <td part="td" key={j}>
-                      {props && <button {...props}>{date.day}</button>}
+                      {props && (
+                        <button class="num" {...props}>
+                          {date.day}
+                        </button>
+                      )}
                     </td>
                   );
                 })}
@@ -87,7 +112,7 @@ export const CalendarMonth = c(
         }
 
         th {
-          font-weight: bold;
+          inline-size: 2.25rem;
           block-size: 2.25rem;
         }
 
@@ -95,12 +120,15 @@ export const CalendarMonth = c(
           padding-inline: 0;
         }
 
+        .num {
+          font-variant-numeric: tabular-nums;
+        }
+
         button {
           color: inherit;
           font-size: inherit;
           background: transparent;
           border: 0;
-          font-variant-numeric: tabular-nums;
           block-size: 2.25rem;
           inline-size: 2.25rem;
         }

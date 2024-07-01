@@ -1,14 +1,23 @@
 ---
-interface Props {
+import { type CalendarDateProps } from "../../../src/index.js";
+
+type ExcludeByValue<T, V> = {
+  [K in keyof T as NonNullable<T[K]> extends V ? never : K]: T[K];
+};
+
+interface Props extends ExcludeByValue<CalendarDateProps, Function> {
   class?: string;
-  value?: string;
 }
 
-const { class: className, value } = Astro.props;
+const { class: className, value, showWeekNumbers } = Astro.props;
 ---
 
 <div class:list={["card", className]}>
-  <calendar-range months="2" value={value}>
+  <calendar-range
+    months="2"
+    value={value}
+    show-week-numbers={showWeekNumbers ? "" : undefined}
+  >
     <svg
       aria-label="Previous"
       slot="previous"
@@ -52,7 +61,7 @@ const { class: className, value } = Astro.props;
 
     .grid {
       display: flex;
-      gap: 1em;
+      gap: var(--space-m);
       justify-content: center;
       flex-wrap: wrap;
     }
@@ -126,6 +135,17 @@ const { class: className, value } = Astro.props;
 
       &::part(range-start range-end) {
         border-radius: var(--radius);
+      }
+
+      &::part(weeknumber) {
+        font-weight: normal;
+        opacity: 0.5;
+        padding-right: var(--space-xs);
+        text-align: end;
+      }
+
+      &::part(col-weeknumber) {
+        border-right: 1px solid #0003;
       }
     }
   }

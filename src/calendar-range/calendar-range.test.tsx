@@ -1,6 +1,6 @@
 import { expect } from "@open-wc/testing";
 import { sendKeys } from "@web/test-runner-commands";
-import type { VNodeAny } from "atomico/types/vnode.js";
+import type { VNodeAny } from "atomico/types/vnode";
 import {
   click,
   clickDay,
@@ -255,7 +255,7 @@ describe("CalendarRange", () => {
       expect(before[1]!.part.contains("selected")).to.eq(true);
       expect(before[1]!.part.contains("range-end")).to.eq(true);
 
-      calendar.tentative = undefined;
+      calendar.tentative = "";
       await calendar.updated;
 
       const after = getSelectedDays(month);
