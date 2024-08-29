@@ -154,6 +154,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       "aria-pressed": isInMonth && isSelected,
       "aria-current": isToday ? "date" : undefined,
       "aria-label": dayFormatter.format(asDate),
+      "data-date": date.toString(),
       onkeydown: onKeyDown,
       onclick() {
         if (!isDisallowed) {

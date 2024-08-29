@@ -144,6 +144,7 @@ describe("CalendarMonth", () => {
         const selected = getSelectedDays(month);
         expect(selected.length).to.eq(1);
         expect(selected[0]).to.have.attribute("aria-label", "1 January");
+        expect(selected[0]).to.have.attribute("data-date", "2020-01-01");
         expect(selected[0]!.part.contains("selected")).to.eq(true);
       });
     });
@@ -178,8 +179,11 @@ describe("CalendarMonth", () => {
         const selected = getSelectedDays(month);
         expect(selected.length).to.eq(3);
         expect(selected[0]).to.have.attribute("aria-label", "1 January");
+        expect(selected[0]).to.have.attribute("data-date", "2020-01-01");
         expect(selected[1]).to.have.attribute("aria-label", "2 January");
+        expect(selected[1]).to.have.attribute("data-date", "2020-01-02");
         expect(selected[2]).to.have.attribute("aria-label", "3 January");
+        expect(selected[2]).to.have.attribute("data-date", "2020-01-03");
       });
     });
   });
