@@ -41,7 +41,7 @@ export const CalendarMonth = c(
             <tr part="tr head">
               {context.showWeekNumbers && (
                 <th part="th weeknumber">
-                  <slot name="weeknumber">
+                  <slot name="weeknumber" id="week-header">
                     <span aria-label="Week">#</span>
                   </slot>
                 </th>
@@ -59,8 +59,19 @@ export const CalendarMonth = c(
             {calendar.weeks.map((week, i) => (
               <tr key={i} part="tr week">
                 {context.showWeekNumbers && (
-                  <th class="num" part="th weeknumber" scope="row">
-                    Week {getWeekNumber(week[0])}
+                  <th
+                    class="num"
+                    part="th weeknumber"
+                    scope="row"
+                    aria-labelledby={`week-header week-${i}`}
+                  >
+                    {/* TODO:
+                      so close! gets announced correctly "Week n" when moving between rows.
+                      But for some reason the column itself gets announced as "Blank" in VO
+                    */}
+                    <span aria-hidden="true" id={`week-${i}`}>
+                      {getWeekNumber(week[0])}
+                    </span>
                   </th>
                 )}
 
