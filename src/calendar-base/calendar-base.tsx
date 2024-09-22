@@ -1,6 +1,6 @@
 import { css } from "atomico";
 import {
-  CalendarMonthContext,
+  CalendarContext,
   type CalendarDateContext,
   type CalendarMultiContext,
   type CalendarRangeContext,
@@ -67,14 +67,14 @@ export function CalendarBase(
         </Button>
       </div>
 
-      <CalendarMonthContext
+      <CalendarContext
         value={props}
         onselectday={props.onSelect}
         onfocusday={props.onFocus}
         onhoverday={props.onHover}
       >
         <slot></slot>
-      </CalendarMonthContext>
+      </CalendarContext>
     </div>
   );
 }
@@ -99,6 +99,10 @@ export const props = {
   formatWeekday: {
     type: String,
     value: (): "narrow" | "short" => "narrow",
+  },
+  getPartsForDate: {
+    type: Function,
+    value: (date: Date): string => "",
   },
   firstDayOfWeek: {
     type: Number,
