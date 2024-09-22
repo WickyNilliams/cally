@@ -21,7 +21,7 @@ import {
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { Pagination } from "../calendar-base/useCalendarBase.js";
 import { CalendarDate } from "./calendar-date.js";
-import { PlainYearMonth } from "../utils/temporal.js";
+import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { today, toDate } from "../utils/date.js";
 
 type TestProps = {
@@ -800,6 +800,44 @@ describe("CalendarDate", () => {
 
       expect(getMonthHeading(month)).to.have.text("January");
       expect(firstJan).to.have.attribute("aria-pressed", "true");
+    });
+  });
+
+  it("allows customizing day parts", async () => {
+    const available = new Set(["2020-01-10", "2020-01-11", "2020-01-12"]);
+    const almostGone = new Set(["2020-01-13", "2020-01-14"]);
+
+    const calendar = await mount(<Fixture value="2020-01-01" />);
+    calendar.getPartsForDate = function getPartsForDate(date: Date) {
+      const d = PlainDate.from(date).toString();
+
+      if (available.has(d)) return "available";
+      if (almostGone.has(d)) return "almost-gone";
+      return "";
+    };
+
+    await nextFrame();
+    const month = getMonth(calendar);
+
+    [
+      getDayButton(month, "10 January"),
+      getDayButton(month, "11 January"),
+      getDayButton(month, "12 January"),
+    ].forEach((day) => {
+      expect(day.part.contains("available")).to.eq(
+        true,
+        `"available" not found in part: "${day.part.toString().trim()}"`
+      );
+    });
+
+    [
+      getDayButton(month, "13 January"),
+      getDayButton(month, "14 January"),
+    ].forEach((day) => {
+      expect(day.part.contains("almost-gone")).to.eq(
+        true,
+        `"almost-gone" not found in part: "${day.part.toString().trim()}"`
+      );
     });
   });
 });

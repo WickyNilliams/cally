@@ -1,7 +1,7 @@
 import { c, css, useContext, useRef, type Host } from "atomico";
 import { reset, vh } from "../utils/styles.js";
 import { useCalendarMonth } from "./useCalendarMonth.js";
-import { CalendarMonthContext } from "./CalendarMonthContext.js";
+import { CalendarContext } from "./CalendarMonthContext.js";
 import { toDate } from "../utils/date.js";
 
 export const CalendarMonth = c(
@@ -12,7 +12,7 @@ export const CalendarMonth = c(
     onFocusDay: CustomEvent<string>;
     onHoverDay: CustomEvent<string>;
   }> => {
-    const context = useContext(CalendarMonthContext);
+    const context = useContext(CalendarContext);
     const table = useRef<HTMLTableElement>();
     const calendar = useCalendarMonth({ props, context });
 
