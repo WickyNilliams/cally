@@ -3,7 +3,8 @@ import { PlainDate, type PlainYearMonth } from "./temporal.js";
 export type DaysOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export function today() {
-  return PlainDate.from(new Date());
+  const d = new Date();
+  return new PlainDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
 }
 
 export function startOfWeek(
