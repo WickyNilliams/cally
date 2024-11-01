@@ -10,6 +10,7 @@ interface CalendarMonthContextBase {
   page: { start: PlainYearMonth; end: PlainYearMonth };
   focusedDate: PlainDate;
   showOutsideDays?: boolean;
+  showWeekNumbers?: boolean;
   locale?: string;
 }
 

@@ -1,11 +1,4 @@
-import {
-  useState,
-  useEvent,
-  useHost,
-  useEffect,
-  useMemo,
-  useRef,
-} from "atomico";
+import { useState, useEvent, useHost, useEffect, useMemo } from "atomico";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { useDateProp, useDateFormatter } from "../utils/hooks.js";
 import { clamp, toDate, today } from "../utils/date.js";

@@ -119,6 +119,46 @@ import Link from "../../components/Link.astro";
       <td>The table's body cells</td>
     </tr>
     <tr>
+      <td><code>col-weeknumber</code></td>
+      <td>The <code>&lt;col&gt;</code> for the week number</td>
+    </tr>
+    <tr>
+      <td><code>col-1</code></td>
+      <td>The <code>&lt;col&gt;</code> for the first day of the week</td>
+    </tr>
+    <tr>
+      <td><code>col-2</code></td>
+      <td>The <code>&lt;col&gt;</code> for the second day of the week </td>
+    </tr>
+    <tr>
+      <td><code>col-3</code></td>
+      <td>The <code>&lt;col&gt;</code> for the third day of the week</td>
+    </tr>
+    <tr>
+      <td><code>col-4</code></td>
+      <td>The <code>&lt;col&gt;</code> for the fourth day of the week</td>
+    </tr>
+    <tr>
+      <td><code>col-5</code></td>
+      <td>The <code>&lt;col&gt;</code> for the fifth day of the week</td>
+    </tr>
+    <tr>
+      <td><code>col-6</code></td>
+      <td>The <code>&lt;col&gt;</code> for the sixth day of the week</td>
+    </tr>
+    <tr>
+      <td><code>col-7</code></td>
+      <td>The <code>&lt;col&gt;</code> for the seventh day of the week</td>
+    </tr>
+    <tr>
+      <td><code>weekday</code></td>
+      <td>The <code>th</code> for the day of the week</td>
+    </tr>
+    <tr>
+      <td><code>weeknumber</code></td>
+      <td>The <code>td</code> for the week number</td>
+    </tr>
+    <tr>
       <td><code>button</code></td>
       <td>Any button used in the component</td>
     </tr>
@@ -157,6 +197,22 @@ import Link from "../../components/Link.astro";
       <td><code>range-inner</code></td>
       <td>
         Any <code>day</code>s between the start and end of a date range
+      </td>
+    </tr>
+  </Table>
+
+  <Heading level={2}>Slots</Heading>
+
+  <Table>
+    <tr slot="head">
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>weeknumber</td>
+      <td>
+        If week numbers are shown, this slot holds the heading for the column.
+        Defaults to "#"
       </td>
     </tr>
   </Table>

@@ -1,10 +1,6 @@
-import {
-  sendKeys,
-  sendMouse,
-  type SendKeysPayload,
-} from "@web/test-runner-commands";
+import { sendKeys, sendMouse } from "@web/test-runner-commands";
 import { fixture } from "atomico/test-dom";
-import type { VNodeAny } from "atomico/types/vnode.js";
+import type { VNodeAny } from "atomico/types/vnode";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
@@ -71,8 +67,8 @@ export async function click(element: Element) {
   const { x, y, width, height } = element.getBoundingClientRect();
 
   const position: [number, number] = [
-    Math.floor(x + window.pageXOffset + width / 2),
-    Math.floor(y + window.pageYOffset + height / 2),
+    Math.floor(x + window.scrollX + width / 2),
+    Math.floor(y + window.scrollY + height / 2),
   ];
 
   await sendMouse({ type: "click", position });

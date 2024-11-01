@@ -120,6 +120,10 @@ export const props = {
     type: String,
     value: (): Pagination => "months",
   },
+  showWeekNumbers: {
+    type: Boolean,
+    value: false,
+  },
 };
 
 export const styles = [
