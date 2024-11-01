@@ -141,9 +141,15 @@ export function useCalendarBase({
   function focus(options?: CalendarFocusOptions) {
     const target = options?.target ?? "day";
     if (target === "day") {
-      host.current
-        .querySelectorAll<HTMLElement>("calendar-month")
-        .forEach((m) => m.focus(options));
+      const children =
+        host.current.querySelectorAll<HTMLElement>("calendar-month");
+      const months = children.length
+        ? children
+        : host.current.shadowRoot!.querySelectorAll<HTMLElement>(
+            "calendar-month"
+          );
+
+      months.forEach((m) => m.focus(options));
     } else {
       host.current
         .shadowRoot!.querySelector<HTMLButtonElement>(`[part~='${target}']`)!

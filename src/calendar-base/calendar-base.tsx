@@ -9,6 +9,7 @@ import { reset, vh } from "../utils/styles.js";
 import { toDate, type DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { Pagination } from "./useCalendarBase.js";
+import { CalendarMonth } from "../calendar-month/calendar-month.js";
 
 interface CalendarBaseProps {
   format: Intl.DateTimeFormat;
@@ -19,6 +20,15 @@ interface CalendarBaseProps {
   onSelect: (e: CustomEvent<PlainDate>) => void;
   onFocus: (e: CustomEvent<PlainDate>) => void;
   onHover?: (e: CustomEvent<PlainDate>) => void;
+  months: number;
+}
+
+function range<T>(max: number, fn: (n: number) => T) {
+  let output = [];
+  for (let i = 0; i < max; i++) {
+    output.push(fn(i));
+  }
+  return output;
 }
 
 interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
@@ -73,7 +83,11 @@ export function CalendarBase(
         onfocusday={props.onFocus}
         onhoverday={props.onHover}
       >
-        <slot></slot>
+        <slot>
+          {range(props.months, (offset) => (
+            <CalendarMonth offset={offset} />
+          ))}
+        </slot>
       </CalendarContext>
     </div>
   );
