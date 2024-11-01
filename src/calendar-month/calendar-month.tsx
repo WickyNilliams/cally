@@ -32,7 +32,7 @@ export const CalendarMonth = c(
               {calendar.daysLong.map((dayName, i) => (
                 <th part="th" scope="col">
                   <span class="vh">{dayName}</span>
-                  <span aria-hidden="true">{calendar.daysShort[i]}</span>
+                  <span aria-hidden="true">{calendar.daysVisible[i]}</span>
                 </th>
               ))}
             </tr>

@@ -11,6 +11,7 @@ interface CalendarMonthContextBase {
   focusedDate: PlainDate;
   showOutsideDays?: boolean;
   locale?: string;
+  formatWeekday: "narrow" | "short";
 }
 
 export interface CalendarDateContext extends CalendarMonthContextBase {
@@ -36,11 +37,8 @@ export type CalendarMonthContextValue =
 const t = today();
 
 export const CalendarMonthContext = createContext<CalendarMonthContextValue>({
-  type: "date",
-  firstDayOfWeek: 1,
-  isDateDisallowed: () => false,
   focusedDate: t,
   page: { start: t.toPlainYearMonth(), end: t.toPlainYearMonth() },
-});
+} as CalendarMonthContextValue);
 
 customElements.define("calendar-month-ctx", CalendarMonthContext);

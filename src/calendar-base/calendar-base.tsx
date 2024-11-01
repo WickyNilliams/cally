@@ -96,6 +96,10 @@ export const props = {
     type: Function,
     value: (date: Date) => false,
   },
+  formatWeekday: {
+    type: String,
+    value: (): "narrow" | "short" => "narrow",
+  },
   firstDayOfWeek: {
     type: Number,
     value: (): DaysOfWeek => 1,
