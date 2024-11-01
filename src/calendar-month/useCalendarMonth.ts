@@ -18,7 +18,6 @@ const isLTR = (e: Event) => (e.target as HTMLElement).matches(":dir(ltr)");
 
 const dayOptions = { month: "long", day: "numeric" } as const;
 const monthOptions = { month: "long" } as const;
-const shortDayOptions = { weekday: "narrow" } as const;
 const longDayOptions = { weekday: "long" } as const;
 const dispatchOptions = { bubbles: true };
 
@@ -37,11 +36,16 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     page,
     locale,
     focusedDate,
+    formatWeekday,
   } = context;
 
   const todaysDate = today();
   const daysLong = useDayNames(longDayOptions, firstDayOfWeek, locale);
-  const daysShort = useDayNames(shortDayOptions, firstDayOfWeek, locale);
+  const visibleDayOptions = useMemo(
+    () => ({ weekday: formatWeekday }),
+    [formatWeekday]
+  );
+  const daysVisible = useDayNames(visibleDayOptions, firstDayOfWeek, locale);
   const dayFormatter = useDateFormatter(dayOptions, locale);
   const formatter = useDateFormatter(monthOptions, locale);
 
@@ -173,7 +177,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     weeks,
     yearMonth,
     daysLong,
-    daysShort,
+    daysVisible,
     formatter,
     getDayProps,
   };
