@@ -134,9 +134,15 @@ export function useCalendarBase({
 
   const host = useHost();
   function focus() {
-    host.current
-      .querySelectorAll<HTMLElement>("calendar-month")
-      .forEach((m) => m.focus());
+    const children =
+      host.current.querySelectorAll<HTMLElement>("calendar-month");
+    const months = children.length
+      ? children
+      : host.current.shadowRoot!.querySelectorAll<HTMLElement>(
+          "calendar-month"
+        );
+
+    months.forEach((m) => m.focus());
   }
 
   return {
