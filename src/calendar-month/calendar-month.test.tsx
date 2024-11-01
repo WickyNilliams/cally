@@ -43,6 +43,7 @@ function Fixture({
   focusedDate = today(),
   dir,
   type = "date",
+  formatWeekday = "narrow",
   ...props
 }: Partial<DateTestProps | RangeTestProps | MultiTestProps>): VNodeAny {
   return (
@@ -58,6 +59,7 @@ function Fixture({
           end: focusedDate.toPlainYearMonth(),
         },
         focusedDate,
+        formatWeekday,
         // @ts-expect-error - not sure why this is a problem
         type,
         ...props,
