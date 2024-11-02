@@ -21,6 +21,8 @@ interface CalendarBaseProps {
   onFocus: (e: CustomEvent<PlainDate>) => void;
   onHover?: (e: CustomEvent<PlainDate>) => void;
   months: number;
+  hasSlotted: boolean;
+  onSlotChange: (e: Event) => void;
 }
 
 function range<T>(max: number, fn: (n: number) => T) {
@@ -83,10 +85,12 @@ export function CalendarBase(
         onfocusday={props.onFocus}
         onhoverday={props.onHover}
       >
-        <slot part="slot">
-          {range(props.months, (offset) => (
-            <CalendarMonth offset={offset} />
-          ))}
+        <slot part="slot" onslotchange={props.onSlotChange}>
+          {props.hasSlotted
+            ? null
+            : range(props.months, (offset) => (
+                <CalendarMonth offset={offset} />
+              ))}
         </slot>
       </CalendarContext>
     </div>

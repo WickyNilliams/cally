@@ -157,6 +157,14 @@ export function useCalendarBase({
     }
   }
 
+  const [hasSlotted, setHasSlotted] = useState(false);
+  const onSlotChange = (e: Event) => {
+    return setHasSlotted(
+      (e.target as HTMLSlotElement).assignedElements({ flatten: true }).length >
+        0
+    );
+  };
+
   return {
     format: useDateFormatter(formatOptions, locale),
     formatVerbose: useDateFormatter(formatVerboseOptions, locale),
@@ -174,5 +182,7 @@ export function useCalendarBase({
     next,
     previous,
     focus,
+    hasSlotted,
+    onSlotChange,
   };
 }
