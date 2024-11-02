@@ -44,7 +44,7 @@ type UsePaginationOptions = {
   goto: (date: PlainDate) => void;
 };
 
-interface CalendarFocusOptions extends FocusOptions {
+export interface CalendarFocusOptions extends FocusOptions {
   target?: "day" | "next" | "previous";
 }
 

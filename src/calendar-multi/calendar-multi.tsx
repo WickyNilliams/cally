@@ -2,7 +2,10 @@ import { c, type Host } from "atomico";
 import { PlainDate } from "../utils/temporal.js";
 import { useDateMultiProp, useDateProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
-import { useCalendarBase } from "../calendar-base/useCalendarBase.js";
+import {
+  useCalendarBase,
+  type CalendarFocusOptions,
+} from "../calendar-base/useCalendarBase.js";
 
 export const CalendarMulti = c(
   (
@@ -10,6 +13,7 @@ export const CalendarMulti = c(
   ): Host<{
     onChange: Event;
     onFocusDay: CustomEvent<Date>;
+    focus: (options?: CalendarFocusOptions) => void;
   }> => {
     const [value, setValue] = useDateMultiProp("value");
     const [focusedDate = value[0], setFocusedDate] = useDateProp("focusedDate");
