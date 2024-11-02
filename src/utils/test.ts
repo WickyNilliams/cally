@@ -75,7 +75,17 @@ export async function click(element: Element) {
 }
 
 export function getMonths(calendar: HTMLElement): MonthInstance[] {
-  return [...calendar.querySelectorAll<MonthInstance>("calendar-month")!];
+  const children = [
+    ...calendar.querySelectorAll<MonthInstance>("calendar-month"),
+  ];
+
+  return children.length
+    ? children
+    : [
+        ...calendar.shadowRoot!.querySelectorAll<MonthInstance>(
+          "calendar-month"
+        ),
+      ];
 }
 
 export function getMonth(calendar: HTMLElement): MonthInstance {
