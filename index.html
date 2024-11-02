@@ -43,6 +43,11 @@
       ::part(bar) {
         background: blue;
       }
+
+      #simple::part(slot) {
+        display: flex;
+        gap: 1em;
+      }
     </style>
   </head>
   <body>
@@ -109,7 +114,7 @@
 
     <h2>Simple date</h2>
 
-    <calendar-date months="2"></calendar-date>
+    <calendar-date id="simple" months="3"></calendar-date>
 
     <script type="module">
       import "./src/index.ts";

@@ -83,7 +83,7 @@ export function CalendarBase(
         onfocusday={props.onFocus}
         onhoverday={props.onHover}
       >
-        <slot>
+        <slot part="slot">
           {range(props.months, (offset) => (
             <CalendarMonth offset={offset} />
           ))}
