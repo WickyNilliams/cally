@@ -166,14 +166,22 @@ import Link from "../../components/Link.astro";
   <Table>
     <tr slot="head">
       <th>Name</th>
+      <th>Parameters</th>
       <th>Description</th>
     </tr>
 
     <tr>
-      <td><code>focus</code></td>
+      <td>
+        <code>
+          focus(options?: FocusOptions & {"{"} target: "previous" | "next" | "day"
+          {"}"}) => void
+        </code>
+      </td>
+      <td><code>options</code> - controls what gets focused, and how</td>
       <td>
         Focuses the <code>&lt;calendar-month&gt;</code> containing the currently
-        focused date
+        focused date. <code>option.target</code> controls which part of the component
+        gets focused
       </td>
     </tr>
   </Table>
