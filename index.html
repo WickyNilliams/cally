@@ -48,6 +48,10 @@
         display: flex;
         gap: 1em;
       }
+      #simple2::part(slot) {
+        display: flex;
+        gap: 1em;
+      }
     </style>
   </head>
   <body>
@@ -115,6 +119,11 @@
     <h2>Simple date</h2>
 
     <calendar-date id="simple" months="3"></calendar-date>
+
+    <calendar-date id="simple2" months="3">
+      <span slot="previous">&lt;</span>
+      <span slot="next">&gt;</span>
+    </calendar-date>
 
     <script type="module">
       import "./src/index.ts";
