@@ -30,6 +30,7 @@ type TestProps = {
   value: string;
   min: string;
   max: string;
+  today: string;
   children: VNodeAny;
   showOutsideDays: boolean;
   months: number;

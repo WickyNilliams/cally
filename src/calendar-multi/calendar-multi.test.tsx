@@ -22,6 +22,7 @@ type TestProps = {
   value: string;
   min: string;
   max: string;
+  today: string;
   months?: number;
   children?: VNodeAny;
 };

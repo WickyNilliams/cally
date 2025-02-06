@@ -25,6 +25,7 @@ type TestProps = {
   value: string;
   min: string;
   max: string;
+  today: string;
   tentative?: string;
   focusedDate?: string;
   months?: number;

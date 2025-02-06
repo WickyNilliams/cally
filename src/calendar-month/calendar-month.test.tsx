@@ -11,6 +11,7 @@ import {
   getSelectedDays,
   click,
   sendShiftPress,
+  getTodayButton,
 } from "../utils/test.js";
 import {
   CalendarContext,
@@ -565,6 +566,17 @@ describe("CalendarMonth", () => {
       await clickDay(month, "30 January");
       expect(spy.count).to.eq(1);
       expect(spy.last[0].detail.toString()).to.eq("2020-01-30");
+    });
+  });
+
+  describe("today support", () => {
+    it("supports today date", async () => {
+      const month = await mount(
+        <Fixture focusedDate={PlainDate.from("2020-01-01")} today={PlainDate.from("2020-01-02")} />
+      );
+
+      const todayButton = getTodayButton(month);
+      expect(todayButton).to.have.attribute("aria-label", "2 January");
     });
   });
 
