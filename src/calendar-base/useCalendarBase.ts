@@ -8,7 +8,7 @@ import {
 } from "atomico";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { useDateProp, useDateFormatter } from "../utils/hooks.js";
-import { clamp, toDate, today } from "../utils/date.js";
+import { clamp, toDate, getToday } from "../utils/date.js";
 
 export type Pagination = "single" | "months";
 
@@ -118,7 +118,7 @@ export function useCalendarBase({
   const dispatch = useEvent("change");
 
   const focusedDate = useMemo(
-    () => clamp(focusedDateProp ?? today(), min, max),
+    () => clamp(focusedDateProp ?? getToday(), min, max),
     [focusedDateProp, min, max]
   );
 

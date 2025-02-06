@@ -21,7 +21,7 @@ import {
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { fixture } from "atomico/test-dom";
 import { PlainDate } from "../utils/temporal.js";
-import { toDate, today } from "../utils/date.js";
+import { toDate, getToday } from "../utils/date.js";
 
 type MonthContextInstance = InstanceType<typeof CalendarContext>;
 
@@ -40,7 +40,7 @@ const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
 function Fixture({
   onselectday,
   onfocusday,
-  focusedDate = today(),
+  focusedDate = getToday(),
   dir,
   type = "date",
   formatWeekday = "narrow",
@@ -199,7 +199,7 @@ describe("CalendarMonth", () => {
       it("marks today", async () => {
         const month = await mount(<Fixture />);
 
-        const todaysDate = toDate(today()).toLocaleDateString("en-GB", {
+        const todaysDate = toDate(getToday()).toLocaleDateString("en-GB", {
           day: "numeric",
           month: "long",
         });

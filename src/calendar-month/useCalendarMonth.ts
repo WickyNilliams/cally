@@ -6,7 +6,7 @@ import {
   getViewOfMonth,
   startOfWeek,
   toDate,
-  today,
+  getToday,
 } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { CalendarContextValue } from "./CalendarMonthContext.js";
@@ -39,7 +39,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     formatWeekday,
   } = context;
 
-  const todaysDate = today();
+  const todaysDate = getToday();
   const daysLong = useDayNames(longDayOptions, firstDayOfWeek, locale);
   const visibleDayOptions = useMemo(
     () => ({ weekday: formatWeekday }),
