@@ -33,13 +33,14 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     isDateDisallowed,
     min,
     max,
+    today,
     page,
     locale,
     focusedDate,
     formatWeekday,
   } = context;
 
-  const todaysDate = getToday();
+  const todaysDate = today ?? getToday();
   const daysLong = useDayNames(longDayOptions, firstDayOfWeek, locale);
   const visibleDayOptions = useMemo(
     () => ({ weekday: formatWeekday }),
