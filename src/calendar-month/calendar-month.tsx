@@ -4,6 +4,9 @@ import { useCalendarMonth } from "./useCalendarMonth.js";
 import { CalendarContext } from "./CalendarMonthContext.js";
 import { toDate } from "../utils/date.js";
 
+const mapToDayNumber = (firstDayOfWeek: number, i: number) =>
+  (i + firstDayOfWeek) % 7;
+
 export const CalendarMonth = c(
   (
     props
@@ -30,7 +33,10 @@ export const CalendarMonth = c(
           <thead>
             <tr part="tr head">
               {calendar.daysLong.map((dayName, i) => (
-                <th part="th" scope="col">
+                <th
+                  part={`th day day-${mapToDayNumber(context.firstDayOfWeek, i)}`}
+                  scope="col"
+                >
                   <span class="vh">{dayName}</span>
                   <span aria-hidden="true">{calendar.daysVisible[i]}</span>
                 </th>
