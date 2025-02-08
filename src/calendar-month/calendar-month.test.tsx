@@ -43,6 +43,7 @@ function Fixture({
   focusedDate = today(),
   dir,
   type = "date",
+  formatWeekday = "narrow",
   ...props
 }: Partial<DateTestProps | RangeTestProps | MultiTestProps>): VNodeAny {
   return (
@@ -58,6 +59,7 @@ function Fixture({
           end: focusedDate.toPlainYearMonth(),
         },
         focusedDate,
+        formatWeekday,
         // @ts-expect-error - not sure why this is a problem
         type,
         ...props,
@@ -612,6 +614,38 @@ describe("CalendarMonth", () => {
 
       const button = getDayButton(month, "15 janvier");
       expect(button).to.exist;
+    });
+
+    it("has configurable week day formatting", async () => {
+      const month = await mount(
+        <Fixture
+          focusedDate={PlainDate.from("2020-01-15")}
+          formatWeekday="short"
+        />
+      );
+      const grid = getGrid(month);
+
+      const accessibleHeadings = grid.querySelectorAll(
+        "th span:not([aria-hidden])"
+      );
+      expect(accessibleHeadings[0]).to.have.trimmed.text("Monday");
+      expect(accessibleHeadings[1]).to.have.trimmed.text("Tuesday");
+      expect(accessibleHeadings[2]).to.have.trimmed.text("Wednesday");
+      expect(accessibleHeadings[3]).to.have.trimmed.text("Thursday");
+      expect(accessibleHeadings[4]).to.have.trimmed.text("Friday");
+      expect(accessibleHeadings[5]).to.have.trimmed.text("Saturday");
+      expect(accessibleHeadings[6]).to.have.trimmed.text("Sunday");
+
+      const visualHeadings = grid.querySelectorAll(
+        "th span[aria-hidden='true']"
+      );
+      expect(visualHeadings[0]).to.have.trimmed.text("Mon");
+      expect(visualHeadings[1]).to.have.trimmed.text("Tue");
+      expect(visualHeadings[2]).to.have.trimmed.text("Wed");
+      expect(visualHeadings[3]).to.have.trimmed.text("Thu");
+      expect(visualHeadings[4]).to.have.trimmed.text("Fri");
+      expect(visualHeadings[5]).to.have.trimmed.text("Sat");
+      expect(visualHeadings[6]).to.have.trimmed.text("Sun");
     });
   });
 });
