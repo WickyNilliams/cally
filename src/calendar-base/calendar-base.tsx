@@ -84,14 +84,11 @@ export function CalendarBase(
         onselectday={props.onSelect}
         onfocusday={props.onFocus}
         onhoverday={props.onHover}
+        part="months"
       >
-        <slot part="slot" onslotchange={props.onSlotChange}>
-          {props.hasSlotted
-            ? null
-            : range(props.months, (offset) => (
-                <CalendarMonth offset={offset} />
-              ))}
-        </slot>
+        <slot onslotchange={props.onSlotChange} />
+        {!props.hasSlotted &&
+          range(props.months, (offset) => <CalendarMonth offset={offset} />)}
       </CalendarContext>
     </div>
   );
@@ -187,6 +184,10 @@ export const styles = [
     button[aria-disabled] {
       cursor: default;
       opacity: 0.5;
+    }
+
+    :host::part(months) {
+      display: contents;
     }
   `,
 ];

@@ -159,7 +159,7 @@ export function useCalendarBase({
 
   const [hasSlotted, setHasSlotted] = useState(false);
   const onSlotChange = (e: Event) => {
-    return setHasSlotted(
+    setHasSlotted(
       (e.target as HTMLSlotElement).assignedElements({ flatten: true }).length >
         0
     );
