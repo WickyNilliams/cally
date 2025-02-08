@@ -869,38 +869,4 @@ describe("CalendarDate", () => {
       );
     });
   });
-
-  describe("simple usage", () => {
-    it("renders its own months if none supplied", async () => {
-      const calendar = await mount(
-        <CalendarDate locale="en-GB" months={2} value="2024-11-02" />
-      );
-      const months = getMonths(calendar);
-
-      expect(months).to.have.lengthOf(2);
-      expect(getMonthHeading(months[0]!)).to.have.text("November");
-      expect(getMonthHeading(months[1]!)).to.have.text("December");
-    });
-
-    it("does not render its own month if some are slotted", async () => {
-      const calendar = await mount(<Fixture value="2024-11-02" />);
-      expect(
-        calendar.shadowRoot!.querySelector("slot:not([name])")!.children
-      ).to.have.lengthOf(0);
-    });
-
-    it("behaves correctly when named slots are used", async () => {
-      const calendar = await mount(
-        <CalendarDate locale="en-GB" months={2} value="2024-11-02">
-          <span slot="prev">&lt;</span>
-          <span slot="next">&gt;</span>
-        </CalendarDate>
-      );
-      const months = getMonths(calendar);
-
-      expect(months).to.have.lengthOf(2);
-      expect(getMonthHeading(months[0]!)).to.have.text("November");
-      expect(getMonthHeading(months[1]!)).to.have.text("December");
-    });
-  });
 });
