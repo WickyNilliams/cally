@@ -1,10 +1,11 @@
 import { createContext } from "atomico";
 import type { PlainDate, PlainYearMonth } from "../utils/temporal.js";
-import { today, type DaysOfWeek } from "../utils/date.js";
+import { getToday, type DaysOfWeek } from "../utils/date.js";
 
 interface CalendarContextBase {
   min?: PlainDate;
   max?: PlainDate;
+  today?: PlainDate;
   firstDayOfWeek: DaysOfWeek;
   isDateDisallowed?: (date: Date) => boolean;
   getDayParts?: (date: Date) => string;
@@ -35,7 +36,7 @@ export type CalendarContextValue =
   | CalendarRangeContext
   | CalendarMultiContext;
 
-const t = today();
+const t = getToday();
 
 export const CalendarContext = createContext<CalendarContextValue>({
   type: "date",

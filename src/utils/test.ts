@@ -143,6 +143,12 @@ export function getNextPageButton(calendar: CalendarInstance) {
   )!;
 }
 
+export function getTodayButton(month: MonthInstance) {
+  return month.shadowRoot!.querySelector<HTMLButtonElement>(
+    `button[part~="today"]`
+  )!;
+}
+
 export function getSelectedDays(month: MonthInstance) {
   return [
     ...month.shadowRoot!.querySelectorAll<HTMLButtonElement>(

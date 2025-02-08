@@ -92,6 +92,10 @@ export const props = {
     type: String,
     value: "",
   },
+  today: {
+    type: String,
+    value: "",
+  },
   isDateDisallowed: {
     type: Function,
     value: (date: Date) => false,

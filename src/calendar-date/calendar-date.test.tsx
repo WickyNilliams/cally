@@ -22,7 +22,7 @@ import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { Pagination } from "../calendar-base/useCalendarBase.js";
 import { CalendarDate } from "./calendar-date.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
-import { today, toDate } from "../utils/date.js";
+import { getToday, toDate } from "../utils/date.js";
 
 type TestProps = {
   onchange: (e: Event) => void;
@@ -30,6 +30,7 @@ type TestProps = {
   value: string;
   min: string;
   max: string;
+  today: string;
   children: VNodeAny;
   showOutsideDays: boolean;
   months: number;
@@ -693,7 +694,7 @@ describe("CalendarDate", () => {
 
     it("defaults to today if no value set", async () => {
       const calendar = await mount(<Fixture />);
-      const todaysDate = toDate(today());
+      const todaysDate = toDate(getToday());
       const month = getMonth(calendar);
 
       const heading = getMonthHeading(month);
