@@ -1,8 +1,4 @@
-import {
-  sendKeys,
-  sendMouse,
-  type SendKeysPayload,
-} from "@web/test-runner-commands";
+import { sendKeys, sendMouse } from "@web/test-runner-commands";
 import { fixture } from "atomico/test-dom";
 import type { VNodeAny } from "atomico/types/vnode.js";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";

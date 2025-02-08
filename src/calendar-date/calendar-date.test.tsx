@@ -802,4 +802,26 @@ describe("CalendarDate", () => {
       expect(firstJan).to.have.attribute("aria-pressed", "true");
     });
   });
+
+  describe("focus()", () => {
+    it("allows targeting different elements", async () => {
+      const calendar = await mount(<Fixture value="2020-01-01" />);
+      const day = getDayButton(getMonth(calendar), "1 January");
+
+      calendar.focus({ target: "previous" });
+
+      expect(getActiveElement(calendar.shadowRoot!)).to.eq(
+        getPrevPageButton(calendar)
+      );
+
+      calendar.focus();
+      expect(getActiveElement()).to.eq(day);
+
+      calendar.focus({ target: "next" });
+      expect(getActiveElement()).to.eq(getNextPageButton(calendar));
+
+      calendar.focus({ target: "day" });
+      expect(getActiveElement()).to.eq(day);
+    });
+  });
 });

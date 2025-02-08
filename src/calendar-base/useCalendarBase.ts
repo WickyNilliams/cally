@@ -44,6 +44,10 @@ type UsePaginationOptions = {
   goto: (date: PlainDate) => void;
 };
 
+export interface CalendarFocusOptions extends FocusOptions {
+  target?: "day" | "next" | "previous";
+}
+
 function usePagination({
   pageBy,
   focusedDate,
@@ -133,10 +137,17 @@ export function useCalendarBase({
   });
 
   const host = useHost();
-  function focus() {
-    host.current
-      .querySelectorAll<HTMLElement>("calendar-month")
-      .forEach((m) => m.focus());
+  function focus(options?: CalendarFocusOptions) {
+    const target = options?.target ?? "day";
+    if (target === "day") {
+      host.current
+        .querySelectorAll<HTMLElement>("calendar-month")
+        .forEach((m) => m.focus(options));
+    } else {
+      host.current
+        .shadowRoot!.querySelector<HTMLButtonElement>(`[part~='${target}']`)!
+        .focus(options);
+    }
   }
 
   return {
