@@ -9,7 +9,7 @@ import {
   today,
 } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
-import type { CalendarMonthContextValue } from "./CalendarMonthContext.js";
+import type { CalendarContextValue } from "./CalendarMonthContext.js";
 
 const inRange = (date: PlainDate, min?: PlainDate, max?: PlainDate) =>
   clamp(date, min, max) === date;
@@ -23,7 +23,7 @@ const dispatchOptions = { bubbles: true };
 
 type UseCalendarMonthOptions = {
   props: { offset: number };
-  context: CalendarMonthContextValue;
+  context: CalendarContextValue;
 };
 
 export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
@@ -148,6 +148,8 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       isDisallowed ? "disallowed" : ""
     } ${
       isToday ? "today" : ""
+    } ${
+      context.getDayParts?.(asDate) ?? ""
     }`;
 
     return {

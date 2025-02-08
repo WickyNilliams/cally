@@ -13,7 +13,7 @@ import {
   sendShiftPress,
 } from "../utils/test.js";
 import {
-  CalendarMonthContext,
+  CalendarContext,
   type CalendarDateContext,
   type CalendarMultiContext,
   type CalendarRangeContext,
@@ -23,7 +23,7 @@ import { fixture } from "atomico/test-dom";
 import { PlainDate } from "../utils/temporal.js";
 import { toDate, today } from "../utils/date.js";
 
-type MonthContextInstance = InstanceType<typeof CalendarMonthContext>;
+type MonthContextInstance = InstanceType<typeof CalendarContext>;
 
 interface TestPropsBase {
   onselectday?: (e: CustomEvent<PlainDate>) => void;
@@ -47,7 +47,7 @@ function Fixture({
   ...props
 }: Partial<DateTestProps | RangeTestProps | MultiTestProps>): VNodeAny {
   return (
-    <CalendarMonthContext
+    <CalendarContext
       onselectday={onselectday}
       onfocusday={onfocusday}
       dir={dir}
@@ -66,7 +66,7 @@ function Fixture({
       }}
     >
       <CalendarMonth />
-    </CalendarMonthContext>
+    </CalendarContext>
   );
 }
 

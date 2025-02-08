@@ -36,6 +36,13 @@
         width: 100%;
         text-align: center;
       }
+
+      ::part(foo) {
+        background: red;
+      }
+      ::part(bar) {
+        background: blue;
+      }
     </style>
   </head>
   <body>
@@ -114,6 +121,14 @@
 
       if (window.range) {
         let start = null;
+
+        window.range.getDayParts = (date) => {
+          const d = date.getUTCDate();
+
+          if (d % 5 === 0) return "foo";
+          if (d % 9 === 0) return "bar";
+          return "";
+        };
 
         window.range.addEventListener("rangestart", (e) => {
           const { detail } = e;
