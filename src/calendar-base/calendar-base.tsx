@@ -100,7 +100,7 @@ export const props = {
     type: String,
     value: (): "narrow" | "short" => "narrow",
   },
-  getPartsForDate: {
+  getDayParts: {
     type: Function,
     value: (date: Date): string => "",
   },

@@ -7,7 +7,7 @@ interface CalendarContextBase {
   max?: PlainDate;
   firstDayOfWeek: DaysOfWeek;
   isDateDisallowed?: (date: Date) => boolean;
-  getPartsForDate?: (date: Date) => string;
+  getDayParts?: (date: Date) => string;
   page: { start: PlainYearMonth; end: PlainYearMonth };
   focusedDate: PlainDate;
   showOutsideDays?: boolean;

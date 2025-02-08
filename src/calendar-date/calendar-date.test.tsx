@@ -836,7 +836,7 @@ describe("CalendarDate", () => {
     const almostGone = new Set(["2020-01-13", "2020-01-14"]);
 
     const calendar = await mount(<Fixture value="2020-01-01" />);
-    calendar.getPartsForDate = function getPartsForDate(date: Date) {
+    calendar.getDayParts = function getDayParts(date: Date) {
       const d = PlainDate.from(date).toString();
 
       if (available.has(d)) return "available";

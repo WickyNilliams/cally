@@ -149,7 +149,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     } ${
       isToday ? "today" : ""
     } ${
-      context.getPartsForDate?.(asDate) ?? ""
+      context.getDayParts?.(asDate) ?? ""
     }`;
 
     return {
