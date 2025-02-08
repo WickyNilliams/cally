@@ -572,7 +572,10 @@ describe("CalendarMonth", () => {
   describe("today support", () => {
     it("supports today date", async () => {
       const month = await mount(
-        <Fixture focusedDate={PlainDate.from("2020-01-01")} today={PlainDate.from("2020-01-02")} />
+        <Fixture
+          focusedDate={PlainDate.from("2020-01-01")}
+          today={PlainDate.from("2020-01-02")}
+        />
       );
 
       const todayButton = getTodayButton(month);
@@ -658,6 +661,42 @@ describe("CalendarMonth", () => {
       expect(visualHeadings[4]).to.have.trimmed.text("Fri");
       expect(visualHeadings[5]).to.have.trimmed.text("Sat");
       expect(visualHeadings[6]).to.have.trimmed.text("Sun");
+    });
+
+    it("renders parts for each day corresponding to day number", async () => {
+      const mapToDayNumber = (firstDayOfWeek: number, i: number) =>
+        (i + firstDayOfWeek) % 7;
+
+      const firstDayOfWeek = 2;
+      const month = await mount(
+        <Fixture
+          focusedDate={PlainDate.from("2020-01-15")}
+          firstDayOfWeek={firstDayOfWeek}
+        />
+      );
+      const grid = getGrid(month);
+
+      const headings = grid.querySelectorAll("th");
+      const days = grid.rows[2]!.querySelectorAll("button");
+
+      // sanity check
+      expect(headings.length).to.eq(7);
+      expect(days.length).to.eq(7);
+
+      for (let i = 0; i < 7; i++) {
+        const heading = headings[i]!;
+        const day = days[i]!;
+        const part = `day-${mapToDayNumber(firstDayOfWeek, i)}`;
+
+        expect(heading.part.contains(part)).to.eq(
+          true,
+          `expected part to contain "${part}", got "${heading.part}"`
+        );
+        expect(day.part.contains(part)).to.eq(
+          true,
+          `expected part to contain "${part}, got "${day.part}"`
+        );
+      }
     });
   });
 });
