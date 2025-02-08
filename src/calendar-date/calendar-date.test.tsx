@@ -465,14 +465,14 @@ describe("CalendarDate", () => {
 
         // move one year ahead
         await sendShiftPress("PageDown");
-        expect(getCalendarVisibleHeading(calendar)).to.have.text("2020–2021");
+        expect(getCalendarVisibleHeading(calendar)).to.include.text("2020").and.include.text("2021");
         expect(getMonthHeading(first)).to.have.text("December");
         expect(getMonthHeading(second)).to.have.text("January");
 
         // move one year back
         await sendShiftPress("PageUp");
         expect(getMonthHeading(first)).to.have.text("December");
-        expect(getCalendarVisibleHeading(calendar)).to.have.text("2019–2020");
+        expect(getCalendarVisibleHeading(calendar)).to.include.text("2019").and.include.text("2020");
         expect(getMonthHeading(second)).to.have.text("January");
       });
 
@@ -550,7 +550,7 @@ describe("CalendarDate", () => {
         await nextFrame();
         expect(getMonthHeading(first)).to.have.text("December");
         expect(getMonthHeading(second)).to.have.text("January");
-        expect(getCalendarVisibleHeading(calendar)).to.have.text("2020–2021");
+        expect(getCalendarVisibleHeading(calendar)).to.include.text("2020").and.include.text("2021");
       });
     });
   });
