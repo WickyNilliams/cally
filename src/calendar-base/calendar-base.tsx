@@ -9,6 +9,7 @@ import { reset, vh } from "../utils/styles.js";
 import { toDate, type DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { Pagination } from "./useCalendarBase.js";
+import { CalendarMonth } from "../calendar-month/calendar-month.js";
 
 interface CalendarBaseProps {
   format: Intl.DateTimeFormat;
@@ -19,6 +20,17 @@ interface CalendarBaseProps {
   onSelect: (e: CustomEvent<PlainDate>) => void;
   onFocus: (e: CustomEvent<PlainDate>) => void;
   onHover?: (e: CustomEvent<PlainDate>) => void;
+  months: number;
+  hasSlotted: boolean;
+  onSlotChange: (e: Event) => void;
+}
+
+function range<T>(max: number, fn: (n: number) => T) {
+  let output = [];
+  for (let i = 0; i < max; i++) {
+    output.push(fn(i));
+  }
+  return output;
 }
 
 interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
@@ -72,8 +84,11 @@ export function CalendarBase(
         onselectday={props.onSelect}
         onfocusday={props.onFocus}
         onhoverday={props.onHover}
+        part="months"
       >
-        <slot></slot>
+        <slot onslotchange={props.onSlotChange} />
+        {!props.hasSlotted &&
+          range(props.months, (offset) => <CalendarMonth offset={offset} />)}
       </CalendarContext>
     </div>
   );
@@ -169,6 +184,10 @@ export const styles = [
     button[aria-disabled] {
       cursor: default;
       opacity: 0.5;
+    }
+
+    :host::part(months) {
+      display: contents;
     }
   `,
 ];

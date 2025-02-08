@@ -141,15 +141,29 @@ export function useCalendarBase({
   function focus(options?: CalendarFocusOptions) {
     const target = options?.target ?? "day";
     if (target === "day") {
-      host.current
-        .querySelectorAll<HTMLElement>("calendar-month")
-        .forEach((m) => m.focus(options));
+      const children =
+        host.current.querySelectorAll<HTMLElement>("calendar-month");
+      const months = children.length
+        ? children
+        : host.current.shadowRoot!.querySelectorAll<HTMLElement>(
+            "calendar-month"
+          );
+
+      months.forEach((m) => m.focus(options));
     } else {
       host.current
         .shadowRoot!.querySelector<HTMLButtonElement>(`[part~='${target}']`)!
         .focus(options);
     }
   }
+
+  const [hasSlotted, setHasSlotted] = useState(false);
+  const onSlotChange = (e: Event) => {
+    setHasSlotted(
+      (e.target as HTMLSlotElement).assignedElements({ flatten: true }).length >
+        0
+    );
+  };
 
   return {
     format: useDateFormatter(formatOptions, locale),
@@ -168,5 +182,7 @@ export function useCalendarBase({
     next,
     previous,
     focus,
+    hasSlotted,
+    onSlotChange,
   };
 }
