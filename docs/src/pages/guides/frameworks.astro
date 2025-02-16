@@ -31,99 +31,10 @@ import { Code } from "astro:components";
   <Heading level={2}>React</Heading>
 
   <p>
-    React <a href="https://custom-elements-everywhere.com/#react"
-      >does not have great support</a
-    > for web components. It is advised to create React-specific wrappers around
-    web components so that they can be used easily and idiomatically.
-  </p>
-
-  <Note>
-    <strong>Note:</strong> the next major version of React will offer
-    <a
-      href="https://github.com/facebook/react/issues/11347#issuecomment-1899140345"
-      >full support for web components</a
-    >, making these wrappers unnecessary. Though no release date has been set
-    yet.
-  </Note>
-
-  <p>
-    With a couple of custom hooks and some thin wrappers, we can make Cally's
-    components feel "native" to React.
-  </p>
-
-  <Code
-    lang="jsx"
-    code={`
-import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
-import "cally";
-
-function useListener(ref, event, listener) {
-  useEffect(() => {
-    const current = ref.current;
-
-    if (current && listener) {
-      current.addEventListener(event, listener);
-      return () => current.removeEventListener(event, listener);
-    }
-  }, [ref, event, listener]);
-}
-
-function useProperty(ref, prop, value) {
-  useEffect(() => {
-    if (ref.current) {
-      ref.current[prop] = value;
-    }
-  }, [ref, prop, value]);
-}
-
-export const CalendarMonth = forwardRef(function CalendarMonth(props, forwardedRef) {
-  return <calendar-month offset={props.offset} ref={forwardedRef} />;
-});
-
-export const CalendarRange = forwardRef(function CalendarRange(
-  { onChange, showOutsideDays, firstDayOfWeek, isDateDisallowed, ...props },
-  forwardedRef
-) {
-  const ref = useRef();
-  useImperativeHandle(forwardedRef, () => ref.current, []);
-  useListener(ref, "change", onChange);
-  useProperty(ref, "isDateDisallowed", isDateDisallowed);
-
-  return (
-    <calendar-range
-      ref={ref}
-      show-outside-days={showOutsideDays || undefined}
-      first-day-of-week={firstDayOfWeek}
-      {...props}
-    />
-  );
-});
-
-export const CalendarDate = forwardRef(function CalendarDate(
-  { onChange, showOutsideDays, firstDayOfWeek, isDateDisallowed, ...props },
-  forwardedRef
-) {
-  const ref = useRef();
-  useImperativeHandle(forwardedRef, () => ref.current, []);
-  useListener(ref, "change", onChange);
-  useProperty(ref, "isDateDisallowed", isDateDisallowed);
-
-  return (
-    <calendar-date
-      ref={ref}
-      show-outside-days={showOutsideDays || undefined}
-      first-day-of-week={firstDayOfWeek}
-      {...props}
-    />
-  );
-});
-`.trim()}
-  />
-
-  <Heading id="react-usage" level={3}>Usage</Heading>
-
-  <p>
-    You can now use these components as you would any other React component.
+    As of version 19, React has <a
+      href="https://custom-elements-everywhere.com/#react"
+      >excellent support for web components</a
+    >. They can now be used directly, with no wrappers or setup necessary.
   </p>
 
   <Code
@@ -131,27 +42,22 @@ export const CalendarDate = forwardRef(function CalendarDate(
     code={`
 import { useState } from "react";
 import { createRoot } from 'react-dom/client';
-import { CalendarRange, CalendarMonth } from "./Cally";
-
-function Picker({ value, onChange }) {
-  return (
-    <CalendarRange value={value} onChange={onChange}>
-      <CalendarMonth />
-      <CalendarMonth offset={1} />
-    </CalendarRange>
-  );
-}
 
 function App() {
   const [value, setValue] = useState("");
-  const onChange = (event) => setValue(event.target.value);
 
   return (
     <>
       <p>Value is: {value}</p>
-      <Picker value={value} onChange={onChange} />
+      <calendar-range
+        value={value}
+        onchange={(event) => setValue(event.target.value)}
+      >
+        <calendar-month />
+        <calendar-month offset={1} />
+      </calendar-range>
     </>
-  )
+  );
 }
 
 const root = createRoot(document.getElementById("root"));
@@ -159,123 +65,83 @@ root.render(<App />)
 `.trim()}
   />
 
+  <Note>
+    <strong>Note:</strong> React requires that event listeners for web components
+    use the event name <strong>verbatim</strong>. For instance if you have an
+    event named <code>fooBar</code> in your web component, you must listen for the
+    <code>onfooBar</code> event. This is unusual for React, which typically expects
+    events to be like <code>onFooBar</code>.
+  </Note>
+
   <Heading id="react-typescript" level={3}>TypeScript</Heading>
 
   <p>
-    Cally exports types for each component's props. We can use these types to
-    add type-checking and improve the editor experience.
+    If you are using TypeScript, you can augment React's types to add
+    type-checking and improve your editor experience. Cally exports types for
+    each component's props making this a simple, one-time procedure.
+  </p>
+
+  <p>
+    First you should create a <code>d.ts</code> file in your React project, with
+    any name you like. For this example let's call it <code>globals.d.ts</code>.
+    In that file, paste the following code:
   </p>
 
   <Code
     lang="tsx"
     code={`
-import {
-  useEffect,
-  useRef,
-  ReactNode,
-  forwardRef,
-  useImperativeHandle,
-  type RefObject,
-  type PropsWithChildren,
-} from "react";
-
-import "cally";
 import type {
   CalendarRangeProps,
   CalendarMonthProps,
   CalendarDateProps,
+  CalendarMultiProps,
 } from "cally";
 
-declare global {
+type MapEvents<T> = {
+  [K in keyof T as K extends \`on\${infer E}\` ? \`on\${Lowercase<E>}\` : K]: T[K];
+};
+
+declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      "calendar-month": unknown;
-      "calendar-range": unknown;
-      "calendar-date": unknown;
+      "calendar-month": MapEvents<CalendarMonthProps> &
+        React.HTMLAttributes<HTMLElement>;
+      "calendar-range": MapEvents<CalendarRangeProps> &
+        React.HTMLAttributes<HTMLElement>;
+      "calendar-date": MapEvents<CalendarDateProps> &
+        React.HTMLAttributes<HTMLElement>;
+      "calendar-multi": MapEvents<CalendarMultiProps> &
+        React.HTMLAttributes<HTMLElement>;
     }
   }
 }
+`.trim()}
+  />
 
-function useListener(
-  ref: RefObject<HTMLElement>,
-  event: string,
-  listener?: (e: Event) => void
-) {
-  useEffect(() => {
-    const current = ref.current;
+  <Note>
+    This uses TypeScript's declaration merging feature. You can read more about
+    it in the <a
+      href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html"
+      >TypeScript Handbook</a
+    >.
+  </Note>
 
-    if (current && listener) {
-      current.addEventListener(event, listener);
-      return () => current.removeEventListener(event, listener);
-    }
-  }, [ref, event, listener]);
+  <p>
+    Finally, you must add this to the <code>compilerOptions.types</code> field in
+    your
+    <code>tsconfig.json</code>:
+  </p>
+
+  <Code
+    lang="json"
+    code={`
+{
+  // ...
+  "compilerOptions": {
+    // ...
+    "types": ["./globals.d.ts"]
+  }
 }
-
-function useProperty(ref: RefObject<HTMLElement>, prop: string, value?: any) {
-  useEffect(() => {
-    if (ref.current) {
-      // @ts-expect-error - TS doesn't know that \`prop\` is a key
-      ref.current[prop] = value;
-    }
-  }, [ref, prop, value]);
-}
-
-export const CalendarMonth = forwardRef(function CalendarMonth(
-  props: CalendarMonthProps,
-  forwardedRef
-) {
-  return <calendar-month offset={props.offset} ref={forwardedRef} />;
-});
-
-export const CalendarRange = forwardRef(function CalendarRange(
-  {
-    onChange,
-    showOutsideDays,
-    firstDayOfWeek,
-    isDateDisallowed,
-    ...props
-  }: PropsWithChildren<CalendarRangeProps>,
-  forwardedRef
-) {
-  const ref = useRef<HTMLElement>(null);
-  useImperativeHandle(forwardedRef, () => ref.current, []);
-  useListener(ref, "change", onChange);
-  useProperty(ref, "isDateDisallowed", isDateDisallowed);
-
-  return (
-    <calendar-range
-      ref={ref}
-      show-outside-days={showOutsideDays || undefined}
-      first-day-of-week={firstDayOfWeek}
-      {...props}
-    />
-  );
-});
-
-export const CalendarDate = forwardRef(function CalendarDate(
-  {
-    onChange,
-    showOutsideDays,
-    firstDayOfWeek,
-    isDateDisallowed,
-    ...props
-  }: PropsWithChildren<CalendarDateProps>,
-  forwardedRef
-) {
-  const ref = useRef<HTMLElement>(null);
-  useImperativeHandle(forwardedRef, () => ref.current, []);
-  useListener(ref, "change", onChange);
-  useProperty(ref, "isDateDisallowed", isDateDisallowed);
-
-  return (
-    <calendar-date
-      ref={forwardRef}
-      show-outside-days={showOutsideDays ? "" : undefined}
-      first-day-of-week={firstDayOfWeek}
-      {...props}
-    />
-  );
-});
 `.trim()}
   />
 
@@ -444,7 +310,7 @@ declare global {
 
   <p>
     Svelte has <a href="https://custom-elements-everywhere.com/#svelte"
-      >good support for web components</a
+      >excellent support for web components</a
     >. There is no setup required to start using Web Components.
   </p>
 
