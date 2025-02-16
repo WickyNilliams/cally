@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.0] - 2025-02-08
+## `0.8.0`
+
+_Released: 2025-02-08_
 
 ### Added
 
@@ -15,32 +17,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `today` attribute/property on `<calendar-date>`, `<calendar-range>`, and `<calendar-multi>` components.
 - `day-0`, `day-1`, etc CSS parts corresponding to day number on `<calendar-month>`.
 
-## [0.7.2] - 2024-11-01
+## `0.7.2`
+
+_Released: 2024-11-01_
 
 ### Fixed
 
 - Use user's timezone for calculating today, not UTC.
 
-## [0.7.1] - 2024-06-05
+## `0.7.1`
+
+_Released: 2024-06-05_
 
 ### Fixed
 
 - Edge cases in pagination logic.
 
-## [0.7.0] - 2024-06-04
+## `0.7.0`
+
+_Released: 2024-06-04_
 
 ### Added
 
 - `page-by` attribute/`pageBy` property to `<calendar-date>`, `<calendar-range>`, and `<calendar-multi>` components.
 - `tentative` attribute/property to `<calendar-range>` component.
 
-## [0.6.1] - 2024-05-23
+## `0.6.1`
+
+_Released: 2024-05-23_
 
 ### Fixed
 
 - Use UTC-based methods on `Date` when getting day names.
 
-## [0.6.0] - 2024-05-10
+## `0.6.0`
+
+_Released: 2024-05-10_
 
 ### Added
 
@@ -51,25 +63,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Hover styles for disallowed dates
 
-## [0.5.3] - 2024-04-25
+## `0.5.3`
+
+_Released: 2024-04-25_
 
 ### Fixed
 
 - Reinstate missing `disallowed` and `today` CSS parts.
 
-## [0.5.2] - 2024-04-22
+## `0.5.2`
+
+_Released: 2024-04-22_
 
 ### Fixed
 
 - `<calendar-range>` handle empty `value` prop.
 
-## [0.5.1] - 2024-04-20
+## `0.5.1`
+
+_Released: 2024-04-20_
 
 ### Fixed
 
 - Reinstate missing `outside` CSS part.
 
-## [0.5.0] - 2024-04-18
+## `0.5.0`
+
+_Released: 2024-04-18_
 
 ### Added
 
@@ -79,25 +99,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bundle size improvements.
 
-## [0.4.3] - 2024-04-05
+## `0.4.3`
+
+_Released: 2024-04-05_
 
 ### Fixed
 
 - Use UTC timezone for formatting day names.
 
-## [0.4.2] - 2024-04-04
+## `0.4.2`
+
+_Released: 2024-04-04_
 
 ### Fixed
 
 - Use UTC timezone for formatting dates.
 
-## [0.4.1] - 2024-04-04
+## `0.4.1`
+
+_Released: 2024-04-04_
 
 ### Fixed
 
 - Styles for iOS devices
 
-## [0.4.0] - 2024-04-02
+## `0.4.0`
+
+_Released: 2024-04-02_
 
 ### Added
 
@@ -118,14 +146,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Font size in buttons.
 - Screen reader announcement for range/date groups.
 
-## [0.3.0] - 2024-03-26
+## `0.3.0`
+
+_Released: 2024-03-26_
 
 ### Added
 
 - Typescript types.
 - Miscellaneous tweaks and polish.
 
-## [0.2.0] - 2024-03-21
+## `0.2.0`
+
+_Released: 2024-03-21_
 
 Initial release
 

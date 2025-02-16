@@ -48,8 +48,11 @@
     "@web/test-runner-playwright": "^0.11.0",
     "@web/test-runner-visual-regression": "^0.9.0",
     "astro": "^4.5.10",
+    "hastscript": "^9.0.0",
     "postcss-nesting": "^12.1.1",
     "prettier": "^3.2.5",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-slug": "^6.0.0",
     "typescript": "^5.3.3",
     "vite": "^5.1.4",
     "vite-plugin-dts": "^3.7.3"
