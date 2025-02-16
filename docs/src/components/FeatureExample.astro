@@ -7,26 +7,6 @@ import Example from "./Example.astro";
   <BrandedCalendar />
 </Example>
 
-<script is:inline type="module">
-  const toISO = (date) => date.toISOString().split("T")[0];
-
-  // pick some dates mid-month
-  const today = new Date();
-  const start = new Date(today.getUTCFullYear(), today.getUTCMonth(), 8);
-  const end = new Date(today.getUTCFullYear(), today.getUTCMonth(), 16);
-
-  document
-    .querySelector("calendar-range")
-    ?.setAttribute("value", `${toISO(start)}/${toISO(end)}`);
-
-  await Promise.all([
-    customElements.whenDefined("calendar-range"),
-    customElements.whenDefined("calendar-month"),
-  ]);
-
-  document.querySelector(".card")?.classList.add("reveal");
-</script>
-
 <style is:global>
   .feature {
     container-type: inline-size;
@@ -53,3 +33,23 @@ import Example from "./Example.astro";
     }
   }
 </style>
+
+<script is:inline type="module">
+  const toISO = (date) => date.toISOString().split("T")[0];
+
+  // pick some dates mid-month
+  const today = new Date();
+  const start = new Date(today.getUTCFullYear(), today.getUTCMonth(), 8);
+  const end = new Date(today.getUTCFullYear(), today.getUTCMonth(), 16);
+
+  document
+    .querySelector("calendar-range")
+    ?.setAttribute("value", `${toISO(start)}/${toISO(end)}`);
+
+  await Promise.all([
+    customElements.whenDefined("calendar-range"),
+    customElements.whenDefined("calendar-month"),
+  ]);
+
+  document.querySelector(".card")?.classList.add("reveal");
+</script>

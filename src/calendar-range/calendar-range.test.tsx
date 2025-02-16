@@ -256,7 +256,7 @@ describe("CalendarRange", () => {
       expect(before[1]!.part.contains("selected")).to.eq(true);
       expect(before[1]!.part.contains("range-end")).to.eq(true);
 
-      calendar.tentative = undefined;
+      calendar.tentative = "";
       await calendar.updated;
 
       const after = getSelectedDays(month);
