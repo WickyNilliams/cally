@@ -1,3 +1,8 @@
 {
-  "extends": "astro/tsconfigs/strict"
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    // For some reason this causes issues with astro not being able to
+    //resolve types for the "postcss-nesting" package
+    "allowJs": false
+  }
 }
