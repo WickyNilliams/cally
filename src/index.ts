@@ -5,7 +5,7 @@ import { CalendarMulti } from "./calendar-multi/calendar-multi";
 
 export { CalendarMonth, CalendarDate, CalendarRange, CalendarMulti };
 
-import type { AtomicoThis } from "atomico/types/dom.js";
+import type { AtomicoThis } from "atomico/types/dom";
 
 type Simplify<T> = {
   [K in keyof T]: T[K];
