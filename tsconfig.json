@@ -6,7 +6,12 @@
     "noUncheckedIndexedAccess": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
+    // despite these being in the atomico base config, i need
+    // them here for some reason to avoid tests failing
+    // with "Cannot find module 'react'"
     "declaration": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "atomico"
   }
 }

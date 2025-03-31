@@ -7,6 +7,33 @@ import Example from "./Example.astro";
   <BrandedCalendar />
 </Example>
 
+<style is:global>
+  .feature {
+    container-type: inline-size;
+  }
+
+  .card {
+    transition:
+      opacity 0.6s ease-in,
+      transform 0.4s ease-out;
+
+    /* avoid reflow */
+    min-block-size: 667px;
+    @container (inline-size > 562px) {
+      min-block-size: 425px;
+    }
+
+    /* animate card in when ready */
+    &:not(.reveal) {
+      opacity: 0;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transform: translateY(-3em);
+      }
+    }
+  }
+</style>
+
 <script is:inline type="module">
   const toISO = (date) => date.toISOString().split("T")[0];
 
@@ -26,30 +53,3 @@ import Example from "./Example.astro";
 
   document.querySelector(".card")?.classList.add("reveal");
 </script>
-
-<style is:global>
-  .feature {
-    container-type: inline-size;
-  }
-
-  .card {
-    transition:
-      opacity 0.6s ease-in,
-      transform 0.4s ease-out;
-
-    /* avoid reflow */
-    min-block-size: 631px;
-    @container (inline-size > 562px) {
-      min-block-size: 385px;
-    }
-
-    /* animate card in when ready */
-    &:not(.reveal) {
-      opacity: 0;
-
-      @media (prefers-reduced-motion: no-preference) {
-        transform: translateY(-3em);
-      }
-    }
-  }
-</style>

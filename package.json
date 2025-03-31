@@ -34,28 +34,28 @@
     "postversion": "git push origin main --tags && npm publish"
   },
   "dependencies": {
-    "atomico": "^1.76.1"
+    "atomico": "^1.79.2"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.5.9",
+    "@astrojs/check": "^0.9.4",
     "@atomico/tsconfig": "^1.1.2",
-    "@atomico/vite": "^2.17.8",
+    "@atomico/vite": "^2.21.1",
     "@open-wc/testing": "^4.0.0",
-    "@types/mocha": "^10.0.6",
-    "@web/dev-server-esbuild": "^1.0.2",
-    "@web/test-runner": "^0.18.0",
+    "@types/mocha": "^10.0.10",
+    "@web/dev-server-esbuild": "^1.0.4",
+    "@web/test-runner": "^0.20.0",
     "@web/test-runner-commands": "^0.9.0",
     "@web/test-runner-playwright": "^0.11.0",
-    "@web/test-runner-visual-regression": "^0.9.0",
-    "astro": "^4.5.10",
-    "hastscript": "^9.0.0",
-    "postcss-nesting": "^12.1.1",
-    "prettier": "^3.2.5",
+    "@web/test-runner-visual-regression": "^0.10.0",
+    "astro": "^5.5.6",
+    "hastscript": "^9.0.1",
+    "postcss-nesting": "^13.0.1",
+    "prettier": "^3.5.3",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4",
-    "vite-plugin-dts": "^3.7.3"
+    "typescript": "^5.8.2",
+    "vite": "^6.2.4",
+    "vite-plugin-dts": "^4.5.3"
   },
   "overrides": {
     "playwright": {
