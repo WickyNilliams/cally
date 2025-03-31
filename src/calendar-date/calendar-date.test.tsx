@@ -31,7 +31,7 @@ type TestProps = {
   min: string;
   max: string;
   today: string;
-  children: VNodeAny;
+  children: VNodeAny[];
   showOutsideDays: boolean;
   months: number;
   locale: string;
@@ -699,9 +699,7 @@ describe("CalendarDate", () => {
 
       const heading = getMonthHeading(month);
       expect(heading).to.have.text(
-        todaysDate.toLocaleDateString("en-GB", {
-          month: "long",
-        })
+        todaysDate.toLocaleDateString("en-GB", { month: "long" })
       );
 
       const button = getDayButton(
