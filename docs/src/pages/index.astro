@@ -26,10 +26,10 @@ const tagline = "Small, feature-rich calendar components";
   <Heading level={2}>Goals</Heading>
 
   <ul>
-    <li><strong>Small bundle size</strong> - less than 8.5KB min/gzip</li>
+    <li><strong>Small bundle size</strong> - less than 9KB min/gzip</li>
     <li>
-      <strong>Full feature set</strong> - single dates, ranges, display multiple
-      months
+      <strong>Full feature set</strong> - single dates, multiple dates, ranges, display
+      multiple months
     </li>
     <li>
       <strong>HTML-friendly</strong> - easy to author, framework-independent
@@ -121,6 +121,17 @@ const tagline = "Small, feature-rich calendar components";
     </calendar-range>
   </Example>
 
+  <Heading level={3}>Multiple dates</Heading>
+
+  For a date range, use the <code>{`<calendar-multi>`}</code> component, and place
+  inside it a <code>{`<calendar-month>`}</code> component.
+
+  <Example lineLength={50}>
+    <calendar-multi>
+      <calendar-month></calendar-month>
+    </calendar-multi>
+  </Example>
+
   <Heading level={3}>Multiple months</Heading>
 
   <p>
@@ -198,7 +209,8 @@ const tagline = "Small, feature-rich calendar components";
 
 <style is:global>
   calendar-date,
-  calendar-range {
+  calendar-range,
+  calendar-multi {
     margin: 0 auto;
   }
 </style>
