@@ -2,8 +2,8 @@
 
 Small, feature-rich calendar components
 
-- **Small bundle size** - less than 8.5KB min/gzip
-- **Full feature set** - single dates, ranges, display multiple months
+- **Small bundle size** - less than 9KB min/gzip
+- **Full feature set** - single dates, multiple dates, ranges, display multiple months
 - **HTML-friendly** - easy to author, framework-independent
 - **Minimal dependencies** - just one
 - **Accessible** - keyboard and screen reader
