@@ -69,7 +69,7 @@ export const CalendarRange = c(
     const range = tentative ? sort(tentative, hovered ?? tentative) : value;
 
     return (
-      <host shadowDom focus={calendar.focus}>
+      <host shadowDom focus={calendar.focus} oncommand={calendar.onCommand}>
         <CalendarBase
           {...props}
           {...calendar}

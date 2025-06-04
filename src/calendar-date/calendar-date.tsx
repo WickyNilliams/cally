@@ -29,7 +29,7 @@ export const CalendarDate = c(
     }
 
     return (
-      <host shadowDom focus={calendar.focus}>
+      <host shadowDom focus={calendar.focus} oncommand={calendar.onCommand}>
         <CalendarBase
           {...props}
           {...calendar}

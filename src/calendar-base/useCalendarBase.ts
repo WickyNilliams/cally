@@ -1,11 +1,4 @@
-import {
-  useState,
-  useEvent,
-  useHost,
-  useEffect,
-  useMemo,
-  useRef,
-} from "atomico";
+import { useState, useEvent, useHost, useEffect, useMemo } from "atomico";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { useDateProp, useDateFormatter } from "../utils/hooks.js";
 import { clamp, toDate, getToday } from "../utils/date.js";
@@ -105,6 +98,10 @@ function usePagination({
   };
 }
 
+interface CommandEvent extends Event {
+  command: string;
+}
+
 export function useCalendarBase({
   months,
   pageBy,
@@ -151,6 +148,20 @@ export function useCalendarBase({
     }
   }
 
+  function onCommand(event: CommandEvent) {
+    switch (event.command) {
+      case "--today":
+        goto(getToday());
+        break;
+      case "--next":
+        next?.();
+        break;
+      case "--previous":
+        previous?.();
+        break;
+    }
+  }
+
   return {
     format: useDateFormatter(formatOptions, locale),
     formatVerbose: useDateFormatter(formatVerboseOptions, locale),
@@ -168,5 +179,6 @@ export function useCalendarBase({
     next,
     previous,
     focus,
+    onCommand,
   };
 }
