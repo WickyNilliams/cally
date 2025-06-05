@@ -1,5 +1,4 @@
 import { c, type Host } from "atomico";
-import type { PlainDate } from "../utils/temporal.js";
 import { useDateProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import {
@@ -23,7 +22,7 @@ export const CalendarDate = c(
       setFocusedDate,
     });
 
-    function handleSelect(e: CustomEvent<PlainDate>) {
+    function handleSelect(e: CustomEvent<Temporal.PlainDate>) {
       setValue(e.detail);
       calendar.dispatch();
     }

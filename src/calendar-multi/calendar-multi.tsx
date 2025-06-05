@@ -1,5 +1,4 @@
 import { c, type Host } from "atomico";
-import { PlainDate } from "../utils/temporal.js";
 import { useDateMultiProp, useDateProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import {
@@ -23,7 +22,7 @@ export const CalendarMulti = c(
       setFocusedDate,
     });
 
-    function handleSelect(e: CustomEvent<PlainDate>) {
+    function handleSelect(e: CustomEvent<Temporal.PlainDate>) {
       const newValues = [...value];
 
       const idx = value.findIndex((date) => date.equals(e.detail));

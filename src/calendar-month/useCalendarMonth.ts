@@ -8,11 +8,13 @@ import {
   toDate,
   getToday,
 } from "../utils/date.js";
-import type { PlainDate } from "../utils/temporal.js";
 import type { CalendarContextValue } from "./CalendarMonthContext.js";
 
-const inRange = (date: PlainDate, min?: PlainDate, max?: PlainDate) =>
-  clamp(date, min, max) === date;
+const inRange = (
+  date: Temporal.PlainDate,
+  min?: Temporal.PlainDate,
+  max?: Temporal.PlainDate
+) => clamp(date, min, max) === date;
 
 const isLTR = (e: Event) => (e.target as HTMLElement).matches(":dir(ltr)");
 
@@ -60,16 +62,25 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     [yearMonth, firstDayOfWeek]
   );
 
-  const dispatchFocusDay = useEvent<PlainDate>("focusday", dispatchOptions);
-  const dispatchSelectDay = useEvent<PlainDate>("selectday", dispatchOptions);
-  const dispatchHoverDay = useEvent<PlainDate>("hoverday", dispatchOptions);
+  const dispatchFocusDay = useEvent<Temporal.PlainDate>(
+    "focusday",
+    dispatchOptions
+  );
+  const dispatchSelectDay = useEvent<Temporal.PlainDate>(
+    "selectday",
+    dispatchOptions
+  );
+  const dispatchHoverDay = useEvent<Temporal.PlainDate>(
+    "hoverday",
+    dispatchOptions
+  );
 
-  function focusDay(date: PlainDate) {
+  function focusDay(date: Temporal.PlainDate) {
     dispatchFocusDay(clamp(date, min, max));
   }
 
   function onKeyDown(e: KeyboardEvent) {
-    let date: PlainDate;
+    let date: Temporal.PlainDate;
 
     switch (e.key) {
       case "ArrowRight":
@@ -104,7 +115,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     e.preventDefault();
   }
 
-  function getDayProps(date: PlainDate) {
+  function getDayProps(date: Temporal.PlainDate) {
     const isInMonth = yearMonth.equals(date);
 
     // days outside of month are only shown if `showOutsideDays` is true

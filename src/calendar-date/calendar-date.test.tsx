@@ -21,7 +21,6 @@ import {
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { Pagination } from "../calendar-base/useCalendarBase.js";
 import { CalendarDate } from "./calendar-date.js";
-import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { getToday, toDate } from "../utils/date.js";
 
 type TestProps = {
@@ -71,7 +70,7 @@ describe("CalendarDate", () => {
       const group = calendar.shadowRoot!.querySelector("[role='group']");
       expect(group).to.have.attribute("aria-labelledby");
 
-      const yearMonth = toDate(new PlainYearMonth(2020, 1));
+      const yearMonth = toDate(new Temporal.PlainYearMonth(2020, 1));
       const formatter = new Intl.DateTimeFormat("en-GB", {
         month: "long",
         year: "numeric",
@@ -89,8 +88,8 @@ describe("CalendarDate", () => {
         </Fixture>
       );
 
-      const start = new PlainYearMonth(2023, 12);
-      const end = new PlainYearMonth(2024, 1);
+      const start = new Temporal.PlainYearMonth(2023, 12);
+      const end = new Temporal.PlainYearMonth(2024, 1);
       const formatter = new Intl.DateTimeFormat("en-GB", {
         month: "long",
         year: "numeric",
@@ -836,7 +835,9 @@ describe("CalendarDate", () => {
 
     const calendar = await mount(<Fixture value="2020-01-01" />);
     calendar.getDayParts = function getDayParts(date: Date) {
-      const d = PlainDate.from(date).toString();
+      const d = Temporal.PlainDate.from(
+        date.toISOString().split("T")[0]!
+      ).toString();
 
       if (available.has(d)) return "available";
       if (almostGone.has(d)) return "almost-gone";

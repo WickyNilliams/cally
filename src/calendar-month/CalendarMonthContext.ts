@@ -1,16 +1,15 @@
 import { createContext } from "atomico";
-import type { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { getToday, type DaysOfWeek } from "../utils/date.js";
 
 interface CalendarContextBase {
-  min?: PlainDate;
-  max?: PlainDate;
-  today?: PlainDate;
+  min?: Temporal.PlainDate;
+  max?: Temporal.PlainDate;
+  today?: Temporal.PlainDate;
   firstDayOfWeek: DaysOfWeek;
   isDateDisallowed?: (date: Date) => boolean;
   getDayParts?: (date: Date) => string;
-  page: { start: PlainYearMonth; end: PlainYearMonth };
-  focusedDate: PlainDate;
+  page: { start: Temporal.PlainYearMonth; end: Temporal.PlainYearMonth };
+  focusedDate: Temporal.PlainDate;
   showOutsideDays?: boolean;
   locale?: string;
   formatWeekday: "narrow" | "short";
@@ -18,17 +17,17 @@ interface CalendarContextBase {
 
 export interface CalendarDateContext extends CalendarContextBase {
   type: "date";
-  value?: PlainDate;
+  value?: Temporal.PlainDate;
 }
 
 export interface CalendarRangeContext extends CalendarContextBase {
   type: "range";
-  value: [PlainDate, PlainDate] | [];
+  value: [Temporal.PlainDate, Temporal.PlainDate] | [];
 }
 
 export interface CalendarMultiContext extends CalendarContextBase {
   type: "multi";
-  value: PlainDate[];
+  value: Temporal.PlainDate[];
 }
 
 export type CalendarContextValue =
