@@ -1,5 +1,4 @@
 import { c, useState, type Host, useEvent, useEffect } from "atomico";
-import { PlainDate } from "../utils/temporal.js";
 import { useDateProp, useDateRangeProp } from "../utils/hooks.js";
 import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import {
@@ -8,8 +7,11 @@ import {
 } from "../calendar-base/useCalendarBase.js";
 import { toDate } from "../utils/date.js";
 
-const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
-  PlainDate.compare(a, b) < 0 ? [a, b] : [b, a];
+const sort = (
+  a: Temporal.PlainDate,
+  b: Temporal.PlainDate
+): [Temporal.PlainDate, Temporal.PlainDate] =>
+  Temporal.PlainDate.compare(a, b) < 0 ? [a, b] : [b, a];
 
 export const CalendarRange = c(
   (
@@ -31,27 +33,27 @@ export const CalendarRange = c(
     const dispatchStart = useEvent<Date>("rangestart");
     const dispatchEnd = useEvent<Date>("rangeend");
 
-    const [tentative, setTentative] = useDateProp<PlainDate | undefined>(
-      "tentative"
-    );
-    const [hovered, setHovered] = useState<PlainDate | undefined>();
+    const [tentative, setTentative] = useDateProp<
+      Temporal.PlainDate | undefined
+    >("tentative");
+    const [hovered, setHovered] = useState<Temporal.PlainDate | undefined>();
 
     // reset whenever tentative changes
     useEffect(() => setHovered(undefined), [tentative]);
 
-    function handleFocus(e: CustomEvent<PlainDate>) {
+    function handleFocus(e: CustomEvent<Temporal.PlainDate>) {
       calendar.onFocus(e);
       handleHover(e);
     }
 
-    function handleHover(e: CustomEvent<PlainDate>) {
+    function handleHover(e: CustomEvent<Temporal.PlainDate>) {
       e.stopPropagation();
       if (tentative) {
         setHovered(e.detail);
       }
     }
 
-    function handleSelect(e: CustomEvent<PlainDate>) {
+    function handleSelect(e: CustomEvent<Temporal.PlainDate>) {
       const detail = e.detail;
       e.stopPropagation();
 

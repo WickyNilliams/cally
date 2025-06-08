@@ -6,7 +6,7 @@ import {
   useMemo,
   useRef,
 } from "atomico";
-import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
+
 import { useDateProp, useDateFormatter } from "../utils/hooks.js";
 import { clamp, toDate, getToday } from "../utils/date.js";
 
@@ -16,19 +16,22 @@ type CalendarBaseOptions = {
   months: number;
   pageBy: Pagination;
   locale?: string;
-  focusedDate: PlainDate | undefined;
-  setFocusedDate: (date: PlainDate) => void;
+  focusedDate: Temporal.PlainDate | undefined;
+  setFocusedDate: (date: Temporal.PlainDate) => void;
 };
 
 const formatOptions = { year: "numeric" } as const;
 const formatVerboseOptions = { year: "numeric", month: "long" } as const;
 
-function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
+function diffInMonths(
+  a: Temporal.PlainYearMonth,
+  b: Temporal.PlainYearMonth
+): number {
   return (b.year - a.year) * 12 + b.month - a.month;
 }
 
-const createPage = (start: PlainYearMonth, months: number) => {
-  start = months === 12 ? new PlainYearMonth(start.year, 1) : start;
+const createPage = (start: Temporal.PlainYearMonth, months: number) => {
+  start = months === 12 ? new Temporal.PlainYearMonth(start.year, 1) : start;
   return {
     start,
     end: start.add({ months: months - 1 }),
@@ -37,11 +40,11 @@ const createPage = (start: PlainYearMonth, months: number) => {
 
 type UsePaginationOptions = {
   pageBy: Pagination;
-  focusedDate: PlainDate;
+  focusedDate: Temporal.PlainDate;
   months: number;
-  min?: PlainDate;
-  max?: PlainDate;
-  goto: (date: PlainDate) => void;
+  min?: Temporal.PlainDate;
+  max?: Temporal.PlainDate;
+  goto: (date: Temporal.PlainDate) => void;
 };
 
 export interface CalendarFocusOptions extends FocusOptions {
@@ -64,7 +67,7 @@ function usePagination({
   const updatePageBy = (by: number) =>
     setPage(createPage(page.start.add({ months: by }), months));
 
-  const contains = (date: PlainDate) => {
+  const contains = (date: Temporal.PlainDate) => {
     const diff = diffInMonths(page.start, date.toPlainYearMonth());
     return diff >= 0 && diff < months;
   };
@@ -123,7 +126,7 @@ export function useCalendarBase({
     [focusedDateProp, today, min, max]
   );
 
-  function goto(date: PlainDate) {
+  function goto(date: Temporal.PlainDate) {
     setFocusedDate(date);
     dispatchFocusDay(toDate(date));
   }
@@ -157,7 +160,7 @@ export function useCalendarBase({
     page,
     focusedDate,
     dispatch,
-    onFocus(e: CustomEvent<PlainDate>) {
+    onFocus(e: CustomEvent<Temporal.PlainDate>) {
       e.stopPropagation();
       goto(e.detail);
       setTimeout(focus);

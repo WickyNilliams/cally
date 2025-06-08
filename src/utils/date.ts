@@ -1,45 +1,47 @@
-import { PlainDate, type PlainYearMonth } from "./temporal.js";
-
 export type DaysOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export function getToday() {
   const d = new Date();
-  return new PlainDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
+  return new Temporal.PlainDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
 }
 
 export function startOfWeek(
-  date: PlainDate,
+  date: Temporal.PlainDate,
   firstDayOfWeek: DaysOfWeek = 0
-): PlainDate {
+): Temporal.PlainDate {
   const d = toDate(date);
   const day = d.getUTCDay();
   const diff = (day < firstDayOfWeek ? 7 : 0) + day - firstDayOfWeek;
 
   d.setUTCDate(d.getUTCDate() - diff);
-  return PlainDate.from(d);
+  return Temporal.PlainDate.from(toISOString(d));
 }
 
 export function endOfWeek(
-  date: PlainDate,
+  date: Temporal.PlainDate,
   firstDayOfWeek: DaysOfWeek = 0
-): PlainDate {
+): Temporal.PlainDate {
   return startOfWeek(date, firstDayOfWeek).add({ days: 6 });
 }
 
-export function endOfMonth(date: { year: number; month: number }): PlainDate {
-  return PlainDate.from(new Date(Date.UTC(date.year, date.month, 0)));
+export function endOfMonth(date: Temporal.PlainYearMonth): Temporal.PlainDate {
+  return Temporal.PlainDate.from({
+    year: date.year,
+    month: date.month,
+    day: date.daysInMonth,
+  });
 }
 
 /**
  * Ensures date is within range, returns min or max if out of bounds
  */
 export function clamp(
-  date: PlainDate,
-  min?: PlainDate,
-  max?: PlainDate
-): PlainDate {
-  if (min && PlainDate.compare(date, min) < 0) return min;
-  if (max && PlainDate.compare(date, max) > 0) return max;
+  date: Temporal.PlainDate,
+  min?: Temporal.PlainDate,
+  max?: Temporal.PlainDate
+): Temporal.PlainDate {
+  if (min && Temporal.PlainDate.compare(date, min) < 0) return min;
+  if (max && Temporal.PlainDate.compare(date, max) > 0) return max;
   return date;
 }
 
@@ -49,16 +51,16 @@ const oneDay = { days: 1 };
  * given a date, return an array of dates from a calendar perspective
  */
 export function getViewOfMonth(
-  yearMonth: PlainYearMonth,
+  yearMonth: Temporal.PlainYearMonth,
   firstDayOfWeek: DaysOfWeek = 0
-): PlainDate[][] {
-  let start = startOfWeek(yearMonth.toPlainDate(), firstDayOfWeek);
+): Temporal.PlainDate[][] {
+  let start = startOfWeek(yearMonth.toPlainDate({ day: 1 }), firstDayOfWeek);
   const end = endOfWeek(endOfMonth(yearMonth), firstDayOfWeek);
 
-  const weeks: PlainDate[][] = [];
+  const weeks: Temporal.PlainDate[][] = [];
 
   // get all days in range
-  while (PlainDate.compare(start, end) < 0) {
+  while (Temporal.PlainDate.compare(start, end) < 0) {
     const week = [];
 
     // chunk into weeks
@@ -81,4 +83,8 @@ interface DateLike {
 
 export function toDate(date: DateLike): Date {
   return new Date(Date.UTC(date.year, date.month - 1, date.day ?? 1));
+}
+
+export function toISOString(date: Date): string {
+  return date.toISOString().split("T")[0]!;
 }

@@ -7,7 +7,6 @@ import {
 } from "../calendar-month/CalendarMonthContext.js";
 import { reset, vh } from "../utils/styles.js";
 import { toDate, type DaysOfWeek } from "../utils/date.js";
-import type { PlainDate } from "../utils/temporal.js";
 import type { Pagination } from "./useCalendarBase.js";
 
 interface CalendarBaseProps {
@@ -16,9 +15,9 @@ interface CalendarBaseProps {
   pageBy: Pagination;
   previous?: () => void;
   next?: () => void;
-  onSelect: (e: CustomEvent<PlainDate>) => void;
-  onFocus: (e: CustomEvent<PlainDate>) => void;
-  onHover?: (e: CustomEvent<PlainDate>) => void;
+  onSelect: (e: CustomEvent<Temporal.PlainDate>) => void;
+  onFocus: (e: CustomEvent<Temporal.PlainDate>) => void;
+  onHover?: (e: CustomEvent<Temporal.PlainDate>) => void;
 }
 
 interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}

@@ -1,8 +1,7 @@
 import { useProp, useMemo } from "atomico";
-import { PlainDate, type PlainYearMonth } from "./temporal.js";
 import { type DaysOfWeek } from "./date.js";
 
-function safeFrom<T extends PlainDate | PlainYearMonth>(
+function safeFrom<T extends Temporal.PlainDate | Temporal.PlainYearMonth>(
   Ctr: { from(value: string): T },
   value: string | undefined
 ) {
@@ -13,12 +12,12 @@ function safeFrom<T extends PlainDate | PlainYearMonth>(
   }
 }
 
-export function useDateProp<T extends PlainDate | undefined = PlainDate>(
-  prop: string
-) {
+export function useDateProp<
+  T extends Temporal.PlainDate | undefined = Temporal.PlainDate,
+>(prop: string) {
   const [value, setValue] = useProp<string>(prop);
 
-  const date = useMemo(() => safeFrom(PlainDate, value), [value]);
+  const date = useMemo(() => safeFrom(Temporal.PlainDate, value), [value]);
   const setDate = (date: T) => setValue(date?.toString());
 
   return [date, setDate] as const;
@@ -27,14 +26,14 @@ export function useDateProp<T extends PlainDate | undefined = PlainDate>(
 export function useDateRangeProp(prop: string) {
   const [value = "", setValue] = useProp<string>(prop);
 
-  const range = useMemo((): [PlainDate, PlainDate] | [] => {
+  const range = useMemo((): [Temporal.PlainDate, Temporal.PlainDate] | [] => {
     const [s, e] = value.split("/");
-    const start = safeFrom(PlainDate, s);
-    const end = safeFrom(PlainDate, e);
+    const start = safeFrom(Temporal.PlainDate, s);
+    const end = safeFrom(Temporal.PlainDate, e);
     return start && end ? [start, end] : [];
   }, [value]);
 
-  const setRange = (range: [PlainDate, PlainDate]) =>
+  const setRange = (range: [Temporal.PlainDate, Temporal.PlainDate]) =>
     setValue(`${range[0]}/${range[1]}`);
 
   return [range, setRange] as const;
@@ -47,7 +46,7 @@ export function useDateMultiProp(prop: string) {
     const result = [];
 
     for (const date of value.trim().split(/\s+/)) {
-      const parsed = safeFrom(PlainDate, date);
+      const parsed = safeFrom(Temporal.PlainDate, date);
 
       if (parsed) {
         result.push(parsed);
@@ -57,7 +56,7 @@ export function useDateMultiProp(prop: string) {
     return result;
   }, [value]);
 
-  const setMulti = (dates: PlainDate[]) => setValue(dates.join(" "));
+  const setMulti = (dates: Temporal.PlainDate[]) => setValue(dates.join(" "));
 
   return [multi, setMulti] as const;
 }

@@ -1,6 +1,6 @@
 {
   "extends": "@atomico/tsconfig/base.json",
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/temporal.d.ts"],
   "compilerOptions": {
     "strict": true,
     "noUncheckedIndexedAccess": true,
