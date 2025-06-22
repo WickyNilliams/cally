@@ -43,6 +43,24 @@
       ::part(bar) {
         background: blue;
       }
+
+      #date {
+        calendar-year-select,
+        calendar-month-select {
+          &::part(select) {
+            border: 1px solid #bcbcbc;
+            padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+            background: #efefef;
+            border-radius: 0.25em;
+            cursor: pointer;
+          }
+
+          &::part(label) {
+            position: absolute;
+            transform: scale(0);
+          }
+        }
+      }
     </style>
   </head>
   <body>
@@ -72,7 +90,9 @@
       show-outside-days
       page-by="single"
     >
-      <div slot="heading">
+      <calendar-year-select slot="heading"></calendar-year-select>
+      <calendar-month-select slot="heading"></calendar-month-select>
+      <!-- <div slot="heading">
         <label for="yearSelect" class="vh">Year:</label>
         <select id="yearSelect">
           <option value="2019">2019</option>
@@ -86,7 +106,7 @@
           <option value="2027">2027</option>
           <option value="2028">2028</option>
         </select>
-      </div>
+      </div> -->
 
       <div class="grid">
         <calendar-month></calendar-month>
@@ -146,19 +166,24 @@
         date.isDateDisallowed = (date) =>
           date.getDay() === 0 || date.getDay() === 6;
 
-        yearSelect.value = new Date(
-          date.getAttribute("value")
-        ).getUTCFullYear();
+        if (window.yearSelect) {
+          yearSelect.value = new Date(
+            date.getAttribute("value")
+          ).getUTCFullYear();
+
+          yearSelect.addEventListener("change", (e) => {
+            const d = new Date(date.focusedDate);
+            d.setUTCFullYear(e.target.value);
+            date.focusedDate = toIso(d);
+          });
+
+          date.addEventListener("focusday", (e) => {
+            yearSelect.value = e.detail.getUTCFullYear();
+          });
+        }
 
         date.addEventListener("focusday", (e) => {
-          yearSelect.value = e.detail.getUTCFullYear();
           console.log(formatter.format(e.detail));
-        });
-
-        yearSelect.addEventListener("change", (e) => {
-          const d = new Date(date.focusedDate);
-          d.setUTCFullYear(e.target.value);
-          date.focusedDate = toIso(d);
         });
       }
     </script>

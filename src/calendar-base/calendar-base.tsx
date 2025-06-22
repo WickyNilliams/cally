@@ -48,34 +48,34 @@ export function CalendarBase(
   const end = toDate(props.page.end);
 
   return (
-    <div role="group" aria-labelledby="h" part="container">
-      <div id="h" class="vh" aria-live="polite" aria-atomic="true">
-        {props.formatVerbose.formatRange(start, end)}
+    <CalendarContext
+      value={props}
+      onselectday={props.onSelect}
+      onfocusday={props.onFocus}
+      onhoverday={props.onHover}
+    >
+      <div role="group" aria-labelledby="h" part="container">
+        <div id="h" class="vh" aria-live="polite" aria-atomic="true">
+          {props.formatVerbose.formatRange(start, end)}
+        </div>
+
+        <div part="header">
+          <Button name="previous" onclick={props.previous}>
+            Previous
+          </Button>
+
+          <slot part="heading" name="heading">
+            <div aria-hidden="true">{props.format.formatRange(start, end)}</div>
+          </slot>
+
+          <Button name="next" onclick={props.next}>
+            Next
+          </Button>
+        </div>
+
+        <slot part="months"></slot>
       </div>
-
-      <div part="header">
-        <Button name="previous" onclick={props.previous}>
-          Previous
-        </Button>
-
-        <slot part="heading" name="heading">
-          <div aria-hidden="true">{props.format.formatRange(start, end)}</div>
-        </slot>
-
-        <Button name="next" onclick={props.next}>
-          Next
-        </Button>
-      </div>
-
-      <CalendarContext
-        value={props}
-        onselectday={props.onSelect}
-        onfocusday={props.onFocus}
-        onhoverday={props.onHover}
-      >
-        <slot></slot>
-      </CalendarContext>
-    </div>
+    </CalendarContext>
   );
 }
 
@@ -143,7 +143,7 @@ export const styles = [
       inline-size: fit-content;
     }
 
-    [role="group"] {
+    :host::part(container) {
       display: flex;
       flex-direction: column;
       gap: 1em;
@@ -160,13 +160,13 @@ export const styles = [
       font-size: 1.25em;
     }
 
-    button {
+    :host::part(button) {
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    button[aria-disabled] {
+    :host::part(button disabled) {
       cursor: default;
       opacity: 0.5;
     }
