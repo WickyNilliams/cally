@@ -14,27 +14,10 @@
         font-family: sans-serif;
       }
 
-      .grid {
+      ::part(months) {
         display: flex;
         gap: 1em;
         flex-wrap: wrap;
-      }
-
-      .vh {
-        position: absolute;
-        transform: scale(0);
-      }
-
-      #date::part(header) {
-        gap: 1em;
-      }
-      #date::part(heading) {
-        flex: 1;
-      }
-
-      #date select {
-        width: 100%;
-        text-align: center;
       }
 
       ::part(foo) {
@@ -42,6 +25,60 @@
       }
       ::part(bar) {
         background: blue;
+      }
+
+      #date {
+        svg {
+          height: 16px;
+          width: 16px;
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 1.5;
+        }
+
+        path {
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        &::part(header) {
+          gap: 0.25em;
+        }
+
+        &::part(heading) {
+          display: flex;
+          gap: 0.25em;
+          order: -1;
+          margin-inline-end: auto;
+        }
+
+        &::part(next),
+        &::part(previous),
+        ::part(select) {
+          border-radius: 0.25em;
+          border: 1px solid #bcbcbc;
+          padding: 0.2rem 0.5rem;
+          cursor: pointer;
+        }
+
+        &::part(next),
+        &::part(previous) {
+          padding: 0.2rem;
+        }
+
+        &::part(months) {
+          display: flex;
+          gap: 1em;
+          flex-wrap: wrap;
+        }
+
+        calendar-select-year,
+        calendar-select-month {
+          &::part(label) {
+            position: absolute;
+            transform: scale(0);
+          }
+        }
       }
     </style>
   </head>
@@ -55,11 +92,9 @@
       max="2025-10-10"
       value="2024-02-12/2025-02-20"
     >
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-        <calendar-month offset="2"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
+      <calendar-month offset="2"></calendar-month>
     </calendar-range>
 
     <h2>date</h2>
@@ -72,26 +107,31 @@
       show-outside-days
       page-by="single"
     >
-      <div slot="heading">
-        <label for="yearSelect" class="vh">Year:</label>
-        <select id="yearSelect">
-          <option value="2019">2019</option>
-          <option value="2020" selected>2020</option>
-          <option value="2021">2021</option>
-          <option value="2022">2022</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-          <option value="2026">2026</option>
-          <option value="2027">2027</option>
-          <option value="2028">2028</option>
-        </select>
-      </div>
+      <svg
+        aria-label="Previous"
+        slot="previous"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+      </svg>
+      <svg
+        aria-label="Next"
+        slot="next"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+      </svg>
 
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-select-year slot="heading"></calendar-select-year>
+      <calendar-select-month
+        slot="heading"
+        format-month="short"
+      ></calendar-select-month>
+
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-date>
 
     <h2>multi</h2>
@@ -101,10 +141,8 @@
       show-outside-days
       value="2024-05-07 2024-05-09"
     >
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-multi>
 
     <script type="module">
@@ -146,19 +184,24 @@
         date.isDateDisallowed = (date) =>
           date.getDay() === 0 || date.getDay() === 6;
 
-        yearSelect.value = new Date(
-          date.getAttribute("value")
-        ).getUTCFullYear();
+        if (window.yearSelect) {
+          yearSelect.value = new Date(
+            date.getAttribute("value")
+          ).getUTCFullYear();
+
+          yearSelect.addEventListener("change", (e) => {
+            const d = new Date(date.focusedDate);
+            d.setUTCFullYear(e.target.value);
+            date.focusedDate = toIso(d);
+          });
+
+          date.addEventListener("focusday", (e) => {
+            yearSelect.value = e.detail.getUTCFullYear();
+          });
+        }
 
         date.addEventListener("focusday", (e) => {
-          yearSelect.value = e.detail.getUTCFullYear();
           console.log(formatter.format(e.detail));
-        });
-
-        yearSelect.addEventListener("change", (e) => {
-          const d = new Date(date.focusedDate);
-          d.setUTCFullYear(e.target.value);
-          date.focusedDate = toIso(d);
         });
       }
     </script>

@@ -145,14 +145,14 @@ const tagline = "Small, feature-rich calendar components";
 
   <p>
     By default, the <code>{`<calendar-month>`}</code> components will stack vertically.
-    You will likely want to use flexbox or css grid to improve the layout as seen
+    You will likely want to use flexbox or css grid, to improve the layout as seen
     below.
   </p>
 
   <Example
     lineLength={50}
     css={`
-      .grid {
+      calendar-range::part(months) {
         display: flex;
         gap: 1em;
         justify-content: center;
@@ -161,10 +161,8 @@ const tagline = "Small, feature-rich calendar components";
     `}
   >
     <calendar-range months="2">
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-range>
   </Example>
 

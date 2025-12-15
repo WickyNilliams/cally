@@ -26,10 +26,8 @@ const { class: className, value } = Astro.props;
       <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
     </svg>
 
-    <div class="grid">
-      <calendar-month></calendar-month>
-      <calendar-month offset="1"></calendar-month>
-    </div>
+    <calendar-month></calendar-month>
+    <calendar-month offset="1"></calendar-month>
   </calendar-range>
 </div>
 
@@ -50,7 +48,7 @@ const { class: className, value } = Astro.props;
     inline-size: fit-content;
     margin-inline: auto;
 
-    .grid {
+    ::part(months) {
       display: flex;
       gap: 1em;
       justify-content: center;

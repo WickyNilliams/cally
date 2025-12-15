@@ -70,17 +70,19 @@ import Link from "../../components/Link.astro";
   <Example
     lineLength={100}
     css={`
-      .flex { display: flex; }
-      .gap-l { gap: var(--sl-spacing-large); }
-      .flex-wrap { flex-wrap: wrap; }
-      .justify-center { justify-content: center; }
-
       calendar-range {
         &::part(button) {
           border-radius: var(--sl-input-border-radius-small);
           background-color: var(--sl-input-background-color);
           border: 1px solid var(--sl-input-border-color);
           padding: var(--sl-spacing-x-small);
+        }
+
+        &::part(months) {
+          display: flex;
+          gap: var(--sl-spacing-large);
+          flex-wrap: wrap;
+          justify-content: center;
         }
       }
 
@@ -112,10 +114,8 @@ import Link from "../../components/Link.astro";
         <sl-icon slot="previous" name="chevron-left" label="Previous"></sl-icon>
         <sl-icon slot="next" name="chevron-right" label="Next"></sl-icon>
 
-        <div class="flex gap-l flex-wrap justify-center">
-          <calendar-month></calendar-month>
-          <calendar-month offset="1"></calendar-month>
-        </div>
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
       </calendar-range>
     </sl-card>
   </Example>
@@ -142,9 +142,6 @@ import Link from "../../components/Link.astro";
     css={`
       .flex { display: flex; }
       .gap-xs { gap: var(--sl-spacing-x-small); }
-      .gap-l { gap: var(--sl-spacing-large); }
-      .flex-wrap { flex-wrap: wrap; }
-      .justify-center { justify-content: center; }
       .flex-1 { flex: 1; }
       .align-end { align-items: end; }
 
@@ -154,6 +151,13 @@ import Link from "../../components/Link.astro";
           background-color: var(--sl-input-background-color);
           border: 1px solid var(--sl-input-border-color);
           padding: var(--sl-spacing-x-small);
+        }
+
+        &::part(months) {
+          display: flex;
+          gap: var(--sl-spacing-large);
+          flex-wrap: wrap;
+          justify-content: center;
         }
       }
 
@@ -191,10 +195,8 @@ import Link from "../../components/Link.astro";
         <sl-icon slot="previous" name="chevron-left" label="Previous"></sl-icon>
         <sl-icon slot="next" name="chevron-right" label="Next"></sl-icon>
 
-        <div class="flex gap-l flex-wrap justify-center">
-          <calendar-month></calendar-month>
-          <calendar-month offset="1"></calendar-month>
-        </div>
+        <calendar-month></calendar-month>
+        <calendar-month offset="1"></calendar-month>
       </calendar-range>
     </sl-card>
   </Example>
@@ -222,9 +224,6 @@ import Link from "../../components/Link.astro";
     css={`
       .flex { display: flex; }
       .gap-xs { gap: var(--sl-spacing-x-small); }
-      .gap-l { gap: var(--sl-spacing-large); }
-      .flex-wrap { flex-wrap: wrap; }
-      .justify-center { justify-content: center; }
       .flex-1 { flex: 1; }
       .align-end { align-items: end; }
 
@@ -234,6 +233,13 @@ import Link from "../../components/Link.astro";
           background-color: var(--sl-input-background-color);
           border: 1px solid var(--sl-input-border-color);
           padding: var(--sl-spacing-x-small);
+        }
+
+        &::part(months) {
+          display: flex;
+          gap: var(--sl-spacing-large);
+          flex-wrap: wrap;
+          justify-content: center;
         }
       }
 
@@ -273,10 +279,8 @@ import Link from "../../components/Link.astro";
           ></sl-icon>
           <sl-icon slot="next" name="chevron-right" label="Next"></sl-icon>
 
-          <div class="flex gap-l flex-wrap justify-center">
-            <calendar-month></calendar-month>
-            <calendar-month offset="1"></calendar-month>
-          </div>
+          <calendar-month></calendar-month>
+          <calendar-month offset="1"></calendar-month>
         </calendar-range>
       </sl-card>
     </sl-popup>
@@ -303,11 +307,8 @@ import Link from "../../components/Link.astro";
     css={`
       .flex { display: flex; }
       .gap-xs { gap: var(--sl-spacing-x-small); }
-      .gap-l { gap: var(--sl-spacing-large); }
-      .flex-wrap { flex-wrap: wrap; }
       .flex-1 { flex: 1; }
       .align-end { align-items: end; }
-      .justify-center { justify-content: center; }
 
       sl-card {
         max-inline-size: calc(var(--auto-size-available-width) - 20px);
@@ -319,6 +320,13 @@ import Link from "../../components/Link.astro";
           background-color: var(--sl-input-background-color);
           border: 1px solid var(--sl-input-border-color);
           padding: var(--sl-spacing-x-small);
+        }
+
+        &::part(months) {
+          display: flex;
+          gap: var(--sl-spacing-large);
+          flex-wrap: wrap;
+          justify-content: center;
         }
       }
 
@@ -365,10 +373,8 @@ import Link from "../../components/Link.astro";
           ></sl-icon>
           <sl-icon slot="next" name="chevron-right" label="Next"></sl-icon>
 
-          <div class="flex gap-l flex-wrap justify-center">
-            <calendar-month></calendar-month>
-            <calendar-month offset="1"></calendar-month>
-          </div>
+          <calendar-month></calendar-month>
+          <calendar-month offset="1"></calendar-month>
         </calendar-range>
       </sl-card>
     </sl-popup>
@@ -431,9 +437,9 @@ import Link from "../../components/Link.astro";
     is open or closed. Additionally, it might be helpful to communicate when a range
     selection has started and ended via a polite <code>aria-live</code> region. This
     could be achieved with the <code>rangestart</code> and <code>rangeend</code>
-    <Link href="/components/calendar-range/#events">events</Link>. 
-    We could also add a hint to the input via <code>aria-describedby</code> to
-    describe the expected format for manual entry.
+    <Link href="/components/calendar-range/#events">events</Link>. We could also
+    add a hint to the input via <code>aria-describedby</code> to describe the expected
+    format for manual entry.
   </p>
 
   <p>

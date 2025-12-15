@@ -56,45 +56,9 @@ const colorTextOnAccent = "#ffffff";
   <Heading level={2}>HTML</Heading>
 
   <p>
-    The first thing we want to do is stack the components horizontally if we
-    have space. Cally's components are designed to allow for flexible markup, so
-    we can add a grid around the <code>{`<calendar-month>`}</code> components. Additionally,
-    we can constrain the width of the
-    <code>{`<calendar-range>`}</code> component to fit the content
-  </p>
-
-  <Example
-    css={`
-      .grid {
-        display: flex;
-        gap: 1.5em;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    `}
-  >
-    <calendar-range
-      value="2024-01-10/2024-01-20"
-      min="2024-01-01"
-      max="2024-12-31"
-      locale="en-GB"
-      months="2"
-    >
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
-    </calendar-range>
-  </Example>
-
-  <p>
-    That's already much better. We use flexbox to wrap the components if there
-    is not enough space, but otherwise stack them horizontally.
-  </p>
-
-  <p>
-    Next, let's replace the "Previous" and "Next" button text with icons. We can
-    do this with <a
+    We will deal with the overall layout of the calendar later. Before that,
+    let's replace the "Previous" and "Next" button text with icons. We can do
+    this with <a
       href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/slot"
       >slots</a
     >. Slots are a way to pass content into a component from the outside. The
@@ -112,14 +76,8 @@ const colorTextOnAccent = "#ffffff";
   </Note>
 
   <Example
+    lineLength={72}
     css={`
-      .grid {
-        display: flex;
-        gap: 1.5em;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
       calendar-range {
         svg {
           height: 16px;
@@ -160,10 +118,8 @@ const colorTextOnAccent = "#ffffff";
         <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
       </svg>
 
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-range>
   </Example>
 
@@ -195,14 +151,8 @@ const colorTextOnAccent = "#ffffff";
   </p>
 
   <Example
+    lineLength={72}
     css={`
-      .grid {
-        display: flex;
-        gap: 1.5em;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
       calendar-range {
         svg {
           height: 16px;
@@ -248,10 +198,8 @@ const colorTextOnAccent = "#ffffff";
         <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
       </svg>
 
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-range>
   </Example>
 
@@ -270,6 +218,63 @@ const colorTextOnAccent = "#ffffff";
   </p>
 
   <p>
+    The first thing we want to do is stack the components horizontally if we
+    have space. You could wrap the <code>&lt;calendar-month&gt;</code> components
+    in <code>&lt;div&gt;</code> and apply styles to that. But we can avoid the extra
+    nesting since the date, range, and multi components offer a
+    <code>months</code> part which already wraps the
+    <code>&lt;calendar-month&gt;</code> components.
+  </p>
+
+  <Example
+    lineLength={72}
+    css={`
+      calendar-range {
+        svg {
+          height: 16px;
+          width: 16px;
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 1.5;
+        }
+
+        path {
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        &::part(months) {
+          display: flex;
+          gap: 1.5em;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+
+      calendar-month {
+        --color-accent: ${colorAccent};
+        --color-text-on-accent: ${colorTextOnAccent};
+      }
+    `}
+  >
+    <calendar-range
+      value="2024-01-10/2024-01-20"
+      min="2024-01-01"
+      max="2024-12-31"
+      locale="en-GB"
+      months="2"
+    >
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
+    </calendar-range>
+  </Example>
+
+  <p>
+    That's already much better. We use flexbox to wrap the components if there
+    is not enough space, but otherwise stack them horizontally.
+  </p>
+
+  <p>
     Let's style the previous and next buttons first. These can be targeted via
     the <code>button</code> part. Additionally, the previous and next buttons have
     <code>previous</code> and <code>next</code> parts, should you wish to style them
@@ -277,14 +282,8 @@ const colorTextOnAccent = "#ffffff";
   </p>
 
   <Example
+    lineLength={72}
     css={`
-    .grid {
-      display: flex;
-      gap: 1.5em;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
     calendar-range {
       svg {
         height: 16px;
@@ -297,6 +296,13 @@ const colorTextOnAccent = "#ffffff";
       path {
         stroke-linecap: round;
         stroke-linejoin: round;
+      }
+
+      &::part(months) {
+        display: flex;
+        gap: 1.5em;
+        flex-wrap: wrap;
+        justify-content: center;
       }
 
       &::part(button) {
@@ -342,10 +348,8 @@ const colorTextOnAccent = "#ffffff";
         <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
       </svg>
 
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-range>
   </Example>
 
@@ -360,14 +364,8 @@ const colorTextOnAccent = "#ffffff";
   </p>
 
   <Example
+    lineLength={72}
     css={`
-      .grid {
-        display: flex;
-        gap: 1.5em;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
       calendar-range {
         svg {
           height: 16px;
@@ -380,6 +378,13 @@ const colorTextOnAccent = "#ffffff";
         path {
           stroke-linecap: round;
           stroke-linejoin: round;
+        }
+
+        &::part(months) {
+          display: flex;
+          gap: 1.5em;
+          flex-wrap: wrap;
+          justify-content: center;
         }
 
         &::part(button) {
@@ -447,10 +452,8 @@ const colorTextOnAccent = "#ffffff";
         <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
       </svg>
 
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-range>
   </Example>
 
@@ -469,14 +472,8 @@ const colorTextOnAccent = "#ffffff";
   </p>
 
   <Example
+    lineLength={72}
     css={`
-      .grid {
-        display: flex;
-        gap: 1.5em;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
       calendar-range {
         svg {
           height: 16px;
@@ -489,6 +486,13 @@ const colorTextOnAccent = "#ffffff";
         path {
           stroke-linecap: round;
           stroke-linejoin: round;
+        }
+
+        &::part(months) {
+          display: flex;
+          gap: 1.5em;
+          flex-wrap: wrap;
+          justify-content: center;
         }
 
         &::part(button) {
@@ -557,10 +561,8 @@ const colorTextOnAccent = "#ffffff";
         <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
       </svg>
 
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-range>
   </Example>
 
