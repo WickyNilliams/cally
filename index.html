@@ -14,7 +14,7 @@
         font-family: sans-serif;
       }
 
-      .grid {
+      ::part(months) {
         display: flex;
         gap: 1em;
         flex-wrap: wrap;
@@ -92,11 +92,9 @@
       max="2025-10-10"
       value="2024-02-12/2025-02-20"
     >
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-        <calendar-month offset="2"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
+      <calendar-month offset="2"></calendar-month>
     </calendar-range>
 
     <h2>date</h2>
@@ -143,10 +141,8 @@
       show-outside-days
       value="2024-05-07 2024-05-09"
     >
-      <div class="grid">
-        <calendar-month></calendar-month>
-        <calendar-month offset="1"></calendar-month>
-      </div>
+      <calendar-month></calendar-month>
+      <calendar-month offset="1"></calendar-month>
     </calendar-multi>
 
     <script type="module">
