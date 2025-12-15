@@ -12,6 +12,7 @@ interface CalendarContextBase {
   page: { start: PlainYearMonth; end: PlainYearMonth };
   focusedDate: PlainDate;
   showOutsideDays?: boolean;
+  showWeekNumbers?: boolean;
   locale?: string;
   formatWeekday: "narrow" | "short";
 }

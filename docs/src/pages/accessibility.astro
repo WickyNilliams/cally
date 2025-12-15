@@ -106,6 +106,16 @@ import Heading from "../components/Heading.astro";
   </p>
 
   <p>
+    Week numbers (via the <code>show-week-numbers</code> prop) are not announced
+    particularly well. Screen readers seem to ignore the week number column's heading,
+    announcing January 4th like "1, January 4th". The lack of context for the
+    <em>"1"</em> could be confusing. If you move the virtual cursor to the week number
+    column it will say <em>"Week 1"</em>. But ideally it would say something
+    like <em>"Week 1, January 4th"</em> for the date itself. I struggled to get something
+    that worked consistently everywhere. I hope to revisit this in future.
+  </p>
+
+  <p>
     If you have found a bug related to accessibility, please
     <a href="https://github.com/WickyNilliams/cally/issues">report an issue</a> on
     github.
