@@ -28,9 +28,10 @@ import Example from "../../components/Example.astro";
     >.
   </p>
 
-  <Example>
+  <Example lineLength={72}>
     <calendar-date>
-      <calendar-select-year slot="heading"></calendar-select-year>
+      <calendar-select-year slot="heading" max-years="20"
+      ></calendar-select-year>
       <calendar-month></calendar-month>
     </calendar-date>
   </Example>
@@ -47,24 +48,17 @@ import Example from "../../components/Example.astro";
     </tr>
 
     <tr>
-      <td><code>minYear</code></td>
-      <td><code>min-year</code></td>
+      <td><code>maxYears</code></td>
+      <td><code>max-years</code></td>
       <td>
-        The minimum year to give an option for. The calendar's <code>min</code> takes
-        precedence, if set
+        The maximum number of years to display, centered around the focused
+        year. The range is constrained by any <code>min</code> and <code
+          >max</code
+        >
+        values from the parent calendar, which may result in fewer years being shown.
       </td>
       <td><code>number</code></td>
-      <td><code>1900</code></td>
-    </tr>
-    <tr>
-      <td><code>maxYear</code></td>
-      <td><code>max-year</code></td>
-      <td>
-        The max year to give an option for. The calendar's <code>max</code> takes
-        precedence, if set
-      </td>
-      <td><code>number</code></td>
-      <td><code>2050</code></td>
+      <td><code>20</code></td>
     </tr>
   </Table>
 

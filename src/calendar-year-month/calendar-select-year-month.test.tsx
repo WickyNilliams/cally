@@ -17,8 +17,7 @@ type TestProps = {
   min: string;
   max: string;
   value: string;
-  minYear: number;
-  maxYear: number;
+  maxYears: number;
   formatMonth: "long" | "short";
 };
 
@@ -26,14 +25,13 @@ function Fixture({
   value,
   min,
   max,
-  minYear,
-  maxYear,
+  maxYears,
   formatMonth,
 }: Partial<TestProps>): VNodeAny {
   return (
     <CalendarDate value={value} min={min} max={max} locale="en-GB">
       <CalendarSelectMonth formatMonth={formatMonth} />
-      <CalendarSelectYear minYear={minYear} maxYear={maxYear} />
+      <CalendarSelectYear maxYears={maxYears} />
       <CalendarMonth />
     </CalendarDate>
   );
@@ -208,13 +206,83 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     ]);
   });
 
-  it("can accept min and max year", async () => {
+  it("respects maxYears prop", async () => {
     const calendar = await mount(
-      <Fixture value="2025-12-15" minYear={2022} maxYear={2027} />
+      <Fixture value="2025-12-15" maxYears={6} />
     );
 
     const yearSelect = getYearSelect(calendar);
     expect([...yearSelect.options].map((o) => o.label)).to.eql([
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027",
+    ]);
+  });
+
+  it("centers years around current year when no min/max", async () => {
+    const calendar = await mount(
+      <Fixture value="2025-12-15" maxYears={10} />
+    );
+
+    const yearSelect = getYearSelect(calendar);
+    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+      "2020",
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027",
+      "2028",
+      "2029",
+    ]);
+  });
+
+  it("respects min/max range when smaller than maxYears", async () => {
+    const calendar = await mount(
+      <Fixture value="2025-06-01" min="2024-01-01" max="2026-12-31" maxYears={20} />
+    );
+
+    const yearSelect = getYearSelect(calendar);
+    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+      "2024",
+      "2025",
+      "2026",
+    ]);
+  });
+
+  it("constrains centered range when min is set", async () => {
+    const calendar = await mount(
+      <Fixture value="2025-01-01" min="2023-01-01" maxYears={10} />
+    );
+
+    const yearSelect = getYearSelect(calendar);
+    // Would normally show 2020-2029, but min constrains to 2023-2029
+    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027",
+      "2028",
+      "2029",
+    ]);
+  });
+
+  it("constrains centered range when max is set", async () => {
+    const calendar = await mount(
+      <Fixture value="2025-12-31" max="2027-12-31" maxYears={10} />
+    );
+
+    const yearSelect = getYearSelect(calendar);
+    // Would normally show 2020-2029, but max constrains to 2020-2027
+    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+      "2020",
+      "2021",
       "2022",
       "2023",
       "2024",
