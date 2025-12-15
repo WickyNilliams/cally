@@ -44,7 +44,9 @@ export const CalendarMonth = c(
             <tr part="tr head">
               {context.showWeekNumbers && (
                 <th part="th weeknumber">
-                  <slot name="weeknumber">#</slot>
+                  <slot name="weeknumber">
+                    <span aria-label="Week">#</span>
+                  </slot>
                 </th>
               )}
               {calendar.daysLong.map((dayName, i) => (
