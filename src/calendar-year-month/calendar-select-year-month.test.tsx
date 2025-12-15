@@ -1,0 +1,226 @@
+import type { VNodeAny } from "atomico/types/vnode";
+import { expect } from "@open-wc/testing";
+import { selectOption } from "@web/test-runner-commands";
+import { CalendarDate } from "../calendar-date/calendar-date";
+import { CalendarMonth } from "../calendar-month/calendar-month";
+import { CalendarSelectMonth } from "./calendar-select-month";
+import { CalendarSelectYear } from "./calendar-select-year";
+import {
+  click,
+  getCalendarHeading,
+  getNextPageButton,
+  mount,
+  type CalendarInstance,
+} from "../utils/test";
+
+type TestProps = {
+  min: string;
+  max: string;
+  value: string;
+  minYear: number;
+  maxYear: number;
+  formatMonth: "long" | "short";
+};
+
+function Fixture({
+  value,
+  min,
+  max,
+  minYear,
+  maxYear,
+  formatMonth,
+}: Partial<TestProps>): VNodeAny {
+  return (
+    <CalendarDate value={value} min={min} max={max} locale="en-GB">
+      <CalendarSelectMonth formatMonth={formatMonth} />
+      <CalendarSelectYear minYear={minYear} maxYear={maxYear} />
+      <CalendarMonth />
+    </CalendarDate>
+  );
+}
+
+function getMonthSelect(calendar: CalendarInstance): HTMLSelectElement {
+  return calendar
+    .querySelector("calendar-select-month")!
+    .shadowRoot!.querySelector("select")!;
+}
+
+function getYearSelect(calendar: CalendarInstance): HTMLSelectElement {
+  return calendar
+    .querySelector("calendar-select-year")!
+    .shadowRoot!.querySelector("select")!;
+}
+
+describe("CalendarSelectMonth / CalendarSelectYear", () => {
+  it("updates as the calendar changes", async () => {
+    const calendar = await mount(<Fixture value="2025-12-15" />);
+    const monthSelect = getMonthSelect(calendar);
+    const yearSelect = getYearSelect(calendar);
+
+    expect(monthSelect).to.have.property("value", "12");
+    expect(yearSelect).to.have.property("value", "2025");
+
+    const nextPage = getNextPageButton(calendar);
+    await click(nextPage);
+
+    expect(monthSelect).to.have.property("value", "1");
+    expect(yearSelect).to.have.property("value", "2026");
+  });
+
+  it("can change the month", async () => {
+    const calendar = await mount(<Fixture value="2025-12-15" />);
+    const monthSelect = getMonthSelect(calendar);
+    const heading = getCalendarHeading(calendar);
+
+    expect(monthSelect).to.have.property("value", "12");
+    expect(heading).to.have.text("December 2025");
+
+    await selectOption({
+      selector: "calendar-select-month select",
+      value: "11",
+    });
+
+    expect(monthSelect).to.have.property("value", "11");
+    expect(heading).to.have.text("November 2025");
+  });
+
+  it("can change the year", async () => {
+    const calendar = await mount(<Fixture value="2025-12-15" />);
+    const yearSelect = getYearSelect(calendar);
+    const heading = getCalendarHeading(calendar);
+
+    expect(yearSelect).to.have.property("value", "2025");
+    expect(heading).to.have.text("December 2025");
+
+    await selectOption({
+      selector: "calendar-select-year select",
+      value: "2026",
+    });
+
+    expect(yearSelect).to.have.property("value", "2026");
+    expect(heading).to.have.text("December 2026");
+  });
+
+  it("handles min and max dates", async () => {
+    const calendar = await mount(
+      <Fixture value="2025-06-01" min="2024-06-01" max="2026-02-01" />
+    );
+
+    const monthSelect = getMonthSelect(calendar);
+    const yearSelect = getYearSelect(calendar);
+
+    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+      "2024",
+      "2025",
+      "2026",
+    ]);
+
+    // all months will be enabled because this year is not min/max
+    expect(
+      [...monthSelect.options].map((o) => ({
+        label: o.label,
+        disabled: o.disabled,
+      }))
+    ).to.eql([
+      { label: "January", disabled: false },
+      { label: "February", disabled: false },
+      { label: "March", disabled: false },
+      { label: "April", disabled: false },
+      { label: "May", disabled: false },
+      { label: "June", disabled: false },
+      { label: "July", disabled: false },
+      { label: "August", disabled: false },
+      { label: "September", disabled: false },
+      { label: "October", disabled: false },
+      { label: "November", disabled: false },
+      { label: "December", disabled: false },
+    ]);
+
+    // go back to 2024, which is the min year
+    await selectOption({
+      selector: "calendar-select-year select",
+      value: "2024",
+    });
+
+    // months before min will be disabled
+    expect(
+      [...monthSelect.options].map((o) => ({
+        label: o.label,
+        disabled: o.disabled,
+      }))
+    ).to.eql([
+      { label: "January", disabled: true },
+      { label: "February", disabled: true },
+      { label: "March", disabled: true },
+      { label: "April", disabled: true },
+      { label: "May", disabled: true },
+      { label: "June", disabled: false },
+      { label: "July", disabled: false },
+      { label: "August", disabled: false },
+      { label: "September", disabled: false },
+      { label: "October", disabled: false },
+      { label: "November", disabled: false },
+      { label: "December", disabled: false },
+    ]);
+  });
+
+  it("can render month names in long format", async () => {
+    const calendar = await mount(
+      <Fixture value="2025-12-15" formatMonth="long" />
+    );
+
+    const monthSelect = getMonthSelect(calendar);
+    expect([...monthSelect.options].map((o) => o.label)).to.eql([
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ]);
+  });
+
+  it("can render month names in short format", async () => {
+    const calendar = await mount(
+      <Fixture value="2025-12-15" formatMonth="short" />
+    );
+
+    const monthSelect = getMonthSelect(calendar);
+    expect([...monthSelect.options].map((o) => o.label)).to.eql([
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sept",
+      "Oct",
+      "Nov",
+      "Dec",
+    ]);
+  });
+
+  it("can accept min and max year", async () => {
+    const calendar = await mount(
+      <Fixture value="2025-12-15" minYear={2022} maxYear={2027} />
+    );
+
+    const yearSelect = getYearSelect(calendar);
+    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026",
+      "2027",
+    ]);
+  });
+});
