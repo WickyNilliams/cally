@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `0.9.0`
+
+_Released: 2025-12-15_
+
+### Added
+
+- `<calendar-select-year>` component for selecting year.
+- `<calendar-select-month>` component for selecting month.
+- `show-week-numbers` attribute/`showWeekNumbers` property to `<calendar-date>`, `<calendar-range>`, and `<calendar-multi>` components.
+- `weeknumber` CSS part for `<calendar-month>` component.
+- `col-weeknumber`, `col-1`, `col-2`, etc CSS parts corresponding to column number on `<calendar-month>`.
+- `months` CSS part for `<calendar-date>`, `<calendar-range>`, and `<calendar-multi>` components.
+
 ## `0.8.0`
 
 _Released: 2025-02-08_
