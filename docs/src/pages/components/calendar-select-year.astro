@@ -1,0 +1,116 @@
+---
+import ApiLayout from "../../layouts/ApiLayout.astro";
+import Table from "../../components/Table.astro";
+import Heading from "../../components/Heading.astro";
+import Link from "../../components/Link.astro";
+import Example from "../../components/Example.astro";
+---
+
+<ApiLayout
+  heading="<calendar-select-year>"
+  meta={{
+    title: "<calendar-select-year> API",
+    description:
+      "The calendar-select-year component allows users to select the year for the calendar. Find out how to use its properties, methods, events, and styling options.",
+  }}
+>
+  <p>
+    This component allows users to quickly jump to a chosen year. It should not
+    be used alone, but as a descendant of one of
+    <Link href="/components/calendar-date/"
+      ><code>{`<calendar-date>`}</code></Link
+    >,
+    <Link href="/components/calendar-range/"
+      ><code>{`<calendar-range>`}</code></Link
+    > or
+    <Link href="/components/calendar-multi/"
+      ><code>{`<calendar-multi>`}</code></Link
+    >.
+  </p>
+
+  <Example>
+    <calendar-date>
+      <calendar-select-year slot="heading"></calendar-select-year>
+      <calendar-month></calendar-month>
+    </calendar-date>
+  </Example>
+
+  <Heading level={2}>Properties and attributes</Heading>
+
+  <Table>
+    <tr slot="head">
+      <th>Property</th>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Default</th>
+    </tr>
+
+    <tr>
+      <td><code>minYear</code></td>
+      <td><code>min-year</code></td>
+      <td>
+        The minimum year to give an option for. The calendar's <code>min</code> takes
+        precedence, if set
+      </td>
+      <td><code>number</code></td>
+      <td><code>1900</code></td>
+    </tr>
+    <tr>
+      <td><code>maxYear</code></td>
+      <td><code>max-year</code></td>
+      <td>
+        The max year to give an option for. The calendar's <code>max</code> takes
+        precedence, if set
+      </td>
+      <td><code>number</code></td>
+      <td><code>2050</code></td>
+    </tr>
+  </Table>
+
+  <Heading level={2}>CSS Parts</Heading>
+
+  <p>
+    CSS parts allow for fine-grained styling and theming. They target specific
+    elements inside the component.
+  </p>
+
+  <Table>
+    <tr slot="head">
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+
+    <tr>
+      <td><code>label</code></td>
+      <td>
+        The <code>&lt;label&gt;</code> for the <code>&lt;select&gt;</code>
+      </td>
+    </tr>
+    <tr>
+      <td><code>select</code></td>
+      <td>The <code>&lt;select&gt;</code> element itself</td>
+    </tr>
+    <tr>
+      <td><code>option</code></td>
+      <td>The <code>&lt;option&gt;</code> for each year</td>
+    </tr>
+  </Table>
+</ApiLayout>
+
+<style is:global>
+  calendar-date {
+    margin-inline: auto;
+  }
+  calendar-select-year::part(label) {
+    position: absolute;
+    transform: scale(0);
+  }
+
+  calendar-select-year {
+    display: block;
+  }
+  calendar-select-year::part(select) {
+    padding: 0;
+  }
+</style>

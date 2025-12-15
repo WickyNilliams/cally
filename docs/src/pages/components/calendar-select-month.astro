@@ -1,0 +1,99 @@
+---
+import ApiLayout from "../../layouts/ApiLayout.astro";
+import Table from "../../components/Table.astro";
+import Heading from "../../components/Heading.astro";
+import Link from "../../components/Link.astro";
+import Example from "../../components/Example.astro";
+---
+
+<ApiLayout
+  heading="<calendar-select-month>"
+  meta={{
+    title: "<calendar-select-month> API",
+    description:
+      "The calendar-select-month component allows users to select the month for the calendar. Find out how to use its properties, methods, events, and styling options.",
+  }}
+>
+  <p>
+    This component allows users to quickly jump to a chosen month. It should not
+    be used alone, but as a descendant of one of
+    <Link href="/components/calendar-date/"
+      ><code>{`<calendar-date>`}</code></Link
+    >,
+    <Link href="/components/calendar-range/"
+      ><code>{`<calendar-range>`}</code></Link
+    > or
+    <Link href="/components/calendar-multi/"
+      ><code>{`<calendar-multi>`}</code></Link
+    >.
+  </p>
+
+  <Example>
+    <calendar-date>
+      <calendar-select-month></calendar-select-month>
+      <calendar-month></calendar-month>
+    </calendar-date>
+  </Example>
+
+  <Heading level={2}>Properties and attributes</Heading>
+
+  <Table>
+    <tr slot="head">
+      <th>Property</th>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Default</th>
+    </tr>
+
+    <tr>
+      <td><code>formatMonth</code></td>
+      <td><code>format-month</code></td>
+      <td>
+        Whether months have long ("January") or short ("Jan") names. Names are
+        dependent on the calendar's <code>locale</code>
+      </td>
+      <td><code>"short" | "long"</code></td>
+      <td><code>"long"</code></td>
+    </tr>
+  </Table>
+
+  <Heading level={2}>CSS Parts</Heading>
+
+  <p>
+    CSS parts allow for fine-grained styling and theming. They target specific
+    elements inside the component.
+  </p>
+
+  <Table>
+    <tr slot="head">
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+
+    <tr>
+      <td><code>label</code></td>
+      <td>
+        The <code>&lt;label&gt;</code> for the <code>&lt;select&gt;</code>
+      </td>
+    </tr>
+    <tr>
+      <td><code>select</code></td>
+      <td> The <code>&lt;select&gt;</code> element itself</td>
+    </tr>
+    <tr>
+      <td><code>option</code></td>
+      <td>The <code>&lt;option&gt;</code> for each month</td>
+    </tr>
+  </Table>
+</ApiLayout>
+
+<style is:global>
+  calendar-date {
+    margin-inline: auto;
+  }
+  calendar-select-month::part(label) {
+    position: absolute;
+    transform: scale(0);
+  }
+</style>
