@@ -98,6 +98,10 @@ function usePagination({
   };
 }
 
+interface CommandEvent extends Event {
+  command: string;
+}
+
 export function useCalendarBase({
   months,
   pageBy,
@@ -144,6 +148,20 @@ export function useCalendarBase({
     }
   }
 
+  function onCommand(event: CommandEvent) {
+    switch (event.command) {
+      case "--today":
+        goto(getToday());
+        break;
+      case "--next":
+        next?.();
+        break;
+      case "--previous":
+        previous?.();
+        break;
+    }
+  }
+
   return {
     format: useDateFormatter(formatOptions, locale),
     formatVerbose: useDateFormatter(formatVerboseOptions, locale),
@@ -161,5 +179,6 @@ export function useCalendarBase({
     next,
     previous,
     focus,
+    onCommand,
   };
 }

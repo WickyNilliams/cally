@@ -136,6 +136,9 @@
     </calendar-date>
 
     <h2>multi</h2>
+    <button commandfor="multi" command="--previous">Previous</button>
+    <button commandfor="multi" command="--next">Next</button>
+    <button commandfor="multi" command="--today">Today</button>
     <calendar-multi
       id="multi"
       months="2"
@@ -203,6 +206,23 @@
 
         date.addEventListener("focusday", (e) => {
           console.log(formatter.format(e.detail));
+        });
+      }
+
+      // polyfill for non-chrome browsers
+      if (!window.CommandEvent) {
+        document.addEventListener("click", (e) => {
+          const source = e.target.closest("button[commandfor]");
+
+          if (source) {
+            const command = source.getAttribute("command");
+            const commandfor = source.getAttribute("commandfor");
+
+            const event = new Event("command");
+            event.command = command;
+            event.source = source;
+            document.getElementById(commandfor)?.dispatchEvent(event);
+          }
         });
       }
     </script>

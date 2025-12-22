@@ -17,6 +17,7 @@ import {
   type MonthInstance,
   sendShiftPress,
   getCalendarVisibleHeading,
+  type CalendarInstance,
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { Pagination } from "../calendar-base/useCalendarBase.js";
@@ -37,6 +38,7 @@ type TestProps = {
   locale: string;
   focusedDate: string;
   pageBy: Pagination;
+  id?: string;
 };
 
 function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
@@ -865,6 +867,68 @@ describe("CalendarDate", () => {
         true,
         `"almost-gone" not found in part: "${day.part.toString().trim()}"`
       );
+    });
+  });
+
+  describe("custom commands", () => {
+    it("supports a next/previous commands", async () => {
+      const test = await mount(
+        <div>
+          <button command="--previous" commandfor="fixture">
+            Previous
+          </button>
+          <button command="--next" commandfor="fixture">
+            Next
+          </button>
+          <Fixture id="fixture" value="2020-01-01" />
+        </div>
+      );
+
+      const calendar = test.querySelector<CalendarInstance>("calendar-date")!;
+      const prevButton = document.querySelector("[command='--previous']")!;
+      const nextButton = document.querySelector("[command='--next']")!;
+
+      expect(getCalendarHeading(calendar)).to.have.text("January 2020");
+      await click(nextButton);
+      expect(getCalendarHeading(calendar)).to.have.text("February 2020");
+      await click(prevButton);
+      expect(getCalendarHeading(calendar)).to.have.text("January 2020");
+    });
+
+    it("supports a today command", async () => {
+      const test = await mount(
+        <div>
+          <button command="--today" commandfor="fixture">
+            Today
+          </button>
+          <Fixture id="fixture" value="2020-01-01" />
+        </div>
+      );
+
+      const calendar = test.querySelector<CalendarInstance>("calendar-date")!;
+      const month = getMonth(calendar);
+      const todayButton = document.querySelector("[command='--today']")!;
+      const todaysDate = toDate(getToday());
+
+      const heading = getCalendarHeading(calendar);
+      expect(heading).to.have.text("January 2020");
+
+      await click(todayButton);
+
+      expect(heading).to.have.text(
+        todaysDate.toLocaleDateString("en-GB", {
+          month: "long",
+          year: "numeric",
+        })
+      );
+      const button = getDayButton(
+        month,
+        todaysDate.toLocaleDateString("en-GB", {
+          month: "long",
+          day: "numeric",
+        })
+      );
+      expect(button).to.have.attribute("tabindex", "0");
     });
   });
 });
