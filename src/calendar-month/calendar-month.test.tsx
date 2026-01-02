@@ -1,5 +1,5 @@
-import { expect, nextFrame } from "@open-wc/testing";
-import { sendKeys } from "@web/test-runner-commands";
+import { describe, it, expect } from "vitest";
+import { page } from "@vitest/browser/context";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
@@ -24,6 +24,10 @@ import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { fixture } from "atomico/test-dom";
 import { PlainDate } from "../utils/temporal.js";
 import { toDate, getToday } from "../utils/date.js";
+
+async function nextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
+}
 
 type MonthContextInstance = InstanceType<typeof CalendarContext>;
 
@@ -88,7 +92,7 @@ export async function mount(node: VNodeAny) {
 describe("CalendarMonth", () => {
   it("is defined", async () => {
     const calendar = await mount(<Fixture />);
-    expect(calendar).to.be.instanceOf(CalendarMonth);
+    expect(calendar).toBeInstanceOf(CalendarMonth);
   });
 
   describe("value types", () => {
@@ -103,7 +107,7 @@ describe("CalendarMonth", () => {
         );
 
         const selected = getSelectedDays(month);
-        expect(selected.length).to.eq(0);
+        expect(selected.length).toBe(0);
       });
 
       it("marks a range as selected", async () => {
@@ -116,19 +120,19 @@ describe("CalendarMonth", () => {
         );
 
         const selected = getSelectedDays(month);
-        expect(selected.length).to.eq(3);
+        expect(selected.length).toBe(3);
 
-        expect(selected[0]).to.have.attribute("aria-label", "1 January");
-        expect(selected[0]!.part.contains("selected")).to.eq(true);
-        expect(selected[0]!.part.contains("range-start"));
+        expect(selected[0].getAttribute("aria-label")).toBe("1 January");
+        expect(selected[0]!.part.contains("selected")).toBe(true);
+        expect(selected[0]!.part.contains("range-start")).toBeTruthy();
 
-        expect(selected[1]).to.have.attribute("aria-label", "2 January");
-        expect(selected[1]!.part.contains("selected")).to.eq(true);
-        expect(selected[1]!.part.contains("range-inner"));
+        expect(selected[1].getAttribute("aria-label")).toBe("2 January");
+        expect(selected[1]!.part.contains("selected")).toBe(true);
+        expect(selected[1]!.part.contains("range-inner")).toBeTruthy();
 
-        expect(selected[2]).to.have.attribute("aria-label", "3 January");
-        expect(selected[2]!.part.contains("selected")).to.eq(true);
-        expect(selected[2]!.part.contains("range-end"));
+        expect(selected[2].getAttribute("aria-label")).toBe("3 January");
+        expect(selected[2]!.part.contains("selected")).toBe(true);
+        expect(selected[2]!.part.contains("range-end")).toBeTruthy();
       });
     });
 
@@ -139,7 +143,7 @@ describe("CalendarMonth", () => {
         );
 
         const selected = getSelectedDays(month);
-        expect(selected.length).to.eq(0);
+        expect(selected.length).toBe(0);
       });
 
       it("marks a single date as selected", async () => {
@@ -151,9 +155,9 @@ describe("CalendarMonth", () => {
         );
 
         const selected = getSelectedDays(month);
-        expect(selected.length).to.eq(1);
-        expect(selected[0]).to.have.attribute("aria-label", "1 January");
-        expect(selected[0]!.part.contains("selected")).to.eq(true);
+        expect(selected.length).toBe(1);
+        expect(selected[0].getAttribute("aria-label")).toBe("1 January");
+        expect(selected[0]!.part.contains("selected")).toBe(true);
       });
     });
 
@@ -168,7 +172,7 @@ describe("CalendarMonth", () => {
         );
 
         const selected = getSelectedDays(month);
-        expect(selected.length).to.eq(0);
+        expect(selected.length).toBe(0);
       });
 
       it("marks multiple dates as selected", async () => {
@@ -185,10 +189,10 @@ describe("CalendarMonth", () => {
         );
 
         const selected = getSelectedDays(month);
-        expect(selected.length).to.eq(3);
-        expect(selected[0]).to.have.attribute("aria-label", "1 January");
-        expect(selected[1]).to.have.attribute("aria-label", "2 January");
-        expect(selected[2]).to.have.attribute("aria-label", "3 January");
+        expect(selected.length).toBe(3);
+        expect(selected[0].getAttribute("aria-label")).toBe("1 January");
+        expect(selected[1].getAttribute("aria-label")).toBe("2 January");
+        expect(selected[2].getAttribute("aria-label")).toBe("3 January");
       });
     });
   });
@@ -200,7 +204,7 @@ describe("CalendarMonth", () => {
 
         // has accessible label
         const title = getMonthHeading(month);
-        expect(title).not.to.eq(undefined);
+        expect(title).not.toBe(undefined);
       });
 
       it("marks today", async () => {
@@ -212,8 +216,8 @@ describe("CalendarMonth", () => {
         });
         const button = getDayButton(month, todaysDate)!;
 
-        expect(button.part.contains("today")).to.eq(true);
-        expect(button).to.have.attribute("aria-current", "date");
+        expect(button.part.contains("today")).toBe(true);
+        expect(button.getAttribute("aria-current")).toBe("date");
       });
 
       it("uses a roving tab index", async () => {
@@ -226,14 +230,14 @@ describe("CalendarMonth", () => {
         // all buttons have a tabindex
         expect(
           buttons.every((button) => button.hasAttribute("tabindex"))
-        ).to.eq(true);
+        ).toBe(true);
 
         // only one button has tabindex 0
         const focusable =
           grid.querySelectorAll<HTMLButtonElement>(`[tabindex="0"]`);
-        expect(focusable.length).to.eq(1);
-        expect(focusable[0]).to.have.trimmed.text("1");
-        expect(focusable[0]).to.have.attribute("aria-label", "1 January");
+        expect(focusable.length).toBe(1);
+        expect(focusable[0].textContent.trim()).toBe("1");
+        expect(focusable[0].getAttribute("aria-label")).toBe("1 January");
       });
     });
   });
@@ -247,8 +251,8 @@ describe("CalendarMonth", () => {
 
       await clickDay(calendar, "19 April");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-04-19");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-04-19");
     });
 
     it("cannot select a disallowed date", async () => {
@@ -262,11 +266,11 @@ describe("CalendarMonth", () => {
       );
 
       const day = getDayButton(calendar, "4 January")!;
-      expect(day.part.contains("disallowed")).to.eq(true);
-      expect(day).to.have.attribute("aria-disabled", "true");
+      expect(day.part.contains("disallowed")).toBe(true);
+      expect(day.getAttribute("aria-disabled")).toBe("true");
 
       await click(day);
-      expect(spy.called).to.eq(false);
+      expect(spy.called).toBe(false);
     });
   });
 
@@ -277,11 +281,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "Enter" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Enter");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-04-19");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-04-19");
     });
 
     it("cannot select a disabled date", async () => {
@@ -294,10 +298,10 @@ describe("CalendarMonth", () => {
         />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "Enter" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Enter");
 
-      expect(spy.called).to.eq(false);
+      expect(spy.called).toBe(false);
     });
 
     it("can move focus to previous day", async () => {
@@ -306,11 +310,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "ArrowLeft" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("ArrowLeft");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-04-18");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-04-18");
     });
 
     it("can move focus to next day ", async () => {
@@ -319,11 +323,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "ArrowRight" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("ArrowRight");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-04-20");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-04-20");
     });
 
     it("can move focus to previous week", async () => {
@@ -332,11 +336,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "ArrowUp" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("ArrowUp");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-04-12");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-04-12");
     });
 
     it("can move focus to next week", async () => {
@@ -345,11 +349,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "ArrowDown" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("ArrowDown");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-04-26");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-04-26");
     });
 
     it("can move focus to start of week", async () => {
@@ -358,11 +362,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-16")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "Home" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Home");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-04-13");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-04-13");
     });
 
     it("can move focus to end of week", async () => {
@@ -371,11 +375,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-16")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "End" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("End");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-04-19");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-04-19");
     });
 
     it("can move focus to previous month", async () => {
@@ -384,11 +388,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "PageUp" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("PageUp");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-03-19");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-03-19");
     });
 
     it("can move focus to next month", async () => {
@@ -397,11 +401,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "PageDown" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("PageDown");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-05-19");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-05-19");
     });
 
     it("can move focus to previous year", async () => {
@@ -410,11 +414,11 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
+      await page.keyboard.press("Tab");
       await sendShiftPress("PageUp");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2019-04-19");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2019-04-19");
     });
 
     it("can move focus to next year", async () => {
@@ -423,13 +427,13 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ down: "Shift" });
-      await sendKeys({ press: "PageDown" });
-      await sendKeys({ up: "Shift" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.down("Shift");
+      await page.keyboard.press("PageDown");
+      await page.keyboard.up("Shift");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2021-04-19");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2021-04-19");
     });
 
     it("can move focus to disabled dates", async () => {
@@ -442,11 +446,11 @@ describe("CalendarMonth", () => {
         />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "ArrowRight" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("ArrowRight");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-01-04");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-01-04");
     });
 
     it("cannot move focus outside of min/max range", async () => {
@@ -461,12 +465,12 @@ describe("CalendarMonth", () => {
         />
       );
 
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "ArrowLeft" });
-      expect(spy.last[0].detail.toString()).to.eq(focused);
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("ArrowLeft");
+      expect(spy.last[0].detail.toString()).toBe(focused);
 
-      await sendKeys({ press: "ArrowRight" });
-      expect(spy.last[0].detail.toString()).to.eq(focused);
+      await page.keyboard.press("ArrowRight");
+      expect(spy.last[0].detail.toString()).toBe(focused);
     });
 
     describe("RTL", () => {
@@ -480,11 +484,11 @@ describe("CalendarMonth", () => {
           />
         );
 
-        await sendKeys({ press: "Tab" });
-        await sendKeys({ press: "ArrowLeft" });
+        await page.keyboard.press("Tab");
+        await page.keyboard.press("ArrowLeft");
 
-        expect(spy.count).to.eq(1);
-        expect(spy.last[0].detail.toString()).to.eq("2020-04-20");
+        expect(spy.count).toBe(1);
+        expect(spy.last[0].detail.toString()).toBe("2020-04-20");
       });
 
       it("treats right arrow as previous day", async () => {
@@ -497,11 +501,11 @@ describe("CalendarMonth", () => {
           />
         );
 
-        await sendKeys({ press: "Tab" });
-        await sendKeys({ press: "ArrowRight" });
+        await page.keyboard.press("Tab");
+        await page.keyboard.press("ArrowRight");
 
-        expect(spy.count).to.eq(1);
-        expect(spy.last[0].detail.toString()).to.eq("2020-04-18");
+        expect(spy.count).toBe(1);
+        expect(spy.last[0].detail.toString()).toBe("2020-04-18");
       });
     });
   });
@@ -519,13 +523,13 @@ describe("CalendarMonth", () => {
 
       // try clicking a day outside the range
       await clickDay(month, "1 January");
-      expect(spy.called).to.eq(false);
+      expect(spy.called).toBe(false);
 
       // click a day inside the range
       await clickDay(month, "2 January");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-01-02");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-01-02");
     });
 
     it("supports a max date", async () => {
@@ -540,13 +544,13 @@ describe("CalendarMonth", () => {
 
       // try clicking a day outside the range
       await clickDay(month, "31 January");
-      expect(spy.called).to.eq(false);
+      expect(spy.called).toBe(false);
 
       // click a day inside the range
       await clickDay(month, "30 January");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-01-30");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-01-30");
     });
 
     it("supports min and max dates", async () => {
@@ -562,16 +566,16 @@ describe("CalendarMonth", () => {
 
       // try clicking a day less than min
       await clickDay(month, "1 January");
-      expect(spy.called).to.eq(false);
+      expect(spy.called).toBe(false);
 
       // try clicking a day greater than max
       await clickDay(month, "31 January");
-      expect(spy.called).to.eq(false);
+      expect(spy.called).toBe(false);
 
       // click a day inside the range
       await clickDay(month, "30 January");
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail.toString()).to.eq("2020-01-30");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail.toString()).toBe("2020-01-30");
     });
   });
 
@@ -585,7 +589,7 @@ describe("CalendarMonth", () => {
       );
 
       const todayButton = getTodayButton(month);
-      expect(todayButton).to.have.attribute("aria-label", "2 January");
+      expect(todayButton.getAttribute("aria-label")).toBe("2 January");
     });
   });
 
@@ -597,8 +601,8 @@ describe("CalendarMonth", () => {
     const outsideMarch = getDayButton(month, "30 March");
     const outsideMay = getDayButton(month, "3 May");
 
-    expect(outsideMarch.part.contains("outside")).to.eq(true);
-    expect(outsideMay.part.contains("outside")).to.eq(true);
+    expect(outsideMarch.part.contains("outside")).toBe(true);
+    expect(outsideMay.part.contains("outside")).toBe(true);
   });
 
   describe("localization", async () => {
@@ -611,30 +615,30 @@ describe("CalendarMonth", () => {
       const accessibleHeadings = grid.querySelectorAll(
         "th span:not([aria-hidden])"
       );
-      expect(accessibleHeadings[0]).to.have.trimmed.text("lundi");
-      expect(accessibleHeadings[1]).to.have.trimmed.text("mardi");
-      expect(accessibleHeadings[2]).to.have.trimmed.text("mercredi");
-      expect(accessibleHeadings[3]).to.have.trimmed.text("jeudi");
-      expect(accessibleHeadings[4]).to.have.trimmed.text("vendredi");
-      expect(accessibleHeadings[5]).to.have.trimmed.text("samedi");
-      expect(accessibleHeadings[6]).to.have.trimmed.text("dimanche");
+      expect(accessibleHeadings[0].textContent.trim()).toBe("lundi");
+      expect(accessibleHeadings[1].textContent.trim()).toBe("mardi");
+      expect(accessibleHeadings[2].textContent.trim()).toBe("mercredi");
+      expect(accessibleHeadings[3].textContent.trim()).toBe("jeudi");
+      expect(accessibleHeadings[4].textContent.trim()).toBe("vendredi");
+      expect(accessibleHeadings[5].textContent.trim()).toBe("samedi");
+      expect(accessibleHeadings[6].textContent.trim()).toBe("dimanche");
 
       const visualHeadings = grid.querySelectorAll(
         "th span[aria-hidden='true']"
       );
-      expect(visualHeadings[0]).to.have.trimmed.text("L");
-      expect(visualHeadings[1]).to.have.trimmed.text("M");
-      expect(visualHeadings[2]).to.have.trimmed.text("M");
-      expect(visualHeadings[3]).to.have.trimmed.text("J");
-      expect(visualHeadings[4]).to.have.trimmed.text("V");
-      expect(visualHeadings[5]).to.have.trimmed.text("S");
-      expect(visualHeadings[6]).to.have.trimmed.text("D");
+      expect(visualHeadings[0].textContent.trim()).toBe("L");
+      expect(visualHeadings[1].textContent.trim()).toBe("M");
+      expect(visualHeadings[2].textContent.trim()).toBe("M");
+      expect(visualHeadings[3].textContent.trim()).toBe("J");
+      expect(visualHeadings[4].textContent.trim()).toBe("V");
+      expect(visualHeadings[5].textContent.trim()).toBe("S");
+      expect(visualHeadings[6].textContent.trim()).toBe("D");
 
       const title = getMonthHeading(month);
-      expect(title).to.have.trimmed.text("janvier");
+      expect(title.textContent.trim()).toBe("janvier");
 
       const button = getDayButton(month, "15 janvier");
-      expect(button).to.exist;
+      expect(button).toBeTruthy();
     });
 
     it("has configurable week day formatting", async () => {
@@ -649,24 +653,24 @@ describe("CalendarMonth", () => {
       const accessibleHeadings = grid.querySelectorAll(
         "th span:not([aria-hidden])"
       );
-      expect(accessibleHeadings[0]).to.have.trimmed.text("Monday");
-      expect(accessibleHeadings[1]).to.have.trimmed.text("Tuesday");
-      expect(accessibleHeadings[2]).to.have.trimmed.text("Wednesday");
-      expect(accessibleHeadings[3]).to.have.trimmed.text("Thursday");
-      expect(accessibleHeadings[4]).to.have.trimmed.text("Friday");
-      expect(accessibleHeadings[5]).to.have.trimmed.text("Saturday");
-      expect(accessibleHeadings[6]).to.have.trimmed.text("Sunday");
+      expect(accessibleHeadings[0].textContent.trim()).toBe("Monday");
+      expect(accessibleHeadings[1].textContent.trim()).toBe("Tuesday");
+      expect(accessibleHeadings[2].textContent.trim()).toBe("Wednesday");
+      expect(accessibleHeadings[3].textContent.trim()).toBe("Thursday");
+      expect(accessibleHeadings[4].textContent.trim()).toBe("Friday");
+      expect(accessibleHeadings[5].textContent.trim()).toBe("Saturday");
+      expect(accessibleHeadings[6].textContent.trim()).toBe("Sunday");
 
       const visualHeadings = grid.querySelectorAll(
         "th span[aria-hidden='true']"
       );
-      expect(visualHeadings[0]).to.have.trimmed.text("Mon");
-      expect(visualHeadings[1]).to.have.trimmed.text("Tue");
-      expect(visualHeadings[2]).to.have.trimmed.text("Wed");
-      expect(visualHeadings[3]).to.have.trimmed.text("Thu");
-      expect(visualHeadings[4]).to.have.trimmed.text("Fri");
-      expect(visualHeadings[5]).to.have.trimmed.text("Sat");
-      expect(visualHeadings[6]).to.have.trimmed.text("Sun");
+      expect(visualHeadings[0].textContent.trim()).toBe("Mon");
+      expect(visualHeadings[1].textContent.trim()).toBe("Tue");
+      expect(visualHeadings[2].textContent.trim()).toBe("Wed");
+      expect(visualHeadings[3].textContent.trim()).toBe("Thu");
+      expect(visualHeadings[4].textContent.trim()).toBe("Fri");
+      expect(visualHeadings[5].textContent.trim()).toBe("Sat");
+      expect(visualHeadings[6].textContent.trim()).toBe("Sun");
     });
 
     it("renders parts for each day corresponding to day number", async () => {
@@ -686,19 +690,19 @@ describe("CalendarMonth", () => {
       const days = grid.rows[2]!.querySelectorAll("button");
 
       // sanity check
-      expect(headings.length).to.eq(7);
-      expect(days.length).to.eq(7);
+      expect(headings.length).toBe(7);
+      expect(days.length).toBe(7);
 
       for (let i = 0; i < 7; i++) {
         const heading = headings[i]!;
         const day = days[i]!;
         const part = `day-${mapToDayNumber(firstDayOfWeek, i)}`;
 
-        expect(heading.part.contains(part)).to.eq(
+        expect(heading.part.contains(part)).toBe(
           true,
           `expected part to contain "${part}", got "${heading.part}"`
         );
-        expect(day.part.contains(part)).to.eq(
+        expect(day.part.contains(part)).toBe(
           true,
           `expected part to contain "${part}, got "${day.part}"`
         );
@@ -715,15 +719,15 @@ describe("CalendarMonth", () => {
       const weekNumbers = getWeekNumbers(month);
 
       // 5 weeks in this month
-      expect(weekNumbers).to.have.length(5);
+      expect(weekNumbers.length).toBe(5);
 
       // from: https://weeknumber.co.uk/?q=2020-04-01
       let current = 14;
       for (const weekNumber of weekNumbers) {
-        expect(weekNumber.part.contains("th")).to.eq(true);
-        expect(weekNumber.part.contains("weeknumber")).to.eq(true);
-        expect(weekNumber).to.have.attribute("scope", "row");
-        expect(weekNumber).to.have.trimmed.text(current.toString());
+        expect(weekNumber.part.contains("th")).toBe(true);
+        expect(weekNumber.part.contains("weeknumber")).toBe(true);
+        expect(weekNumber.getAttribute("scope")).toBe("row");
+        expect(weekNumber.textContent.trim()).toBe(current.toString());
         current++;
       }
     });

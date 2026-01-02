@@ -1,7 +1,9 @@
+/// <reference types="vitest" />
 import atomico from "@atomico/vite";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { appendFile, readFile } from "fs/promises";
+import { playwright } from "@vitest/browser-playwright";
 
 const fileName = "cally";
 
@@ -31,4 +33,16 @@ export default defineConfig({
       },
     }),
   ],
+  test: {
+    browser: {
+      enabled: true,
+      provider: playwright(),
+      instances: [
+        {
+          browser: "chromium",
+        },
+      ],
+      headless: true,
+    },
+  },
 });

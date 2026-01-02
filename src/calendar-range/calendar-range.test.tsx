@@ -1,5 +1,5 @@
-import { expect } from "@open-wc/testing";
-import { sendKeys } from "@web/test-runner-commands";
+import { describe, it, expect } from "vitest";
+import { page } from "@vitest/browser/context";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
   click,
@@ -43,7 +43,7 @@ function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
 describe("CalendarRange", () => {
   it("is defined", async () => {
     const calendar = await mount(<Fixture />);
-    expect(calendar).to.be.instanceOf(CalendarRange);
+    expect(calendar).toBeInstanceOf(CalendarRange);
   });
 
   describe("mouse interaction", () => {
@@ -64,8 +64,8 @@ describe("CalendarRange", () => {
       await clickDay(month, "19 April");
       await clickDay(month, "22 April");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].target.value).to.eq("2020-04-19/2020-04-22");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].target.value).toBe("2020-04-19/2020-04-22");
     });
 
     it("can select a range: end -> start", async () => {
@@ -84,8 +84,8 @@ describe("CalendarRange", () => {
       await clickDay(month, "22 April");
       await clickDay(month, "19 April");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].target.value).to.eq("2020-04-19/2020-04-22");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].target.value).toBe("2020-04-19/2020-04-22");
     });
   });
 
@@ -95,34 +95,34 @@ describe("CalendarRange", () => {
       await mount(<Fixture value="2020-01-01/2020-01-01" onchange={spy} />);
 
       // tab to next page
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "Tab" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
 
       // set month to april
-      await sendKeys({ press: "Enter" });
-      await sendKeys({ press: "Enter" });
-      await sendKeys({ press: "Enter" });
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("Enter");
 
       // tab to grid
-      await sendKeys({ press: "Tab" });
+      await page.keyboard.press("Tab");
 
       // select 19th of month
-      await sendKeys({ press: "ArrowDown" });
-      await sendKeys({ press: "ArrowDown" });
-      await sendKeys({ press: "ArrowRight" });
-      await sendKeys({ press: "ArrowRight" });
-      await sendKeys({ press: "ArrowRight" });
-      await sendKeys({ press: "ArrowRight" });
-      await sendKeys({ press: "Enter" });
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Enter");
 
       // select 22nd of month
-      await sendKeys({ press: "ArrowRight" });
-      await sendKeys({ press: "ArrowRight" });
-      await sendKeys({ press: "ArrowRight" });
-      await sendKeys({ press: "Enter" });
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("ArrowRight");
+      await page.keyboard.press("Enter");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].target.value).to.eq("2020-04-19/2020-04-22");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].target.value).toBe("2020-04-19/2020-04-22");
     });
 
     it("can select a range: end -> start", async () => {
@@ -130,31 +130,31 @@ describe("CalendarRange", () => {
       await mount(<Fixture value="2020-01-01/2020-01-01" onchange={spy} />);
 
       // tab to next page
-      await sendKeys({ press: "Tab" });
-      await sendKeys({ press: "Tab" });
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
 
       // set month to april
-      await sendKeys({ press: "Enter" });
-      await sendKeys({ press: "Enter" });
-      await sendKeys({ press: "Enter" });
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("Enter");
 
       // tab to grid
-      await sendKeys({ press: "Tab" });
+      await page.keyboard.press("Tab");
 
       // select 22nd of month
-      await sendKeys({ press: "ArrowDown" });
-      await sendKeys({ press: "ArrowDown" });
-      await sendKeys({ press: "ArrowDown" });
-      await sendKeys({ press: "Enter" });
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
 
       // select 19th of month
-      await sendKeys({ press: "ArrowLeft" });
-      await sendKeys({ press: "ArrowLeft" });
-      await sendKeys({ press: "ArrowLeft" });
-      await sendKeys({ press: "Enter" });
+      await page.keyboard.press("ArrowLeft");
+      await page.keyboard.press("ArrowLeft");
+      await page.keyboard.press("ArrowLeft");
+      await page.keyboard.press("Enter");
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].target.value).to.eq("2020-04-19/2020-04-22");
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].target.value).toBe("2020-04-19/2020-04-22");
     });
   });
 
@@ -168,8 +168,8 @@ describe("CalendarRange", () => {
       // click next button
       await click(getNextPageButton(calendar));
 
-      expect(spy.count).to.eq(1);
-      expect(spy.last[0].detail).to.eql(new Date("2022-02-01"));
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail).toEqual(new Date("2022-02-01"));
     });
 
     it("raises a change event", async () => {
@@ -184,9 +184,9 @@ describe("CalendarRange", () => {
       await clickDay(month, "31 December");
       await clickDay(month, "30 December");
 
-      expect(spy.count).to.eq(1);
+      expect(spy.count).toBe(1);
       const target = spy.last[0].target as InstanceType<typeof CalendarRange>;
-      expect(target.value).to.eq("2021-12-30/2021-12-31");
+      expect(target.value).toBe("2021-12-30/2021-12-31");
     });
 
     it("raises rangestart and rangeend events", async () => {
@@ -205,14 +205,14 @@ describe("CalendarRange", () => {
       await click(getPrevPageButton(calendar));
 
       await clickDay(month, "31 December");
-      expect(startSpy.count).to.eq(1);
-      expect(startSpy.last[0].detail).to.eql(new Date("2021-12-31"));
-      expect(endSpy.called).to.eq(false);
+      expect(startSpy.count).toBe(1);
+      expect(startSpy.last[0].detail).toEqual(new Date("2021-12-31"));
+      expect(endSpy.called).toBe(false);
 
       await clickDay(month, "30 December");
-      expect(startSpy.count).to.eq(1);
-      expect(endSpy.count).to.eq(1);
-      expect(endSpy.last[0].detail).to.eql(new Date("2021-12-30"));
+      expect(startSpy.count).toBe(1);
+      expect(endSpy.count).toBe(1);
+      expect(endSpy.last[0].detail).toEqual(new Date("2021-12-30"));
     });
   });
 
@@ -222,7 +222,7 @@ describe("CalendarRange", () => {
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "5 January");
-      expect(day).to.have.attribute("tabindex", "0");
+      expect(day.getAttribute("tabindex")).toBe("0");
     });
   });
 
@@ -234,9 +234,9 @@ describe("CalendarRange", () => {
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "19 April");
-      expect(day.part.contains("selected")).to.eq(true);
-      expect(day.part.contains("range-start")).to.eq(true);
-      expect(day.part.contains("range-end")).to.eq(true);
+      expect(day.part.contains("selected")).toBe(true);
+      expect(day.part.contains("range-start")).toBe(true);
+      expect(day.part.contains("range-end")).toBe(true);
     });
 
     it("can be cleared", async () => {
@@ -246,21 +246,21 @@ describe("CalendarRange", () => {
       const month = getMonth(calendar);
 
       await clickDay(month, "19 April");
-      expect(calendar.tentative).to.eq("2024-04-19");
-      await sendKeys({ press: "ArrowRight" });
+      expect(calendar.tentative).toBe("2024-04-19");
+      await page.keyboard.press("ArrowRight");
 
       const before = getSelectedDays(month);
 
-      expect(before[0]!.part.contains("selected")).to.eq(true);
-      expect(before[0]!.part.contains("range-start")).to.eq(true);
-      expect(before[1]!.part.contains("selected")).to.eq(true);
-      expect(before[1]!.part.contains("range-end")).to.eq(true);
+      expect(before[0]!.part.contains("selected")).toBe(true);
+      expect(before[0]!.part.contains("range-start")).toBe(true);
+      expect(before[1]!.part.contains("selected")).toBe(true);
+      expect(before[1]!.part.contains("range-end")).toBe(true);
 
       calendar.tentative = "";
       await calendar.updated;
 
       const after = getSelectedDays(month);
-      expect(after).to.have.length(0);
+      expect(after.length).toBe(0);
     });
   });
 
@@ -283,10 +283,10 @@ describe("CalendarRange", () => {
       const sixth = getDayButton(month, "6 January");
       const seventh = getDayButton(month, "7 January");
 
-      expect(getMonthHeading(month)).to.have.text("January");
-      expect(fifth).to.have.attribute("aria-pressed", "true");
-      expect(sixth).to.have.attribute("aria-pressed", "true");
-      expect(seventh).to.have.attribute("aria-pressed", "true");
+      expect(getMonthHeading(month).textContent).toBe("January");
+      expect(fifth.getAttribute("aria-pressed")).toBe("true");
+      expect(sixth.getAttribute("aria-pressed")).toBe("true");
+      expect(seventh.getAttribute("aria-pressed")).toBe("true");
     });
   });
 });

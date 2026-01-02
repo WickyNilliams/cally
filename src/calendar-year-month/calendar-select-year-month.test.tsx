@@ -1,6 +1,6 @@
 import type { VNodeAny } from "atomico/types/vnode";
-import { expect } from "@open-wc/testing";
-import { selectOption } from "@web/test-runner-commands";
+import { describe, it, expect } from "vitest";
+import { page } from "@vitest/browser/context";
 import { CalendarDate } from "../calendar-date/calendar-date";
 import { CalendarMonth } from "../calendar-month/calendar-month";
 import { CalendarSelectMonth } from "./calendar-select-month";
@@ -55,14 +55,14 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const monthSelect = getMonthSelect(calendar);
     const yearSelect = getYearSelect(calendar);
 
-    expect(monthSelect).to.have.property("value", "12");
-    expect(yearSelect).to.have.property("value", "2025");
+    expect(monthSelect.value).toBe("12");
+    expect(yearSelect.value).toBe("2025");
 
     const nextPage = getNextPageButton(calendar);
     await click(nextPage);
 
-    expect(monthSelect).to.have.property("value", "1");
-    expect(yearSelect).to.have.property("value", "2026");
+    expect(monthSelect.value).toBe("1");
+    expect(yearSelect.value).toBe("2026");
   });
 
   it("can change the month", async () => {
@@ -70,16 +70,13 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const monthSelect = getMonthSelect(calendar);
     const heading = getCalendarHeading(calendar);
 
-    expect(monthSelect).to.have.property("value", "12");
-    expect(heading).to.have.text("December 2025");
+    expect(monthSelect.value).toBe("12");
+    expect(heading.textContent).toBe("December 2025");
 
-    await selectOption({
-      selector: "calendar-select-month select",
-      value: "11",
-    });
+    await page.locator("calendar-select-month select").selectOptions("11");
 
-    expect(monthSelect).to.have.property("value", "11");
-    expect(heading).to.have.text("November 2025");
+    expect(monthSelect.value).toBe("11");
+    expect(heading.textContent).toBe("November 2025");
   });
 
   it("can change the year", async () => {
@@ -87,16 +84,13 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const yearSelect = getYearSelect(calendar);
     const heading = getCalendarHeading(calendar);
 
-    expect(yearSelect).to.have.property("value", "2025");
-    expect(heading).to.have.text("December 2025");
+    expect(yearSelect.value).toBe("2025");
+    expect(heading.textContent).toBe("December 2025");
 
-    await selectOption({
-      selector: "calendar-select-year select",
-      value: "2026",
-    });
+    await page.locator("calendar-select-year select").selectOptions("2026");
 
-    expect(yearSelect).to.have.property("value", "2026");
-    expect(heading).to.have.text("December 2026");
+    expect(yearSelect.value).toBe("2026");
+    expect(heading.textContent).toBe("December 2026");
   });
 
   it("handles min and max dates", async () => {
@@ -107,7 +101,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const monthSelect = getMonthSelect(calendar);
     const yearSelect = getYearSelect(calendar);
 
-    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+    expect([...yearSelect.options].map((o) => o.label)).toEqual([
       "2024",
       "2025",
       "2026",
@@ -119,7 +113,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
         label: o.label,
         disabled: o.disabled,
       }))
-    ).to.eql([
+    ).toEqual([
       { label: "January", disabled: false },
       { label: "February", disabled: false },
       { label: "March", disabled: false },
@@ -135,10 +129,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     ]);
 
     // go back to 2024, which is the min year
-    await selectOption({
-      selector: "calendar-select-year select",
-      value: "2024",
-    });
+    await page.locator("calendar-select-year select").selectOptions("2024");
 
     // months before min will be disabled
     expect(
@@ -146,7 +137,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
         label: o.label,
         disabled: o.disabled,
       }))
-    ).to.eql([
+    ).toEqual([
       { label: "January", disabled: true },
       { label: "February", disabled: true },
       { label: "March", disabled: true },
@@ -168,7 +159,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     );
 
     const monthSelect = getMonthSelect(calendar);
-    expect([...monthSelect.options].map((o) => o.label)).to.eql([
+    expect([...monthSelect.options].map((o) => o.label)).toEqual([
       "January",
       "February",
       "March",
@@ -190,7 +181,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     );
 
     const monthSelect = getMonthSelect(calendar);
-    expect([...monthSelect.options].map((o) => o.label)).to.eql([
+    expect([...monthSelect.options].map((o) => o.label)).toEqual([
       "Jan",
       "Feb",
       "Mar",
@@ -212,7 +203,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     );
 
     const yearSelect = getYearSelect(calendar);
-    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+    expect([...yearSelect.options].map((o) => o.label)).toEqual([
       "2022",
       "2023",
       "2024",
@@ -228,7 +219,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     );
 
     const yearSelect = getYearSelect(calendar);
-    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+    expect([...yearSelect.options].map((o) => o.label)).toEqual([
       "2020",
       "2021",
       "2022",
@@ -248,7 +239,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     );
 
     const yearSelect = getYearSelect(calendar);
-    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+    expect([...yearSelect.options].map((o) => o.label)).toEqual([
       "2024",
       "2025",
       "2026",
@@ -262,7 +253,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
 
     const yearSelect = getYearSelect(calendar);
     // Would normally show 2020-2029, but min constrains to 2023-2029
-    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+    expect([...yearSelect.options].map((o) => o.label)).toEqual([
       "2023",
       "2024",
       "2025",
@@ -280,7 +271,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
 
     const yearSelect = getYearSelect(calendar);
     // Would normally show 2020-2029, but max constrains to 2020-2027
-    expect([...yearSelect.options].map((o) => o.label)).to.eql([
+    expect([...yearSelect.options].map((o) => o.label)).toEqual([
       "2020",
       "2021",
       "2022",

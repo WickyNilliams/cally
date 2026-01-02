@@ -1,10 +1,13 @@
-import { sendKeys, sendMouse } from "@web/test-runner-commands";
+import { page } from "@vitest/browser/context";
 import { fixture } from "atomico/test-dom";
 import type { VNodeAny } from "atomico/types/vnode";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
-import { nextFrame } from "@open-wc/testing";
+
+async function nextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
+}
 
 type SpySubject = (...args: any[]) => any;
 
@@ -20,9 +23,9 @@ const defineGetter = <TObj, TReturn>(
 };
 
 export async function sendShiftPress(key: string) {
-  await sendKeys({ down: "Shift" });
-  await sendKeys({ press: key });
-  await sendKeys({ up: "Shift" });
+  await page.keyboard.down("Shift");
+  await page.keyboard.press(key);
+  await page.keyboard.up("Shift");
 }
 
 /**
@@ -66,12 +69,10 @@ export async function mount<T extends CalendarInstance>(node: VNodeAny) {
 export async function click(element: Element) {
   const { x, y, width, height } = element.getBoundingClientRect();
 
-  const position: [number, number] = [
-    Math.floor(x + window.scrollX + width / 2),
-    Math.floor(y + window.scrollY + height / 2),
-  ];
+  const positionX = Math.floor(x + window.scrollX + width / 2);
+  const positionY = Math.floor(y + window.scrollY + height / 2);
 
-  await sendMouse({ type: "click", position });
+  await page.mouse.click(positionX, positionY);
 }
 
 export function getMonths(calendar: HTMLElement): MonthInstance[] {
