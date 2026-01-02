@@ -4,23 +4,13 @@ import type { VNodeAny } from "atomico/types/vnode";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
+import { vi } from "vitest";
 
 async function nextFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
 }
 
 type SpySubject = (...args: any[]) => any;
-
-const defineGetter = <TObj, TReturn>(
-  obj: TObj,
-  name: string,
-  getter: () => TReturn
-) => {
-  Object.defineProperty(obj, name, {
-    enumerable: true,
-    get: getter,
-  });
-};
 
 export async function sendShiftPress(key: string) {
   await page.keyboard.down("Shift");
@@ -29,30 +19,18 @@ export async function sendShiftPress(key: string) {
 }
 
 /**
- * Creates a spy for use in tests.
+ * Creates a spy for use in tests that works across Node/browser boundary.
  */
 export function createSpy<T extends SpySubject>(fn?: T) {
-  const _calls: Parameters<T>[] = [];
+  const mock = vi.fn(fn);
 
-  function spy(...args: Parameters<T>): ReturnType<T> {
-    _calls.push(args);
-    return fn?.(...args);
-  }
-
-  defineGetter(spy, "calls", () => _calls);
-  defineGetter(spy, "count", () => _calls.length);
-  defineGetter(spy, "called", () => _calls.length > 0);
-  defineGetter(spy, "first", () => _calls[0]);
-  defineGetter(spy, "last", () => _calls[_calls.length - 1]);
-
-  return spy as {
-    (...args: Parameters<T>): ReturnType<T>;
-    readonly calls: Parameters<T>[];
-    readonly called: boolean;
-    readonly count: number;
-    readonly first: Parameters<T>;
-    readonly last: Parameters<T>;
-  };
+  return Object.assign(mock, {
+    get calls() { return mock.mock.calls as Parameters<T>[]; },
+    get called() { return mock.mock.calls.length > 0; },
+    get count() { return mock.mock.calls.length; },
+    get first() { return mock.mock.calls[0] as Parameters<T>; },
+    get last() { return mock.mock.calls[mock.mock.calls.length - 1] as Parameters<T>; },
+  });
 }
 
 export type MonthInstance = InstanceType<typeof CalendarMonth>;
