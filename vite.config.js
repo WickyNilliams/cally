@@ -33,6 +33,9 @@ export default defineConfig({
       },
     }),
   ],
+  optimizeDeps: {
+    include: ["atomico/jsx-dev-runtime"],
+  },
   test: {
     browser: {
       enabled: true,
