@@ -182,10 +182,13 @@ export function getActiveElement(root: Document | ShadowRoot = document) {
 }
 
 /**
- * Custom matcher for CSS Parts API (Shadow Parts).
- * Checks if an element's part attribute contains the specified value.
+ * Custom matchers for Vitest.
  */
 expect.extend({
+  /**
+   * Custom matcher for CSS Parts API (Shadow Parts).
+   * Checks if an element's part attribute contains the specified value.
+   */
   toHavePart(element: Element, expectedPart: string) {
     const { isNot } = this;
     const hasPart = element.part?.contains(expectedPart) ?? false;
@@ -201,14 +204,43 @@ expect.extend({
       },
     };
   },
+
+  /**
+   * Custom matcher for checking active element with Shadow DOM support.
+   *
+   * Note: Vitest's built-in toHaveFocus() doesn't work properly with Shadow DOM -
+   * it times out even with retry logic because it can't traverse shadow boundaries
+   * to find the actually focused element.
+   *
+   * This matcher uses getActiveElement() to recursively find the focused element
+   * within shadow trees, while still providing Vitest's retry-ability through the
+   * custom matcher infrastructure.
+   */
+  toBeActiveElement(element: Element, root?: Document | ShadowRoot) {
+    const { isNot } = this;
+    const activeElement = getActiveElement(root);
+    const isFocused = activeElement === element;
+
+    return {
+      pass: isFocused,
+      message: () => {
+        if (isNot) {
+          return `Expected element not to be the active element, but it is.`;
+        }
+        return `Expected element to be the active element, but it isn't.\nActive element: ${activeElement?.tagName || 'null'}`;
+      },
+    };
+  },
 });
 
-// Extend Vitest expect types for custom matcher
+// Extend Vitest expect types for custom matchers
 declare module "vitest" {
   interface Assertion<T = any> {
     toHavePart(expectedPart: string): T;
+    toBeActiveElement(root?: Document | ShadowRoot): T;
   }
   interface AsymmetricMatchersContaining {
     toHavePart(expectedPart: string): any;
+    toBeActiveElement(root?: Document | ShadowRoot): any;
   }
 }

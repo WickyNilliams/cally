@@ -4,7 +4,6 @@ import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
   createSpy,
-  getActiveElement,
   getDayButton,
   getMonthHeading,
   getMonth,
@@ -613,7 +612,7 @@ describe("CalendarDate", () => {
       const nextButton = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
         `button[part~="next"]`
       )!;
-      expect(getActiveElement()).toBe(nextButton);
+      expect(nextButton).toBeActiveElement();
     });
 
     it("moves focus to the selected date when clicking outside of the month", async () => {
@@ -634,7 +633,7 @@ describe("CalendarDate", () => {
 
       // get the clicked day
       const button = getDayButton(month, "1 February");
-      expect(getActiveElement()).toBe(button);
+      expect(button).toBeActiveElement();
       expect(button.tabIndex).toBe(0);
     });
   });
@@ -827,16 +826,16 @@ describe("CalendarDate", () => {
       )!;
 
       calendar.focus({ target: "previous" });
-      expect(getActiveElement(calendar.shadowRoot!)).toBe(prevButton);
+      expect(prevButton).toBeActiveElement(calendar.shadowRoot!);
 
       calendar.focus();
-      expect(getActiveElement()).toBe(day);
+      expect(day).toBeActiveElement();
 
       calendar.focus({ target: "next" });
-      expect(getActiveElement()).toBe(nextButton);
+      expect(nextButton).toBeActiveElement();
 
       calendar.focus({ target: "day" });
-      expect(getActiveElement()).toBe(day);
+      expect(day).toBeActiveElement();
     });
   });
 
