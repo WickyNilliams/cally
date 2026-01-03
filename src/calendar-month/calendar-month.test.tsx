@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { userEvent } from "vitest/browser";
+import { userEvent, page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
@@ -266,8 +266,8 @@ describe("CalendarMonth", () => {
       );
 
       const day = getDayButton(calendar, "4 January")!;
-      expect(day.part.contains("disallowed")).toBe(true);
-      expect(day.getAttribute("aria-disabled")).toBe("true");
+      await expect.element(page.elementLocator(day)).toHaveAttribute("part", expect.stringContaining("disallowed"));
+      await expect.element(page.elementLocator(day)).toHaveAttribute("aria-disabled", "true");
 
       await click(day, { force: true });
       expect(spy.called).toBe(false);

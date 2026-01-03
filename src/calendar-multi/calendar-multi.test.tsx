@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { userEvent } from "vitest/browser";
+import { userEvent, page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
   click,
@@ -152,7 +152,7 @@ describe("CalendarMulti", () => {
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "5 January");
-      expect(day.getAttribute("tabindex")).toBe("0");
+      await expect.element(page.elementLocator(day)).toHaveAttribute("tabindex", "0");
     });
   });
 
@@ -174,9 +174,9 @@ describe("CalendarMulti", () => {
       const fifth = getDayButton(month, "5 January");
       const tenth = getDayButton(month, "10 January");
 
-      expect(getMonthHeading(month).textContent).toBe("January");
-      expect(fifth.getAttribute("aria-pressed")).toBe("true");
-      expect(tenth.getAttribute("aria-pressed")).toBe("true");
+      await expect.element(page.elementLocator(getMonthHeading(month))).toHaveTextContent("January");
+      await expect.element(page.elementLocator(fifth)).toHaveAttribute("aria-pressed", "true");
+      await expect.element(page.elementLocator(tenth)).toHaveAttribute("aria-pressed", "true");
     });
   });
 });
