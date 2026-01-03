@@ -101,8 +101,9 @@ describe("CalendarDate", () => {
       });
 
       const heading = getCalendarHeading(calendar);
-      const expectedText = formatter.formatRange(toDate(start), toDate(end));
-      expect(heading.textContent).toBe(expectedText);
+      await expect.poll(() => heading.textContent).toBe(
+        formatter.formatRange(toDate(start), toDate(end))
+      );
     });
   });
 
