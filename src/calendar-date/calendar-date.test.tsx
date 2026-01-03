@@ -626,7 +626,6 @@ describe("CalendarDate", () => {
 
       // try clicking a day outside the range
       await clickDay(month, "1 February");
-      await nextFrame();
 
       expect(spy.count).toBe(1);
       expect(calendar.value).toBe("2020-02-01");

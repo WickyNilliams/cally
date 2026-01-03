@@ -4,7 +4,7 @@ import type { VNodeAny } from "atomico/types/vnode";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
-import { vi, expect } from "vitest";
+import { expect } from "vitest";
 
 async function nextFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
