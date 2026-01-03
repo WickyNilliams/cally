@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { page } from "vitest/browser";
+import { userEvent } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
   click,
@@ -147,25 +147,25 @@ describe("CalendarDate", () => {
       await mount(<Fixture value="2020-01-01" onchange={spy} />);
 
       // tab to next page
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Tab}");
 
       // set month to april
-      await page.keyboard.press("Enter");
-      await page.keyboard.press("Enter");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Enter}");
+      await userEvent.keyboard("{Enter}");
+      await userEvent.keyboard("{Enter}");
 
       // tab to grid
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
 
       // tab to grid, select 19th of month
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{Enter}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].target.value).toBe("2020-04-19");
@@ -175,23 +175,23 @@ describe("CalendarDate", () => {
       const spy = createSpy();
       await mount(<Fixture value="2019-05-01" onchange={spy} />);
 
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
 
       // set month to April
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Enter}");
 
       // tab to grid
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Tab}");
 
       // select date 19th of month
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{Enter}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].target.value).toBe("2019-04-19");
@@ -209,37 +209,37 @@ describe("CalendarDate", () => {
       };
 
       // tab to next page button
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Tab}");
 
       // set month to april
-      await page.keyboard.press("Enter");
-      await page.keyboard.press("Enter");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Enter}");
+      await userEvent.keyboard("{Enter}");
+      await userEvent.keyboard("{Enter}");
 
       // tab to grid
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
 
       // navigate to 2. april thursday
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{ArrowRight}");
       // navigate to 3. april friday
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{ArrowRight}");
       // navigate to 4. april saturday
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{ArrowRight}");
 
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Enter}");
       expect(spy.called).toBe(false);
 
       // navigate to 5. april sunday
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{ArrowRight}");
 
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Enter}");
       expect(spy.called).toBe(false);
 
       // navigate to 6. april monday
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{ArrowRight}");
 
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Enter}");
 
       expect(spy.count).toBe(1);
       expect(calendar.value).toBe("2020-04-06");
@@ -278,42 +278,42 @@ describe("CalendarDate", () => {
         ];
 
         // tab to grid
-        await page.keyboard.press("Tab");
-        await page.keyboard.press("Tab");
-        await page.keyboard.press("Tab");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Tab}");
 
         // move to feb, within page
-        await page.keyboard.press("PageDown");
+        await userEvent.keyboard("{PageDown}");
         expect(getMonthHeading(first).textContent).toBe("January");
         expect(getMonthHeading(second).textContent).toBe("February");
 
         // move to march, out of page
-        await page.keyboard.press("PageDown");
+        await userEvent.keyboard("{PageDown}");
         expect(getMonthHeading(first).textContent).toBe("March");
         expect(getMonthHeading(second).textContent).toBe("April");
 
         // move to april, should be on same page
-        await page.keyboard.press("PageDown");
+        await userEvent.keyboard("{PageDown}");
         expect(getMonthHeading(first).textContent).toBe("March");
         expect(getMonthHeading(second).textContent).toBe("April");
 
         // move to march, within page
-        await page.keyboard.press("PageUp");
+        await userEvent.keyboard("{PageUp}");
         expect(getMonthHeading(first).textContent).toBe("March");
         expect(getMonthHeading(second).textContent).toBe("April");
 
         // move to feb, out of page
-        await page.keyboard.press("PageUp");
+        await userEvent.keyboard("{PageUp}");
         expect(getMonthHeading(first).textContent).toBe("January");
         expect(getMonthHeading(second).textContent).toBe("February");
 
         // move to jan, within page
-        await page.keyboard.press("PageUp");
+        await userEvent.keyboard("{PageUp}");
         expect(getMonthHeading(first).textContent).toBe("January");
         expect(getMonthHeading(second).textContent).toBe("February");
 
         // move to dec, out of page
-        await page.keyboard.press("PageUp");
+        await userEvent.keyboard("{PageUp}");
         expect(getMonthHeading(first).textContent).toBe("November");
         expect(getMonthHeading(second).textContent).toBe("December");
 
@@ -426,42 +426,42 @@ describe("CalendarDate", () => {
         ];
 
         // tab to grid
-        await page.keyboard.press("Tab");
-        await page.keyboard.press("Tab");
-        await page.keyboard.press("Tab");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Tab}");
 
         // move to feb, within page
-        await page.keyboard.press("PageDown");
+        await userEvent.keyboard("{PageDown}");
         expect(getMonthHeading(first).textContent).toBe("January");
         expect(getMonthHeading(second).textContent).toBe("February");
 
         // move to march, out of page
-        await page.keyboard.press("PageDown");
+        await userEvent.keyboard("{PageDown}");
         expect(getMonthHeading(first).textContent).toBe("February");
         expect(getMonthHeading(second).textContent).toBe("March");
 
         // move to april, should be on same page
-        await page.keyboard.press("PageDown");
+        await userEvent.keyboard("{PageDown}");
         expect(getMonthHeading(first).textContent).toBe("March");
         expect(getMonthHeading(second).textContent).toBe("April");
 
         // move to march, within page
-        await page.keyboard.press("PageUp");
+        await userEvent.keyboard("{PageUp}");
         expect(getMonthHeading(first).textContent).toBe("March");
         expect(getMonthHeading(second).textContent).toBe("April");
 
         // move to feb, out of page
-        await page.keyboard.press("PageUp");
+        await userEvent.keyboard("{PageUp}");
         expect(getMonthHeading(first).textContent).toBe("February");
         expect(getMonthHeading(second).textContent).toBe("March");
 
         // move to jan, within page
-        await page.keyboard.press("PageUp");
+        await userEvent.keyboard("{PageUp}");
         expect(getMonthHeading(first).textContent).toBe("January");
         expect(getMonthHeading(second).textContent).toBe("February");
 
         // move to dec, out of page
-        await page.keyboard.press("PageUp");
+        await userEvent.keyboard("{PageUp}");
         expect(getMonthHeading(first).textContent).toBe("December");
         expect(getMonthHeading(second).textContent).toBe("January");
 
@@ -602,9 +602,9 @@ describe("CalendarDate", () => {
       );
 
       // tab to next page, click
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Enter}");
 
       expect(getActiveElement()).toBe(getNextPageButton(calendar));
     });

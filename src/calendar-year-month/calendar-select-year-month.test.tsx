@@ -1,6 +1,6 @@
 import type { VNodeAny } from "atomico/types/vnode";
 import { describe, it, expect } from "vitest";
-import { page } from "vitest/browser";
+import { userEvent } from "vitest/browser";
 import { CalendarDate } from "../calendar-date/calendar-date";
 import { CalendarMonth } from "../calendar-month/calendar-month";
 import { CalendarSelectMonth } from "./calendar-select-month";
@@ -73,7 +73,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     expect(monthSelect.value).toBe("12");
     expect(heading.textContent).toBe("December 2025");
 
-    await page.locator("calendar-select-month select").selectOptions("11");
+    await userEvent.selectOptions(monthSelect, "11");
 
     expect(monthSelect.value).toBe("11");
     expect(heading.textContent).toBe("November 2025");
@@ -87,7 +87,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     expect(yearSelect.value).toBe("2025");
     expect(heading.textContent).toBe("December 2025");
 
-    await page.locator("calendar-select-year select").selectOptions("2026");
+    await userEvent.selectOptions(yearSelect, "2026");
 
     expect(yearSelect.value).toBe("2026");
     expect(heading.textContent).toBe("December 2026");
@@ -129,7 +129,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     ]);
 
     // go back to 2024, which is the min year
-    await page.locator("calendar-select-year select").selectOptions("2024");
+    await userEvent.selectOptions(yearSelect, "2024");
 
     // months before min will be disabled
     expect(

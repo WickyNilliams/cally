@@ -1,4 +1,4 @@
-import { page } from "vitest/browser";
+import { userEvent, page } from "vitest/browser";
 import { fixture } from "atomico/test-dom";
 import type { VNodeAny } from "atomico/types/vnode";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
@@ -13,24 +13,37 @@ async function nextFrame() {
 type SpySubject = (...args: any[]) => any;
 
 export async function sendShiftPress(key: string) {
-  await page.keyboard.down("Shift");
-  await page.keyboard.press(key);
-  await page.keyboard.up("Shift");
+  await userEvent.keyboard(`{Shift>}${key}{/Shift}`);
 }
 
 /**
  * Creates a spy for use in tests that works across Node/browser boundary.
+ * In vitest browser mode, vi.fn() doesn't marshal across the boundary,
+ * so we use a plain function with a calls array.
  */
 export function createSpy<T extends SpySubject>(fn?: T) {
-  const mock = vi.fn(fn);
+  const calls: any[][] = [];
 
-  return Object.assign(mock, {
-    get calls() { return mock.mock.calls as Parameters<T>[]; },
-    get called() { return mock.mock.calls.length > 0; },
-    get count() { return mock.mock.calls.length; },
-    get first() { return mock.mock.calls[0] as Parameters<T>; },
-    get last() { return mock.mock.calls[mock.mock.calls.length - 1] as Parameters<T>; },
+  const spy = function(...args: any[]) {
+    calls.push(args);
+    return fn?.(...args);
+  } as T & {
+    calls: Parameters<T>[];
+    called: boolean;
+    count: number;
+    first: Parameters<T>;
+    last: Parameters<T>;
+  };
+
+  Object.defineProperties(spy, {
+    calls: { get: () => calls as Parameters<T>[] },
+    called: { get: () => calls.length > 0 },
+    count: { get: () => calls.length },
+    first: { get: () => calls[0] as Parameters<T> },
+    last: { get: () => calls[calls.length - 1] as Parameters<T> },
   });
+
+  return spy;
 }
 
 export type MonthInstance = InstanceType<typeof CalendarMonth>;
@@ -45,12 +58,10 @@ export async function mount<T extends CalendarInstance>(node: VNodeAny) {
 }
 
 export async function click(element: Element) {
-  const { x, y, width, height } = element.getBoundingClientRect();
-
-  const positionX = Math.floor(x + window.scrollX + width / 2);
-  const positionY = Math.floor(y + window.scrollY + height / 2);
-
-  await page.mouse.click(positionX, positionY);
+  if (element instanceof HTMLElement) {
+    element.click();
+  }
+  await nextFrame();
 }
 
 export function getMonths(calendar: HTMLElement): MonthInstance[] {

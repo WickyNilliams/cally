@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { page } from "vitest/browser";
+import { userEvent } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
   click,
@@ -95,31 +95,31 @@ describe("CalendarRange", () => {
       await mount(<Fixture value="2020-01-01/2020-01-01" onchange={spy} />);
 
       // tab to next page
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Tab}");
 
       // set month to april
-      await page.keyboard.press("Enter");
-      await page.keyboard.press("Enter");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Enter}");
+      await userEvent.keyboard("{Enter}");
+      await userEvent.keyboard("{Enter}");
 
       // tab to grid
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
 
       // select 19th of month
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{Enter}");
 
       // select 22nd of month
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("ArrowRight");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.keyboard("{Enter}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].target.value).toBe("2020-04-19/2020-04-22");
@@ -130,28 +130,28 @@ describe("CalendarRange", () => {
       await mount(<Fixture value="2020-01-01/2020-01-01" onchange={spy} />);
 
       // tab to next page
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Tab}");
 
       // set month to april
-      await page.keyboard.press("Enter");
-      await page.keyboard.press("Enter");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Enter}");
+      await userEvent.keyboard("{Enter}");
+      await userEvent.keyboard("{Enter}");
 
       // tab to grid
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
 
       // select 22nd of month
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("ArrowDown");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{ArrowDown}");
+      await userEvent.keyboard("{Enter}");
 
       // select 19th of month
-      await page.keyboard.press("ArrowLeft");
-      await page.keyboard.press("ArrowLeft");
-      await page.keyboard.press("ArrowLeft");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{ArrowLeft}");
+      await userEvent.keyboard("{ArrowLeft}");
+      await userEvent.keyboard("{ArrowLeft}");
+      await userEvent.keyboard("{Enter}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].target.value).toBe("2020-04-19/2020-04-22");
@@ -247,7 +247,7 @@ describe("CalendarRange", () => {
 
       await clickDay(month, "19 April");
       expect(calendar.tentative).toBe("2024-04-19");
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{ArrowRight}");
 
       const before = getSelectedDays(month);
 

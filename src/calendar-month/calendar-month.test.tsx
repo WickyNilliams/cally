@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { page } from "vitest/browser";
+import { userEvent } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
@@ -281,8 +281,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Enter}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-04-19");
@@ -298,8 +298,8 @@ describe("CalendarMonth", () => {
         />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Enter");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Enter}");
 
       expect(spy.called).toBe(false);
     });
@@ -310,8 +310,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("ArrowLeft");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{ArrowLeft}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-04-18");
@@ -323,8 +323,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{ArrowRight}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-04-20");
@@ -336,8 +336,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("ArrowUp");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{ArrowUp}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-04-12");
@@ -349,8 +349,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("ArrowDown");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{ArrowDown}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-04-26");
@@ -362,8 +362,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-16")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Home");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Home}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-04-13");
@@ -375,8 +375,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-16")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("End");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{End}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-04-19");
@@ -388,8 +388,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("PageUp");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{PageUp}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-03-19");
@@ -401,8 +401,8 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("PageDown");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{PageDown}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-05-19");
@@ -414,7 +414,7 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
+      await userEvent.keyboard("{Tab}");
       await sendShiftPress("PageUp");
 
       expect(spy.count).toBe(1);
@@ -427,10 +427,10 @@ describe("CalendarMonth", () => {
         <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.down("Shift");
-      await page.keyboard.press("PageDown");
-      await page.keyboard.up("Shift");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{Shift>}");
+      await userEvent.keyboard("{PageDown}");
+      await userEvent.keyboard("{/Shift}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2021-04-19");
@@ -446,8 +446,8 @@ describe("CalendarMonth", () => {
         />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{ArrowRight}");
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail.toString()).toBe("2020-01-04");
@@ -465,11 +465,11 @@ describe("CalendarMonth", () => {
         />
       );
 
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("ArrowLeft");
+      await userEvent.keyboard("{Tab}");
+      await userEvent.keyboard("{ArrowLeft}");
       expect(spy.last[0].detail.toString()).toBe(focused);
 
-      await page.keyboard.press("ArrowRight");
+      await userEvent.keyboard("{ArrowRight}");
       expect(spy.last[0].detail.toString()).toBe(focused);
     });
 
@@ -484,8 +484,8 @@ describe("CalendarMonth", () => {
           />
         );
 
-        await page.keyboard.press("Tab");
-        await page.keyboard.press("ArrowLeft");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{ArrowLeft}");
 
         expect(spy.count).toBe(1);
         expect(spy.last[0].detail.toString()).toBe("2020-04-20");
@@ -501,8 +501,8 @@ describe("CalendarMonth", () => {
           />
         );
 
-        await page.keyboard.press("Tab");
-        await page.keyboard.press("ArrowRight");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{ArrowRight}");
 
         expect(spy.count).toBe(1);
         expect(spy.last[0].detail.toString()).toBe("2020-04-18");
