@@ -269,7 +269,7 @@ describe("CalendarMonth", () => {
       expect(day.part.contains("disallowed")).toBe(true);
       expect(day.getAttribute("aria-disabled")).toBe("true");
 
-      await click(day);
+      await click(day, { force: true });
       expect(spy.called).toBe(false);
     });
   });
@@ -522,7 +522,7 @@ describe("CalendarMonth", () => {
       );
 
       // try clicking a day outside the range
-      await clickDay(month, "1 January");
+      await clickDay(month, "1 January", { force: true });
       expect(spy.called).toBe(false);
 
       // click a day inside the range
@@ -543,7 +543,7 @@ describe("CalendarMonth", () => {
       );
 
       // try clicking a day outside the range
-      await clickDay(month, "31 January");
+      await clickDay(month, "31 January", { force: true });
       expect(spy.called).toBe(false);
 
       // click a day inside the range
@@ -565,11 +565,11 @@ describe("CalendarMonth", () => {
       );
 
       // try clicking a day less than min
-      await clickDay(month, "1 January");
+      await clickDay(month, "1 January", { force: true });
       expect(spy.called).toBe(false);
 
       // try clicking a day greater than max
-      await clickDay(month, "31 January");
+      await clickDay(month, "31 January", { force: true });
       expect(spy.called).toBe(false);
 
       // click a day inside the range

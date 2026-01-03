@@ -57,12 +57,10 @@ export async function mount<T extends CalendarInstance>(node: VNodeAny) {
   return calendar;
 }
 
-export async function click(element: Element) {
+export async function click(element: Element, options?: { force?: boolean }) {
   // Use page.elementLocator to wrap element for proper shadow DOM handling
-  // Use force:true to bypass actionability checks since we sometimes test
-  // clicking on disabled elements to verify they don't respond
   const locator = page.elementLocator(element);
-  await locator.click({ force: true });
+  await locator.click(options);
   await nextFrame();
 }
 
@@ -161,14 +159,18 @@ export function getDayButton(month: MonthInstance, dateLabel: string) {
   )!;
 }
 
-export async function clickDay(month: MonthInstance, dateLabel: string) {
+export async function clickDay(
+  month: MonthInstance,
+  dateLabel: string,
+  options?: { force?: boolean }
+) {
   const button = getDayButton(month, dateLabel);
 
   if (!button) {
     throw new Error(`No button found for date: ${dateLabel}`);
   }
 
-  await click(button);
+  await click(button, options);
 }
 
 export function getActiveElement(root: Document | ShadowRoot = document) {
