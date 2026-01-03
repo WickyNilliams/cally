@@ -1,6 +1,6 @@
 import type { VNodeAny } from "atomico/types/vnode";
 import { describe, it, expect } from "vitest";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import { CalendarDate } from "../calendar-date/calendar-date";
 import { CalendarMonth } from "../calendar-month/calendar-month";
 import { CalendarSelectMonth } from "./calendar-select-month";
