@@ -101,6 +101,9 @@ describe("CalendarDate", () => {
       });
 
       const heading = getCalendarHeading(calendar);
+      // Use poll() instead of toHaveTextContent() because the formatter output
+      // contains unicode characters (en-dash "–") that toHaveTextContent() normalizes
+      // differently, causing false negatives. poll() does direct string comparison.
       await expect.poll(() => heading.textContent).toBe(
         formatter.formatRange(toDate(start), toDate(end))
       );
