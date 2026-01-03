@@ -283,7 +283,7 @@ describe("CalendarRange", () => {
       const sixth = getDayButton(month, "6 January");
       const seventh = getDayButton(month, "7 January");
 
-      await expect.element(page.elementLocator(getMonthHeading(month))).toHaveTextContent("January");
+      await expect.element(getMonthHeading(month)).toHaveTextContent("January");
       await expect.element(page.elementLocator(fifth)).toHaveAttribute("aria-pressed", "true");
       await expect.element(page.elementLocator(sixth)).toHaveAttribute("aria-pressed", "true");
       await expect.element(page.elementLocator(seventh)).toHaveAttribute("aria-pressed", "true");

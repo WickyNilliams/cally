@@ -635,7 +635,7 @@ describe("CalendarMonth", () => {
       await expect.element(page.elementLocator(visualHeadings[6])).toHaveTextContent("D");
 
       const title = getMonthHeading(month);
-      await expect.element(page.elementLocator(title)).toHaveTextContent("janvier");
+      await expect.element(title).toHaveTextContent("janvier");
 
       const button = getDayButton(month, "15 janvier");
       expect(button).toBeTruthy();

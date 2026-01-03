@@ -68,29 +68,27 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
   it("can change the month", async () => {
     const calendar = await mount(<Fixture value="2025-12-15" />);
     const monthSelect = getMonthSelect(calendar);
-    const heading = getCalendarHeading(calendar);
 
     expect(monthSelect.value).toBe("12");
-    await expect.element(page.elementLocator(heading)).toHaveTextContent("December 2025");
+    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2025");
 
     await userEvent.selectOptions(monthSelect, "11");
 
     expect(monthSelect.value).toBe("11");
-    await expect.element(page.elementLocator(heading)).toHaveTextContent("November 2025");
+    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("November 2025");
   });
 
   it("can change the year", async () => {
     const calendar = await mount(<Fixture value="2025-12-15" />);
     const yearSelect = getYearSelect(calendar);
-    const heading = getCalendarHeading(calendar);
 
     expect(yearSelect.value).toBe("2025");
-    await expect.element(page.elementLocator(heading)).toHaveTextContent("December 2025");
+    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2025");
 
     await userEvent.selectOptions(yearSelect, "2026");
 
     expect(yearSelect.value).toBe("2026");
-    await expect.element(page.elementLocator(heading)).toHaveTextContent("December 2026");
+    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2026");
   });
 
   it("handles min and max dates", async () => {

@@ -78,9 +78,7 @@ export function getGrid(month: MonthInstance): HTMLTableElement {
   return month.shadowRoot!.querySelector(`[part="table"]`)!;
 }
 
-export function getCalendarVisibleHeading(
-  calendar: CalendarInstance
-): HTMLElement {
+export function getCalendarVisibleHeading(calendar: CalendarInstance) {
   const slot = calendar.shadowRoot!.querySelector(`[part=heading]`);
   const heading = slot?.querySelector<HTMLElement>(`[aria-hidden]`);
 
@@ -88,10 +86,10 @@ export function getCalendarVisibleHeading(
     throw new Error("Could not find visible heading for calendar");
   }
 
-  return heading;
+  return page.elementLocator(heading);
 }
 
-export function getCalendarHeading(calendar: CalendarInstance): HTMLElement {
+export function getCalendarHeading(calendar: CalendarInstance) {
   const group = calendar.shadowRoot!.querySelector(`[role="group"]`)!;
 
   const labelledById = group.getAttribute("aria-labelledby");
@@ -104,10 +102,10 @@ export function getCalendarHeading(calendar: CalendarInstance): HTMLElement {
     throw new Error("No heading found for calendar");
   }
 
-  return heading;
+  return page.elementLocator(heading);
 }
 
-export function getMonthHeading(month: MonthInstance): HTMLElement {
+export function getMonthHeading(month: MonthInstance) {
   const table = getGrid(month);
 
   const labelledById = table.getAttribute("aria-labelledby");
@@ -120,7 +118,7 @@ export function getMonthHeading(month: MonthInstance): HTMLElement {
     throw new Error("No heading found for month");
   }
 
-  return heading;
+  return page.elementLocator(heading);
 }
 
 export function getPrevPageButton(calendar: CalendarInstance) {

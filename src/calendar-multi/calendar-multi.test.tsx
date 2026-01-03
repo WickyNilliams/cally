@@ -174,7 +174,7 @@ describe("CalendarMulti", () => {
       const fifth = getDayButton(month, "5 January");
       const tenth = getDayButton(month, "10 January");
 
-      await expect.element(page.elementLocator(getMonthHeading(month))).toHaveTextContent("January");
+      await expect.element(getMonthHeading(month)).toHaveTextContent("January");
       await expect.element(page.elementLocator(fifth)).toHaveAttribute("aria-pressed", "true");
       await expect.element(page.elementLocator(tenth)).toHaveAttribute("aria-pressed", "true");
     });
