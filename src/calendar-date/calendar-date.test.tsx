@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { userEvent } from "vitest/browser";
+import { userEvent, page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
   click,
