@@ -13,7 +13,9 @@ async function nextFrame() {
 type SpySubject = (...args: any[]) => any;
 
 export async function sendShiftPress(key: string) {
-  await userEvent.keyboard(`{Shift>}${key}{/Shift}`);
+  await userEvent.keyboard("{Shift>}");
+  await userEvent.keyboard(`{${key}}`);
+  await userEvent.keyboard("{/Shift}");
 }
 
 /**
