@@ -284,28 +284,28 @@ describe("CalendarDate", () => {
 
         // move to feb, within page
         await userEvent.keyboard("{PageDown}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("January");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("February");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("January");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("February");
 
         // move to march, out of page
         await userEvent.keyboard("{PageDown}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("March");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("April");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("March");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("April");
 
         // move to april, should be on same page
         await userEvent.keyboard("{PageDown}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("March");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("April");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("March");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("April");
 
         // move to march, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("March");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("April");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("March");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("April");
 
         // move to feb, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("January");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("February");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("January");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("February");
 
         // move to jan, within page
         await userEvent.keyboard("{PageUp}");
@@ -432,41 +432,41 @@ describe("CalendarDate", () => {
 
         // move to feb, within page
         await userEvent.keyboard("{PageDown}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("January");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("February");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("January");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("February");
 
         // move to march, out of page
         await userEvent.keyboard("{PageDown}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("February");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("March");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("February");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("March");
 
         // move to april, should be on same page
         await userEvent.keyboard("{PageDown}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("March");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("April");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("March");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("April");
 
         // move to march, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("March");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("April");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("March");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("April");
 
         // move to feb, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("February");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("March");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("February");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("March");
 
         // move to jan, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("January");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("February");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("January");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("February");
 
         // move to dec, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.poll(() => getMonthHeading(first).textContent).toBe("December");
-        await expect.poll(() => getMonthHeading(second).textContent).toBe("January");
+        await expect.element(page.elementLocator(getMonthHeading(first))).toHaveTextContent("December");
+        await expect.element(page.elementLocator(getMonthHeading(second))).toHaveTextContent("January");
 
         // sanity check
-        await expect.poll(() => calendar.focusedDate).toBe("2019-12-01");
+        expect(calendar.focusedDate).toBe("2019-12-01");
 
         // move one year ahead
         await sendShiftPress("PageDown");
