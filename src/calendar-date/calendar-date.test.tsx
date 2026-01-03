@@ -855,18 +855,14 @@ describe("CalendarDate", () => {
       getDayButton(month, "11 January"),
       getDayButton(month, "12 January"),
     ].forEach((day) => {
-      expect(day.part.contains("available")).toBe(
-        true
-      );
+      expect(day).toHavePart("available");
     });
 
     [
       getDayButton(month, "13 January"),
       getDayButton(month, "14 January"),
     ].forEach((day) => {
-      expect(day.part.contains("almost-gone")).toBe(
-        true
-      );
+      expect(day).toHavePart("almost-gone");
     });
   });
 });

@@ -4,7 +4,7 @@ import type { VNodeAny } from "atomico/types/vnode";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
-import { vi } from "vitest";
+import { vi, expect } from "vitest";
 
 async function nextFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
@@ -185,4 +185,36 @@ export function getActiveElement(root: Document | ShadowRoot = document) {
   }
 
   return root.activeElement;
+}
+
+/**
+ * Custom matcher for CSS Parts API (Shadow Parts).
+ * Checks if an element's part attribute contains the specified value.
+ */
+expect.extend({
+  toHavePart(element: Element, expectedPart: string) {
+    const { isNot } = this;
+    const hasPart = element.part?.contains(expectedPart) ?? false;
+
+    return {
+      pass: hasPart,
+      message: () => {
+        const parts = element.part ? Array.from(element.part).join(", ") : "none";
+        if (isNot) {
+          return `Expected element not to have part "${expectedPart}", but it does.\nElement parts: ${parts}`;
+        }
+        return `Expected element to have part "${expectedPart}", but it doesn't.\nElement parts: ${parts}`;
+      },
+    };
+  },
+});
+
+// Extend Vitest expect types for custom matcher
+declare module "vitest" {
+  interface Assertion<T = any> {
+    toHavePart(expectedPart: string): T;
+  }
+  interface AsymmetricMatchersContaining {
+    toHavePart(expectedPart: string): any;
+  }
 }

@@ -123,16 +123,16 @@ describe("CalendarMonth", () => {
         expect(selected.length).toBe(3);
 
         await expect.element(page.elementLocator(selected[0])).toHaveAttribute("aria-label", "1 January");
-        expect(selected[0]!.part.contains("selected")).toBe(true);
-        expect(selected[0]!.part.contains("range-start")).toBeTruthy();
+        expect(selected[0]!).toHavePart("selected");
+        expect(selected[0]!).toHavePart("range-start");
 
         await expect.element(page.elementLocator(selected[1])).toHaveAttribute("aria-label", "2 January");
-        expect(selected[1]!.part.contains("selected")).toBe(true);
-        expect(selected[1]!.part.contains("range-inner")).toBeTruthy();
+        expect(selected[1]!).toHavePart("selected");
+        expect(selected[1]!).toHavePart("range-inner");
 
         await expect.element(page.elementLocator(selected[2])).toHaveAttribute("aria-label", "3 January");
-        expect(selected[2]!.part.contains("selected")).toBe(true);
-        expect(selected[2]!.part.contains("range-end")).toBeTruthy();
+        expect(selected[2]!).toHavePart("selected");
+        expect(selected[2]!).toHavePart("range-end");
       });
     });
 
@@ -157,7 +157,7 @@ describe("CalendarMonth", () => {
         const selected = getSelectedDays(month);
         expect(selected.length).toBe(1);
         await expect.element(page.elementLocator(selected[0])).toHaveAttribute("aria-label", "1 January");
-        expect(selected[0]!.part.contains("selected")).toBe(true);
+        expect(selected[0]!).toHavePart("selected");
       });
     });
 
@@ -216,7 +216,7 @@ describe("CalendarMonth", () => {
         });
         const button = getDayButton(month, todaysDate)!;
 
-        expect(button.part.contains("today")).toBe(true);
+        expect(button).toHavePart("today");
         await expect.element(page.elementLocator(button)).toHaveAttribute("aria-current", "date");
       });
 
@@ -266,7 +266,7 @@ describe("CalendarMonth", () => {
       );
 
       const day = getDayButton(calendar, "4 January")!;
-      expect(day.part.contains("disallowed")).toBe(true);
+      expect(day).toHavePart("disallowed");
       await expect.element(page.elementLocator(day)).toHaveAttribute("aria-disabled", "true");
 
       await click(day, { force: true });
@@ -601,8 +601,8 @@ describe("CalendarMonth", () => {
     const outsideMarch = getDayButton(month, "30 March");
     const outsideMay = getDayButton(month, "3 May");
 
-    expect(outsideMarch.part.contains("outside")).toBe(true);
-    expect(outsideMay.part.contains("outside")).toBe(true);
+    expect(outsideMarch).toHavePart("outside");
+    expect(outsideMay).toHavePart("outside");
   });
 
   describe("localization", async () => {
@@ -698,14 +698,8 @@ describe("CalendarMonth", () => {
         const day = days[i]!;
         const part = `day-${mapToDayNumber(firstDayOfWeek, i)}`;
 
-        expect(heading.part.contains(part)).toBe(
-          true,
-          `expected part to contain "${part}", got "${heading.part}"`
-        );
-        expect(day.part.contains(part)).toBe(
-          true,
-          `expected part to contain "${part}, got "${day.part}"`
-        );
+        expect(heading).toHavePart(part);
+        expect(day).toHavePart(part);
       }
     });
   });
@@ -724,8 +718,8 @@ describe("CalendarMonth", () => {
       // from: https://weeknumber.co.uk/?q=2020-04-01
       let current = 14;
       for (const weekNumber of weekNumbers) {
-        expect(weekNumber.part.contains("th")).toBe(true);
-        expect(weekNumber.part.contains("weeknumber")).toBe(true);
+        expect(weekNumber).toHavePart("th");
+        expect(weekNumber).toHavePart("weeknumber");
         await expect.element(page.elementLocator(weekNumber)).toHaveAttribute("scope", "row");
         await expect.element(page.elementLocator(weekNumber)).toHaveTextContent(current.toString());
         current++;

@@ -234,9 +234,9 @@ describe("CalendarRange", () => {
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "19 April");
-      expect(day.part.contains("selected")).toBe(true);
-      expect(day.part.contains("range-start")).toBe(true);
-      expect(day.part.contains("range-end")).toBe(true);
+      expect(day).toHavePart("selected");
+      expect(day).toHavePart("range-start");
+      expect(day).toHavePart("range-end");
     });
 
     it("can be cleared", async () => {
@@ -251,10 +251,10 @@ describe("CalendarRange", () => {
 
       const before = getSelectedDays(month);
 
-      expect(before[0]!.part.contains("selected")).toBe(true);
-      expect(before[0]!.part.contains("range-start")).toBe(true);
-      expect(before[1]!.part.contains("selected")).toBe(true);
-      expect(before[1]!.part.contains("range-end")).toBe(true);
+      expect(before[0]!).toHavePart("selected");
+      expect(before[0]!).toHavePart("range-start");
+      expect(before[1]!).toHavePart("selected");
+      expect(before[1]!).toHavePart("range-end");
 
       calendar.tentative = "";
       await calendar.updated;
