@@ -59,13 +59,6 @@ export async function mount<T extends CalendarInstance>(node: VNodeAny) {
   return calendar;
 }
 
-export async function click(element: Element, options?: { force?: boolean }) {
-  // Use page.elementLocator to wrap element for proper shadow DOM handling
-  const locator = page.elementLocator(element);
-  await locator.click(options);
-  await nextFrame();
-}
-
 export function getMonths(calendar: HTMLElement): MonthInstance[] {
   return [...calendar.querySelectorAll<MonthInstance>("calendar-month")!];
 }
@@ -122,21 +115,24 @@ export function getMonthHeading(month: MonthInstance) {
 }
 
 export function getPrevPageButton(calendar: CalendarInstance) {
-  return calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+  const button = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
     `button[part~="previous"]`
   )!;
+  return page.elementLocator(button);
 }
 
 export function getNextPageButton(calendar: CalendarInstance) {
-  return calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+  const button = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
     `button[part~="next"]`
   )!;
+  return page.elementLocator(button);
 }
 
 export function getTodayButton(month: MonthInstance) {
-  return month.shadowRoot!.querySelector<HTMLButtonElement>(
+  const button = month.shadowRoot!.querySelector<HTMLButtonElement>(
     `button[part~="today"]`
   )!;
+  return page.elementLocator(button);
 }
 
 export function getSelectedDays(month: MonthInstance) {
@@ -170,7 +166,7 @@ export async function clickDay(
     throw new Error(`No button found for date: ${dateLabel}`);
   }
 
-  await click(button, options);
+  await page.elementLocator(button).click(options);
 }
 
 export function getActiveElement(root: Document | ShadowRoot = document) {

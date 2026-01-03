@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
-  click,
   clickDay,
   createSpy,
   getDayButton,
@@ -57,9 +56,9 @@ describe("CalendarRange", () => {
       const nextMonth = getNextPageButton(calendar);
 
       // to april
-      await click(nextMonth);
-      await click(nextMonth);
-      await click(nextMonth);
+      await nextMonth.click();
+      await nextMonth.click();
+      await nextMonth.click();
 
       await clickDay(month, "19 April");
       await clickDay(month, "22 April");
@@ -77,9 +76,9 @@ describe("CalendarRange", () => {
       const nextMonth = getNextPageButton(calendar);
 
       // to april
-      await click(nextMonth);
-      await click(nextMonth);
-      await click(nextMonth);
+      await nextMonth.click();
+      await nextMonth.click();
+      await nextMonth.click();
 
       await clickDay(month, "22 April");
       await clickDay(month, "19 April");
@@ -166,7 +165,7 @@ describe("CalendarRange", () => {
       );
 
       // click next button
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail).toEqual(new Date("2022-02-01"));
@@ -179,7 +178,7 @@ describe("CalendarRange", () => {
       );
 
       const month = getMonth(calendar);
-      await click(getPrevPageButton(calendar));
+      await getPrevPageButton(calendar).click();
 
       await clickDay(month, "31 December");
       await clickDay(month, "30 December");
@@ -202,7 +201,7 @@ describe("CalendarRange", () => {
       );
 
       const month = getMonth(calendar);
-      await click(getPrevPageButton(calendar));
+      await getPrevPageButton(calendar).click();
 
       await clickDay(month, "31 December");
       expect(startSpy.count).toBe(1);

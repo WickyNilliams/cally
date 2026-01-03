@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
-  click,
   clickDay,
   createSpy,
   getActiveElement,
@@ -61,12 +60,12 @@ describe("CalendarDate", () => {
     describe("controls", () => {
       it("has a label for next page button", async () => {
         const calendar = await mount(<Fixture />);
-        await expect.element(page.elementLocator(getNextPageButton(calendar))).toHaveTextContent("Next");
+        await expect.element(getNextPageButton(calendar)).toHaveTextContent("Next");
       });
 
       it("has a label for previous page button", async () => {
         const calendar = await mount(<Fixture />);
-        await expect.element(page.elementLocator(getPrevPageButton(calendar))).toHaveTextContent("Previous");
+        await expect.element(getPrevPageButton(calendar)).toHaveTextContent("Previous");
       });
     });
 
@@ -121,9 +120,9 @@ describe("CalendarDate", () => {
       const month = getMonth(calendar);
       const nextMonth = getNextPageButton(calendar);
 
-      await click(nextMonth);
-      await click(nextMonth);
-      await click(nextMonth);
+      await nextMonth.click();
+      await nextMonth.click();
+      await nextMonth.click();
       await clickDay(month, "19 April");
 
       expect(spy.count).toBe(1);
@@ -137,8 +136,8 @@ describe("CalendarDate", () => {
       );
       const month = getMonth(calendar);
 
-      await click(getPrevPageButton(calendar));
-      await click(getPrevPageButton(calendar));
+      await getPrevPageButton(calendar).click();
+      await getPrevPageButton(calendar).click();
       await clickDay(month, "19 November");
 
       expect(spy.count).toBe(1);
@@ -265,7 +264,7 @@ describe("CalendarDate", () => {
           MonthInstance,
         ];
 
-        await click(getNextPageButton(calendar));
+        await getNextPageButton(calendar).click();
         await expect.element(getMonthHeading(first!)).toHaveTextContent("March");
         await expect.element(getMonthHeading(second!)).toHaveTextContent("April");
       });
@@ -353,23 +352,23 @@ describe("CalendarDate", () => {
           MonthInstance,
         ];
 
-        await click(next);
+        await next.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("March");
         await expect.element(getMonthHeading(second)).toHaveTextContent("April");
 
-        await click(next);
+        await next.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("May");
         await expect.element(getMonthHeading(second)).toHaveTextContent("June");
 
-        await click(prev);
+        await prev.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("March");
         await expect.element(getMonthHeading(second)).toHaveTextContent("April");
 
-        await click(prev);
+        await prev.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("January");
         await expect.element(getMonthHeading(second)).toHaveTextContent("February");
 
-        await click(prev);
+        await prev.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("November");
         await expect.element(getMonthHeading(second)).toHaveTextContent("December");
       });
@@ -503,23 +502,23 @@ describe("CalendarDate", () => {
         const next = getNextPageButton(calendar);
         const prev = getPrevPageButton(calendar);
 
-        await click(next);
+        await next.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("February");
         await expect.element(getMonthHeading(second)).toHaveTextContent("March");
 
-        await click(next);
+        await next.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("March");
         await expect.element(getMonthHeading(second)).toHaveTextContent("April");
 
-        await click(prev);
+        await prev.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("February");
         await expect.element(getMonthHeading(second)).toHaveTextContent("March");
 
-        await click(prev);
+        await prev.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("January");
         await expect.element(getMonthHeading(second)).toHaveTextContent("February");
 
-        await click(prev);
+        await prev.click();
         await expect.element(getMonthHeading(first)).toHaveTextContent("December");
         await expect.element(getMonthHeading(second)).toHaveTextContent("January");
       });
@@ -576,7 +575,7 @@ describe("CalendarDate", () => {
       );
 
       // click next button
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
 
       expect(spy.count).toBe(1);
       expect(spy.last[0].detail).toEqual(new Date("2022-02-01"));
@@ -589,7 +588,7 @@ describe("CalendarDate", () => {
       );
       const month = getMonth(calendar);
 
-      await click(getPrevPageButton(calendar));
+      await getPrevPageButton(calendar).click();
       await clickDay(month, "31 December");
 
       expect(spy.count).toBe(1);
@@ -611,7 +610,10 @@ describe("CalendarDate", () => {
       await userEvent.keyboard("{Tab}");
       await userEvent.keyboard("{Enter}");
 
-      expect(getActiveElement()).toBe(getNextPageButton(calendar));
+      const nextButton = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+        `button[part~="next"]`
+      )!;
+      expect(getActiveElement()).toBe(nextButton);
     });
 
     it("moves focus to the selected date when clicking outside of the month", async () => {
@@ -644,7 +646,7 @@ describe("CalendarDate", () => {
       );
 
       const prevMonthButton = getPrevPageButton(calendar);
-      expect(prevMonthButton.hasAttribute("aria-disabled")).toBe(true);
+      await expect.element(prevMonthButton).toHaveAttribute("aria-disabled", "true");
     });
 
     it("disables next month button if same month and year as max", async () => {
@@ -653,7 +655,7 @@ describe("CalendarDate", () => {
       );
 
       const nextMonthButton = getNextPageButton(calendar);
-      expect(nextMonthButton.hasAttribute("aria-disabled")).toBe(true);
+      await expect.element(nextMonthButton).toHaveAttribute("aria-disabled", "true");
     });
   });
 
@@ -681,11 +683,11 @@ describe("CalendarDate", () => {
 
       const [first, second] = getMonths(calendar);
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getMonthHeading(first!)).toHaveTextContent("March");
       await expect.element(getMonthHeading(second!)).toHaveTextContent("April");
 
-      await click(getPrevPageButton(calendar));
+      await getPrevPageButton(calendar).click();
       await expect.element(getMonthHeading(first!)).toHaveTextContent("January");
       await expect.element(getMonthHeading(second!)).toHaveTextContent("February");
     });
@@ -740,7 +742,7 @@ describe("CalendarDate", () => {
       );
       const month = getMonth(calendar);
 
-      await click(getPrevPageButton(calendar));
+      await getPrevPageButton(calendar).click();
 
       const day = getDayButton(month, "15 January");
       await expect.element(page.elementLocator(day)).toHaveAttribute("tabindex", "0");
@@ -756,37 +758,37 @@ describe("CalendarDate", () => {
 
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Januar 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Februar 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("März 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("April 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Mai 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Juni 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Juli 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("August 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("September 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Oktober 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("November 2020");
 
-      await click(getNextPageButton(calendar));
+      await getNextPageButton(calendar).click();
       await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Dezember 2020");
     });
   });
@@ -817,18 +819,21 @@ describe("CalendarDate", () => {
     it("allows targeting different elements", async () => {
       const calendar = await mount(<Fixture value="2020-01-01" />);
       const day = getDayButton(getMonth(calendar), "1 January");
+      const prevButton = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+        `button[part~="previous"]`
+      )!;
+      const nextButton = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+        `button[part~="next"]`
+      )!;
 
       calendar.focus({ target: "previous" });
-
-      expect(getActiveElement(calendar.shadowRoot!)).toBe(
-        getPrevPageButton(calendar)
-      );
+      expect(getActiveElement(calendar.shadowRoot!)).toBe(prevButton);
 
       calendar.focus();
       expect(getActiveElement()).toBe(day);
 
       calendar.focus({ target: "next" });
-      expect(getActiveElement()).toBe(getNextPageButton(calendar));
+      expect(getActiveElement()).toBe(nextButton);
 
       calendar.focus({ target: "day" });
       expect(getActiveElement()).toBe(day);

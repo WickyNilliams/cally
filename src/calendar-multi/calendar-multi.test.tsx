@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
-  click,
   clickDay,
   createSpy,
   getDayButton,
@@ -52,9 +51,9 @@ describe("CalendarMulti", () => {
       const nextMonth = getNextPageButton(calendar);
 
       // to april
-      await click(nextMonth);
-      await click(nextMonth);
-      await click(nextMonth);
+      await nextMonth.click();
+      await nextMonth.click();
+      await nextMonth.click();
 
       await clickDay(month, "19 April");
       expect(spy.count).toBe(1);
@@ -132,7 +131,7 @@ describe("CalendarMulti", () => {
       );
 
       const month = getMonth(calendar);
-      await click(getPrevPageButton(calendar));
+      await getPrevPageButton(calendar).click();
 
       await clickDay(month, "31 December");
       expect(spy.count).toBe(1);

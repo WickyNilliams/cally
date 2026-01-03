@@ -6,7 +6,6 @@ import { CalendarMonth } from "../calendar-month/calendar-month";
 import { CalendarSelectMonth } from "./calendar-select-month";
 import { CalendarSelectYear } from "./calendar-select-year";
 import {
-  click,
   getCalendarHeading,
   getNextPageButton,
   mount,
@@ -59,7 +58,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     expect(yearSelect.value).toBe("2025");
 
     const nextPage = getNextPageButton(calendar);
-    await click(nextPage);
+    await nextPage.click();
 
     expect(monthSelect.value).toBe("1");
     expect(yearSelect.value).toBe("2026");

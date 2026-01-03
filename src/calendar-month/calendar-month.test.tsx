@@ -9,7 +9,6 @@ import {
   getMonth,
   getDayButton,
   getSelectedDays,
-  click,
   sendShiftPress,
   getTodayButton,
   type MonthInstance,
@@ -269,7 +268,7 @@ describe("CalendarMonth", () => {
       expect(day).toHavePart("disallowed");
       await expect.element(page.elementLocator(day)).toHaveAttribute("aria-disabled", "true");
 
-      await click(day, { force: true });
+      await page.elementLocator(day).click({ force: true });
       expect(spy.called).toBe(false);
     });
   });
@@ -589,7 +588,7 @@ describe("CalendarMonth", () => {
       );
 
       const todayButton = getTodayButton(month);
-      await expect.element(page.elementLocator(todayButton)).toHaveAttribute("aria-label", "2 January");
+      await expect.element(todayButton).toHaveAttribute("aria-label", "2 January");
     });
   });
 
