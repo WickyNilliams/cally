@@ -58,9 +58,11 @@ export async function mount<T extends CalendarInstance>(node: VNodeAny) {
 }
 
 export async function click(element: Element) {
-  if (element instanceof HTMLElement) {
-    element.click();
-  }
+  // Use page.elementLocator to wrap element for proper shadow DOM handling
+  // Use force:true to bypass actionability checks since we sometimes test
+  // clicking on disabled elements to verify they don't respond
+  const locator = page.elementLocator(element);
+  await locator.click({ force: true });
   await nextFrame();
 }
 
