@@ -266,7 +266,7 @@ describe("CalendarMonth", () => {
       );
 
       const day = getDayButton(calendar, "4 January")!;
-      await expect.element(page.elementLocator(day)).toHaveAttribute("part", expect.stringContaining("disallowed"));
+      expect(day.part.contains("disallowed")).toBe(true);
       await expect.element(page.elementLocator(day)).toHaveAttribute("aria-disabled", "true");
 
       await click(day, { force: true });

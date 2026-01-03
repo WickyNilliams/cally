@@ -234,9 +234,9 @@ describe("CalendarRange", () => {
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "19 April");
-      await expect.element(page.elementLocator(day)).toHaveAttribute("part", expect.stringContaining("selected"));
-      await expect.element(page.elementLocator(day)).toHaveAttribute("part", expect.stringContaining("range-start"));
-      await expect.element(page.elementLocator(day)).toHaveAttribute("part", expect.stringContaining("range-end"));
+      expect(day.part.contains("selected")).toBe(true);
+      expect(day.part.contains("range-start")).toBe(true);
+      expect(day.part.contains("range-end")).toBe(true);
     });
 
     it("can be cleared", async () => {
@@ -251,10 +251,10 @@ describe("CalendarRange", () => {
 
       const before = getSelectedDays(month);
 
-      await expect.element(page.elementLocator(before[0]!)).toHaveAttribute("part", expect.stringContaining("selected"));
-      await expect.element(page.elementLocator(before[0]!)).toHaveAttribute("part", expect.stringContaining("range-start"));
-      await expect.element(page.elementLocator(before[1]!)).toHaveAttribute("part", expect.stringContaining("selected"));
-      await expect.element(page.elementLocator(before[1]!)).toHaveAttribute("part", expect.stringContaining("range-end"));
+      expect(before[0]!.part.contains("selected")).toBe(true);
+      expect(before[0]!.part.contains("range-start")).toBe(true);
+      expect(before[1]!.part.contains("selected")).toBe(true);
+      expect(before[1]!.part.contains("range-end")).toBe(true);
 
       calendar.tentative = "";
       await calendar.updated;
