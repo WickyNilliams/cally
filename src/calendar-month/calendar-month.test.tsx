@@ -122,15 +122,15 @@ describe("CalendarMonth", () => {
         const selected = getSelectedDays(month);
         expect(selected.length).toBe(3);
 
-        expect(selected[0].getAttribute("aria-label")).toBe("1 January");
+        await expect.element(page.elementLocator(selected[0])).toHaveAttribute("aria-label", "1 January");
         expect(selected[0]!.part.contains("selected")).toBe(true);
         expect(selected[0]!.part.contains("range-start")).toBeTruthy();
 
-        expect(selected[1].getAttribute("aria-label")).toBe("2 January");
+        await expect.element(page.elementLocator(selected[1])).toHaveAttribute("aria-label", "2 January");
         expect(selected[1]!.part.contains("selected")).toBe(true);
         expect(selected[1]!.part.contains("range-inner")).toBeTruthy();
 
-        expect(selected[2].getAttribute("aria-label")).toBe("3 January");
+        await expect.element(page.elementLocator(selected[2])).toHaveAttribute("aria-label", "3 January");
         expect(selected[2]!.part.contains("selected")).toBe(true);
         expect(selected[2]!.part.contains("range-end")).toBeTruthy();
       });
@@ -156,7 +156,7 @@ describe("CalendarMonth", () => {
 
         const selected = getSelectedDays(month);
         expect(selected.length).toBe(1);
-        expect(selected[0].getAttribute("aria-label")).toBe("1 January");
+        await expect.element(page.elementLocator(selected[0])).toHaveAttribute("aria-label", "1 January");
         expect(selected[0]!.part.contains("selected")).toBe(true);
       });
     });
@@ -190,9 +190,9 @@ describe("CalendarMonth", () => {
 
         const selected = getSelectedDays(month);
         expect(selected.length).toBe(3);
-        expect(selected[0].getAttribute("aria-label")).toBe("1 January");
-        expect(selected[1].getAttribute("aria-label")).toBe("2 January");
-        expect(selected[2].getAttribute("aria-label")).toBe("3 January");
+        await expect.element(page.elementLocator(selected[0])).toHaveAttribute("aria-label", "1 January");
+        await expect.element(page.elementLocator(selected[1])).toHaveAttribute("aria-label", "2 January");
+        await expect.element(page.elementLocator(selected[2])).toHaveAttribute("aria-label", "3 January");
       });
     });
   });
@@ -217,7 +217,7 @@ describe("CalendarMonth", () => {
         const button = getDayButton(month, todaysDate)!;
 
         expect(button.part.contains("today")).toBe(true);
-        expect(button.getAttribute("aria-current")).toBe("date");
+        await expect.element(page.elementLocator(button)).toHaveAttribute("aria-current", "date");
       });
 
       it("uses a roving tab index", async () => {
@@ -236,8 +236,8 @@ describe("CalendarMonth", () => {
         const focusable =
           grid.querySelectorAll<HTMLButtonElement>(`[tabindex="0"]`);
         expect(focusable.length).toBe(1);
-        expect(focusable[0].textContent.trim()).toBe("1");
-        expect(focusable[0].getAttribute("aria-label")).toBe("1 January");
+        await expect.element(page.elementLocator(focusable[0])).toHaveTextContent("1");
+        await expect.element(page.elementLocator(focusable[0])).toHaveAttribute("aria-label", "1 January");
       });
     });
   });
@@ -589,7 +589,7 @@ describe("CalendarMonth", () => {
       );
 
       const todayButton = getTodayButton(month);
-      expect(todayButton.getAttribute("aria-label")).toBe("2 January");
+      await expect.element(page.elementLocator(todayButton)).toHaveAttribute("aria-label", "2 January");
     });
   });
 
@@ -615,27 +615,27 @@ describe("CalendarMonth", () => {
       const accessibleHeadings = grid.querySelectorAll(
         "th span:not([aria-hidden])"
       );
-      expect(accessibleHeadings[0].textContent.trim()).toBe("lundi");
-      expect(accessibleHeadings[1].textContent.trim()).toBe("mardi");
-      expect(accessibleHeadings[2].textContent.trim()).toBe("mercredi");
-      expect(accessibleHeadings[3].textContent.trim()).toBe("jeudi");
-      expect(accessibleHeadings[4].textContent.trim()).toBe("vendredi");
-      expect(accessibleHeadings[5].textContent.trim()).toBe("samedi");
-      expect(accessibleHeadings[6].textContent.trim()).toBe("dimanche");
+      await expect.element(page.elementLocator(accessibleHeadings[0])).toHaveTextContent("lundi");
+      await expect.element(page.elementLocator(accessibleHeadings[1])).toHaveTextContent("mardi");
+      await expect.element(page.elementLocator(accessibleHeadings[2])).toHaveTextContent("mercredi");
+      await expect.element(page.elementLocator(accessibleHeadings[3])).toHaveTextContent("jeudi");
+      await expect.element(page.elementLocator(accessibleHeadings[4])).toHaveTextContent("vendredi");
+      await expect.element(page.elementLocator(accessibleHeadings[5])).toHaveTextContent("samedi");
+      await expect.element(page.elementLocator(accessibleHeadings[6])).toHaveTextContent("dimanche");
 
       const visualHeadings = grid.querySelectorAll(
         "th span[aria-hidden='true']"
       );
-      expect(visualHeadings[0].textContent.trim()).toBe("L");
-      expect(visualHeadings[1].textContent.trim()).toBe("M");
-      expect(visualHeadings[2].textContent.trim()).toBe("M");
-      expect(visualHeadings[3].textContent.trim()).toBe("J");
-      expect(visualHeadings[4].textContent.trim()).toBe("V");
-      expect(visualHeadings[5].textContent.trim()).toBe("S");
-      expect(visualHeadings[6].textContent.trim()).toBe("D");
+      await expect.element(page.elementLocator(visualHeadings[0])).toHaveTextContent("L");
+      await expect.element(page.elementLocator(visualHeadings[1])).toHaveTextContent("M");
+      await expect.element(page.elementLocator(visualHeadings[2])).toHaveTextContent("M");
+      await expect.element(page.elementLocator(visualHeadings[3])).toHaveTextContent("J");
+      await expect.element(page.elementLocator(visualHeadings[4])).toHaveTextContent("V");
+      await expect.element(page.elementLocator(visualHeadings[5])).toHaveTextContent("S");
+      await expect.element(page.elementLocator(visualHeadings[6])).toHaveTextContent("D");
 
       const title = getMonthHeading(month);
-      expect(title.textContent.trim()).toBe("janvier");
+      await expect.element(page.elementLocator(title)).toHaveTextContent("janvier");
 
       const button = getDayButton(month, "15 janvier");
       expect(button).toBeTruthy();
@@ -653,24 +653,24 @@ describe("CalendarMonth", () => {
       const accessibleHeadings = grid.querySelectorAll(
         "th span:not([aria-hidden])"
       );
-      expect(accessibleHeadings[0].textContent.trim()).toBe("Monday");
-      expect(accessibleHeadings[1].textContent.trim()).toBe("Tuesday");
-      expect(accessibleHeadings[2].textContent.trim()).toBe("Wednesday");
-      expect(accessibleHeadings[3].textContent.trim()).toBe("Thursday");
-      expect(accessibleHeadings[4].textContent.trim()).toBe("Friday");
-      expect(accessibleHeadings[5].textContent.trim()).toBe("Saturday");
-      expect(accessibleHeadings[6].textContent.trim()).toBe("Sunday");
+      await expect.element(page.elementLocator(accessibleHeadings[0])).toHaveTextContent("Monday");
+      await expect.element(page.elementLocator(accessibleHeadings[1])).toHaveTextContent("Tuesday");
+      await expect.element(page.elementLocator(accessibleHeadings[2])).toHaveTextContent("Wednesday");
+      await expect.element(page.elementLocator(accessibleHeadings[3])).toHaveTextContent("Thursday");
+      await expect.element(page.elementLocator(accessibleHeadings[4])).toHaveTextContent("Friday");
+      await expect.element(page.elementLocator(accessibleHeadings[5])).toHaveTextContent("Saturday");
+      await expect.element(page.elementLocator(accessibleHeadings[6])).toHaveTextContent("Sunday");
 
       const visualHeadings = grid.querySelectorAll(
         "th span[aria-hidden='true']"
       );
-      expect(visualHeadings[0].textContent.trim()).toBe("Mon");
-      expect(visualHeadings[1].textContent.trim()).toBe("Tue");
-      expect(visualHeadings[2].textContent.trim()).toBe("Wed");
-      expect(visualHeadings[3].textContent.trim()).toBe("Thu");
-      expect(visualHeadings[4].textContent.trim()).toBe("Fri");
-      expect(visualHeadings[5].textContent.trim()).toBe("Sat");
-      expect(visualHeadings[6].textContent.trim()).toBe("Sun");
+      await expect.element(page.elementLocator(visualHeadings[0])).toHaveTextContent("Mon");
+      await expect.element(page.elementLocator(visualHeadings[1])).toHaveTextContent("Tue");
+      await expect.element(page.elementLocator(visualHeadings[2])).toHaveTextContent("Wed");
+      await expect.element(page.elementLocator(visualHeadings[3])).toHaveTextContent("Thu");
+      await expect.element(page.elementLocator(visualHeadings[4])).toHaveTextContent("Fri");
+      await expect.element(page.elementLocator(visualHeadings[5])).toHaveTextContent("Sat");
+      await expect.element(page.elementLocator(visualHeadings[6])).toHaveTextContent("Sun");
     });
 
     it("renders parts for each day corresponding to day number", async () => {
@@ -726,8 +726,8 @@ describe("CalendarMonth", () => {
       for (const weekNumber of weekNumbers) {
         expect(weekNumber.part.contains("th")).toBe(true);
         expect(weekNumber.part.contains("weeknumber")).toBe(true);
-        expect(weekNumber.getAttribute("scope")).toBe("row");
-        expect(weekNumber.textContent.trim()).toBe(current.toString());
+        await expect.element(page.elementLocator(weekNumber)).toHaveAttribute("scope", "row");
+        await expect.element(page.elementLocator(weekNumber)).toHaveTextContent(current.toString());
         current++;
       }
     });

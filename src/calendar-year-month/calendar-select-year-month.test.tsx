@@ -1,6 +1,6 @@
 import type { VNodeAny } from "atomico/types/vnode";
 import { describe, it, expect } from "vitest";
-import { userEvent } from "vitest/browser";
+import { userEvent, page } from "vitest/browser";
 import { CalendarDate } from "../calendar-date/calendar-date";
 import { CalendarMonth } from "../calendar-month/calendar-month";
 import { CalendarSelectMonth } from "./calendar-select-month";
@@ -71,12 +71,12 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const heading = getCalendarHeading(calendar);
 
     expect(monthSelect.value).toBe("12");
-    expect(heading.textContent).toBe("December 2025");
+    await expect.element(page.elementLocator(heading)).toHaveTextContent("December 2025");
 
     await userEvent.selectOptions(monthSelect, "11");
 
     expect(monthSelect.value).toBe("11");
-    expect(heading.textContent).toBe("November 2025");
+    await expect.element(page.elementLocator(heading)).toHaveTextContent("November 2025");
   });
 
   it("can change the year", async () => {
@@ -85,12 +85,12 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const heading = getCalendarHeading(calendar);
 
     expect(yearSelect.value).toBe("2025");
-    expect(heading.textContent).toBe("December 2025");
+    await expect.element(page.elementLocator(heading)).toHaveTextContent("December 2025");
 
     await userEvent.selectOptions(yearSelect, "2026");
 
     expect(yearSelect.value).toBe("2026");
-    expect(heading.textContent).toBe("December 2026");
+    await expect.element(page.elementLocator(heading)).toHaveTextContent("December 2026");
   });
 
   it("handles min and max dates", async () => {

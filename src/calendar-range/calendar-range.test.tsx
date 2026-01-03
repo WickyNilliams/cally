@@ -222,7 +222,7 @@ describe("CalendarRange", () => {
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "5 January");
-      expect(day.getAttribute("tabindex")).toBe("0");
+      await expect.element(page.elementLocator(day)).toHaveAttribute("tabindex", "0");
     });
   });
 
@@ -283,10 +283,10 @@ describe("CalendarRange", () => {
       const sixth = getDayButton(month, "6 January");
       const seventh = getDayButton(month, "7 January");
 
-      expect(getMonthHeading(month).textContent).toBe("January");
-      expect(fifth.getAttribute("aria-pressed")).toBe("true");
-      expect(sixth.getAttribute("aria-pressed")).toBe("true");
-      expect(seventh.getAttribute("aria-pressed")).toBe("true");
+      await expect.element(page.elementLocator(getMonthHeading(month))).toHaveTextContent("January");
+      await expect.element(page.elementLocator(fifth)).toHaveAttribute("aria-pressed", "true");
+      await expect.element(page.elementLocator(sixth)).toHaveAttribute("aria-pressed", "true");
+      await expect.element(page.elementLocator(seventh)).toHaveAttribute("aria-pressed", "true");
     });
   });
 });
