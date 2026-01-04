@@ -73,7 +73,7 @@ export function CalendarBase(
             </Button>
 
             <slot part="heading" name="heading">
-              <div aria-hidden="true">{props.format.formatRange(start, end)}</div>
+              <calendar-heading year="numeric" aria-hidden="true" />
             </slot>
 
             <Button name="next" onclick={props.next}>

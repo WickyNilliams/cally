@@ -33,9 +33,7 @@ export const CalendarMonth = c(
             locale: context.locale,
           }}
         >
-          <div id="h" part="heading">
-            {calendar.formatter.format(toDate(calendar.yearMonth))}
-          </div>
+          <calendar-heading month="long" id="h" part="heading" />
 
           <table ref={table} aria-labelledby="h" part="table">
           <colgroup>
