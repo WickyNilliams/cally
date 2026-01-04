@@ -5,6 +5,7 @@ import {
   type CalendarMultiContext,
   type CalendarRangeContext,
 } from "../calendar-month/CalendarMonthContext.js";
+import { CalendarHeadingContext } from "../calendar-heading/CalendarHeadingContext.js";
 import { reset, vh } from "../utils/styles.js";
 import { toDate, type DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
@@ -54,27 +55,35 @@ export function CalendarBase(
       onfocusday={props.onFocus}
       onhoverday={props.onHover}
     >
-      <div role="group" aria-labelledby="h" part="container">
-        <div id="h" class="vh" aria-live="polite" aria-atomic="true">
-          {props.formatVerbose.formatRange(start, end)}
+      <CalendarHeadingContext
+        value={{
+          type: "range",
+          value: [start, end],
+          locale: props.locale,
+        }}
+      >
+        <div role="group" aria-labelledby="h" part="container">
+          <div id="h" class="vh" aria-live="polite" aria-atomic="true">
+            {props.formatVerbose.formatRange(start, end)}
+          </div>
+
+          <div part="header">
+            <Button name="previous" onclick={props.previous}>
+              Previous
+            </Button>
+
+            <slot part="heading" name="heading">
+              <div aria-hidden="true">{props.format.formatRange(start, end)}</div>
+            </slot>
+
+            <Button name="next" onclick={props.next}>
+              Next
+            </Button>
+          </div>
+
+          <slot part="months"></slot>
         </div>
-
-        <div part="header">
-          <Button name="previous" onclick={props.previous}>
-            Previous
-          </Button>
-
-          <slot part="heading" name="heading">
-            <div aria-hidden="true">{props.format.formatRange(start, end)}</div>
-          </slot>
-
-          <Button name="next" onclick={props.next}>
-            Next
-          </Button>
-        </div>
-
-        <slot part="months"></slot>
-      </div>
+      </CalendarHeadingContext>
     </CalendarContext>
   );
 }
