@@ -12,7 +12,6 @@ import type { PlainDate } from "../utils/temporal.js";
 import type { Pagination } from "./useCalendarBase.js";
 
 interface CalendarBaseProps {
-  format: Intl.DateTimeFormat;
   formatVerbose: Intl.DateTimeFormat;
   pageBy: Pagination;
   previous?: () => void;
