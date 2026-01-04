@@ -13,8 +13,6 @@ type CalendarBaseOptions = {
   setFocusedDate: (date: PlainDate) => void;
 };
 
-const formatVerboseOptions = { year: "numeric", month: "long" } as const;
-
 function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
   return (b.year - a.year) * 12 + b.month - a.month;
 }
@@ -144,7 +142,6 @@ export function useCalendarBase({
   }
 
   return {
-    formatVerbose: useDateFormatter(formatVerboseOptions, locale),
     page,
     focusedDate,
     dispatch,

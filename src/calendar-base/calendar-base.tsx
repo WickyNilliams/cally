@@ -12,7 +12,6 @@ import type { PlainDate } from "../utils/temporal.js";
 import type { Pagination } from "./useCalendarBase.js";
 
 interface CalendarBaseProps {
-  formatVerbose: Intl.DateTimeFormat;
   pageBy: Pagination;
   previous?: () => void;
   next?: () => void;
@@ -62,9 +61,14 @@ export function CalendarBase(
         }}
       >
         <div role="group" aria-labelledby="h" part="container">
-          <div id="h" class="vh" aria-live="polite" aria-atomic="true">
-            {props.formatVerbose.formatRange(start, end)}
-          </div>
+          <calendar-heading
+            month="long"
+            year="numeric"
+            id="h"
+            class="vh"
+            aria-live="polite"
+            aria-atomic="true"
+          />
 
           <div part="header">
             <Button name="previous" onclick={props.previous}>
