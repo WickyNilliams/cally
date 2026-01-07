@@ -37,6 +37,7 @@ export default defineConfig({
     include: ["atomico/jsx-dev-runtime"],
   },
   test: {
+    setupFiles: ["./vitest.setup.ts"],
     browser: {
       enabled: true,
       provider: playwright(),
