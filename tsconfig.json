@@ -1,6 +1,6 @@
 {
   "extends": "@atomico/tsconfig/base.json",
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "./vitest.d.ts"],
   "compilerOptions": {
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -12,6 +12,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "atomico"
+    "jsxImportSource": "atomico",
+    "moduleResolution": "bundler"
   }
 }

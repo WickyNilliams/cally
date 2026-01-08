@@ -6,7 +6,9 @@ import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
 
 async function nextFrame() {
-  return new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
+  return new Promise((resolve) =>
+    requestAnimationFrame(() => resolve(undefined))
+  );
 }
 
 type SpySubject = (...args: any[]) => any;
@@ -18,33 +20,32 @@ export async function sendShiftPress(key: string) {
 }
 
 /**
- * Creates a spy for use in tests that works across Node/browser boundary.
- * In vitest browser mode, vi.fn() doesn't marshal across the boundary,
- * so we use a plain function with a calls array.
+ * Creates a spy for use in tests.
  */
 export function createSpy<T extends SpySubject>(fn?: T) {
-  const calls: any[][] = [];
+  const calls: Parameters<T>[] = [];
 
-  const spy = function(...args: any[]) {
+  function spy(...args: Parameters<T>): ReturnType<T> {
     calls.push(args);
     return fn?.(...args);
-  } as T & {
-    calls: Parameters<T>[];
-    called: boolean;
-    count: number;
-    first: Parameters<T>;
-    last: Parameters<T>;
-  };
+  }
 
   Object.defineProperties(spy, {
-    calls: { get: () => calls as Parameters<T>[] },
+    calls: { get: () => calls },
     called: { get: () => calls.length > 0 },
     count: { get: () => calls.length },
-    first: { get: () => calls[0] as Parameters<T> },
-    last: { get: () => calls[calls.length - 1] as Parameters<T> },
+    first: { get: () => calls[0] },
+    last: { get: () => calls[calls.length - 1] },
   });
 
-  return spy;
+  return spy as {
+    (...args: Parameters<T>): ReturnType<T>;
+    readonly calls: Parameters<T>[];
+    readonly called: boolean;
+    readonly count: number;
+    readonly first: Parameters<T>;
+    readonly last: Parameters<T>;
+  };
 }
 
 export type MonthInstance = InstanceType<typeof CalendarMonth>;
@@ -121,9 +122,10 @@ export function getPrevPageButton(calendar: CalendarInstance) {
 }
 
 export function getNextPageButton(calendar: CalendarInstance) {
-  const button = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
-    `button[part~="next"]`
-  )!;
+  const button =
+    calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+      `button[part~="next"]`
+    )!;
   return page.elementLocator(button);
 }
 

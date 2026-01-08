@@ -30,7 +30,9 @@ expect.extend({
     return {
       pass: hasPart,
       message: () => {
-        const parts = element.part ? Array.from(element.part).join(", ") : "none";
+        const parts = element.part
+          ? Array.from(element.part).join(", ")
+          : "none";
         if (isNot) {
           return `Expected element not to have part "${expectedPart}", but it does.\nElement parts: ${parts}`;
         }
@@ -61,20 +63,8 @@ expect.extend({
         if (isNot) {
           return `Expected element not to be the active element, but it is.`;
         }
-        return `Expected element to be the active element, but it isn't.\nActive element: ${activeElement?.tagName || 'null'}`;
+        return `Expected element to be the active element, but it isn't.\nActive element: ${activeElement?.tagName || "null"}`;
       },
     };
   },
 });
-
-// Extend Vitest expect types for custom matchers
-declare module "vitest" {
-  interface Assertion<T = any> {
-    toHavePart(expectedPart: string): T;
-    toBeActiveElement(root?: Document | ShadowRoot): T;
-  }
-  interface AsymmetricMatchersContaining {
-    toHavePart(expectedPart: string): any;
-    toBeActiveElement(root?: Document | ShadowRoot): any;
-  }
-}
