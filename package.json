@@ -25,7 +25,8 @@
     "clean": "rm -rf dist docs/dist",
     "prebuild": "npm run clean",
     "build": "vite build && npm run astro:build",
-    "test": "wtr",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
     "astro:dev": "astro dev --root ./docs",
     "astro:build": "astro check --root ./docs && astro build --root ./docs",
     "astro:preview": "astro preview --root ./docs",
@@ -40,27 +41,19 @@
     "@astrojs/check": "^0.9.4",
     "@atomico/tsconfig": "^1.1.2",
     "@atomico/vite": "^2.21.1",
-    "@open-wc/testing": "^4.0.0",
-    "@types/mocha": "^10.0.10",
-    "@web/dev-server-esbuild": "^1.0.4",
-    "@web/test-runner": "^0.20.0",
-    "@web/test-runner-commands": "^0.9.0",
-    "@web/test-runner-playwright": "^0.11.0",
-    "@web/test-runner-visual-regression": "^0.10.0",
+    "@vitest/browser": "^4.0.16",
+    "@vitest/browser-playwright": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
     "astro": "^5.5.6",
     "hastscript": "^9.0.1",
+    "playwright": "^1.50.1",
     "postcss-nesting": "^13.0.1",
     "prettier": "^3.5.3",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.4",
-    "vite-plugin-dts": "^4.5.3"
-  },
-  "overrides": {
-    "playwright": {
-      ".": "1.50.1",
-      "@web/test-runner-playwright": "0.11.0"
-    }
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "^4.0.16"
   }
 }

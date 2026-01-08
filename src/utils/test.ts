@@ -1,46 +1,42 @@
-import { sendKeys, sendMouse } from "@web/test-runner-commands";
+import { userEvent, page } from "vitest/browser";
 import { fixture } from "atomico/test-dom";
 import type { VNodeAny } from "atomico/types/vnode";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
-import { nextFrame } from "@open-wc/testing";
+
+async function nextFrame() {
+  return new Promise((resolve) =>
+    requestAnimationFrame(() => resolve(undefined))
+  );
+}
 
 type SpySubject = (...args: any[]) => any;
 
-const defineGetter = <TObj, TReturn>(
-  obj: TObj,
-  name: string,
-  getter: () => TReturn
-) => {
-  Object.defineProperty(obj, name, {
-    enumerable: true,
-    get: getter,
-  });
-};
-
 export async function sendShiftPress(key: string) {
-  await sendKeys({ down: "Shift" });
-  await sendKeys({ press: key });
-  await sendKeys({ up: "Shift" });
+  await userEvent.keyboard("{Shift>}");
+  await userEvent.keyboard(`{${key}}`);
+  await userEvent.keyboard("{/Shift}");
 }
 
 /**
  * Creates a spy for use in tests.
  */
 export function createSpy<T extends SpySubject>(fn?: T) {
-  const _calls: Parameters<T>[] = [];
+  const calls: Parameters<T>[] = [];
 
   function spy(...args: Parameters<T>): ReturnType<T> {
-    _calls.push(args);
+    calls.push(args);
     return fn?.(...args);
   }
 
-  defineGetter(spy, "calls", () => _calls);
-  defineGetter(spy, "count", () => _calls.length);
-  defineGetter(spy, "called", () => _calls.length > 0);
-  defineGetter(spy, "first", () => _calls[0]);
-  defineGetter(spy, "last", () => _calls[_calls.length - 1]);
+  Object.defineProperties(spy, {
+    calls: { get: () => calls },
+    called: { get: () => calls.length > 0 },
+    count: { get: () => calls.length },
+    first: { get: () => calls[0] },
+    last: { get: () => calls[calls.length - 1] },
+  });
 
   return spy as {
     (...args: Parameters<T>): ReturnType<T>;
@@ -63,17 +59,6 @@ export async function mount<T extends CalendarInstance>(node: VNodeAny) {
   return calendar;
 }
 
-export async function click(element: Element) {
-  const { x, y, width, height } = element.getBoundingClientRect();
-
-  const position: [number, number] = [
-    Math.floor(x + window.scrollX + width / 2),
-    Math.floor(y + window.scrollY + height / 2),
-  ];
-
-  await sendMouse({ type: "click", position });
-}
-
 export function getMonths(calendar: HTMLElement): MonthInstance[] {
   return [...calendar.querySelectorAll<MonthInstance>("calendar-month")!];
 }
@@ -86,9 +71,7 @@ export function getGrid(month: MonthInstance): HTMLTableElement {
   return month.shadowRoot!.querySelector(`[part="table"]`)!;
 }
 
-export function getCalendarVisibleHeading(
-  calendar: CalendarInstance
-): HTMLElement {
+export function getCalendarVisibleHeading(calendar: CalendarInstance) {
   const slot = calendar.shadowRoot!.querySelector(`[part=heading]`);
   const heading = slot?.querySelector<HTMLElement>(`[aria-hidden]`);
 
@@ -96,10 +79,10 @@ export function getCalendarVisibleHeading(
     throw new Error("Could not find visible heading for calendar");
   }
 
-  return heading;
+  return page.elementLocator(heading);
 }
 
-export function getCalendarHeading(calendar: CalendarInstance): HTMLElement {
+export function getCalendarHeading(calendar: CalendarInstance) {
   const group = calendar.shadowRoot!.querySelector(`[role="group"]`)!;
 
   const labelledById = group.getAttribute("aria-labelledby");
@@ -112,10 +95,10 @@ export function getCalendarHeading(calendar: CalendarInstance): HTMLElement {
     throw new Error("No heading found for calendar");
   }
 
-  return heading;
+  return page.elementLocator(heading);
 }
 
-export function getMonthHeading(month: MonthInstance): HTMLElement {
+export function getMonthHeading(month: MonthInstance) {
   const table = getGrid(month);
 
   const labelledById = table.getAttribute("aria-labelledby");
@@ -128,25 +111,29 @@ export function getMonthHeading(month: MonthInstance): HTMLElement {
     throw new Error("No heading found for month");
   }
 
-  return heading;
+  return page.elementLocator(heading);
 }
 
 export function getPrevPageButton(calendar: CalendarInstance) {
-  return calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+  const button = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
     `button[part~="previous"]`
   )!;
+  return page.elementLocator(button);
 }
 
 export function getNextPageButton(calendar: CalendarInstance) {
-  return calendar.shadowRoot!.querySelector<HTMLButtonElement>(
-    `button[part~="next"]`
-  )!;
+  const button =
+    calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+      `button[part~="next"]`
+    )!;
+  return page.elementLocator(button);
 }
 
 export function getTodayButton(month: MonthInstance) {
-  return month.shadowRoot!.querySelector<HTMLButtonElement>(
+  const button = month.shadowRoot!.querySelector<HTMLButtonElement>(
     `button[part~="today"]`
   )!;
+  return page.elementLocator(button);
 }
 
 export function getSelectedDays(month: MonthInstance) {
@@ -169,24 +156,16 @@ export function getDayButton(month: MonthInstance, dateLabel: string) {
   )!;
 }
 
-export async function clickDay(month: MonthInstance, dateLabel: string) {
+export async function clickDay(
+  month: MonthInstance,
+  dateLabel: string,
+  options?: { force?: boolean }
+) {
   const button = getDayButton(month, dateLabel);
 
   if (!button) {
     throw new Error(`No button found for date: ${dateLabel}`);
   }
 
-  await click(button);
-}
-
-export function getActiveElement(root: Document | ShadowRoot = document) {
-  if (
-    root.activeElement &&
-    "shadowRoot" in root.activeElement &&
-    root.activeElement.shadowRoot
-  ) {
-    return getActiveElement(root.activeElement.shadowRoot);
-  }
-
-  return root.activeElement;
+  await page.elementLocator(button).click(options);
 }
