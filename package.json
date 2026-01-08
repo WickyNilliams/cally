@@ -29,10 +29,7 @@
     "test:ui": "vitest --ui",
     "astro:dev": "astro dev --root ./docs",
     "astro:build": "astro check --root ./docs && astro build --root ./docs",
-    "astro:preview": "astro preview --root ./docs",
-    "preversion": "npm test",
-    "version": "npm run build",
-    "postversion": "git push origin main --tags && npm publish"
+    "astro:preview": "astro preview --root ./docs"
   },
   "dependencies": {
     "atomico": "^1.79.2"
