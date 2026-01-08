@@ -1,7 +1,7 @@
 import { c, useContext, useEvent, useMemo, type Host } from "atomico";
 import { CalendarContext } from "../calendar-month/CalendarMonthContext.js";
 import { useDateFormatter } from "../utils/hooks.js";
-import { PlainDate } from "../utils/temporal.js";
+import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import {
   SelectBase,
   styles,
@@ -35,13 +35,11 @@ function useCalendarSelectMonth(props: { formatMonth: "long" | "short" }) {
   const focusedYearMonth = focusedDate.toPlainYearMonth();
   const options: MonthOption[] = monthNames.map((label, index) => {
     const i = index + 1;
-    const yearMonth = focusedYearMonth
-      .add({ months: i - focusedYearMonth.month })
-      .toPlainDate();
+    const yearMonth = focusedYearMonth.add({ months: i - focusedYearMonth.month });
 
     const isDisabled =
-      (min != null && PlainDate.compare(yearMonth, min) < 0) ||
-      (max != null && PlainDate.compare(yearMonth, max) > 0);
+      (min != null && PlainYearMonth.compare(yearMonth, min) < 0) ||
+      (max != null && PlainYearMonth.compare(yearMonth, max) > 0);
 
     return {
       label,

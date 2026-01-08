@@ -150,6 +150,38 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     ]);
   });
 
+  it("does not disable months with valid days when min is not first of month", async () => {
+    // Bug reported in #113: when min="2026-01-02", January should not be disabled
+    // because days 2-31 are valid, but the old logic disabled it
+    const calendar = await mount(
+      <Fixture value="2026-01-15" min="2026-01-02" max="2026-03-15" />
+    );
+
+    const monthSelect = getMonthSelect(calendar);
+
+    // January should NOT be disabled even though min is Jan 2nd
+    // because days 2-31 are still valid
+    expect(
+      [...monthSelect.options].map((o) => ({
+        label: o.label,
+        disabled: o.disabled,
+      }))
+    ).toEqual([
+      { label: "January", disabled: false },  // Should be enabled (days 2-31 valid)
+      { label: "February", disabled: false },
+      { label: "March", disabled: false },    // Should be enabled (days 1-15 valid)
+      { label: "April", disabled: true },     // Should be disabled (all days after max)
+      { label: "May", disabled: true },
+      { label: "June", disabled: true },
+      { label: "July", disabled: true },
+      { label: "August", disabled: true },
+      { label: "September", disabled: true },
+      { label: "October", disabled: true },
+      { label: "November", disabled: true },
+      { label: "December", disabled: true },
+    ]);
+  });
+
   it("can render month names in long format", async () => {
     const calendar = await mount(
       <Fixture value="2025-12-15" formatMonth="long" />

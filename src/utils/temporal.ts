@@ -115,4 +115,15 @@ export class PlainYearMonth {
   toPlainDate() {
     return new PlainDate(this.year, this.month, 1);
   }
+
+  static compare(
+    a: PlainYearMonth | { year: number; month: number },
+    b: PlainYearMonth | { year: number; month: number }
+  ): CompareResult {
+    if (a.year < b.year) return -1;
+    if (a.year > b.year) return 1;
+    if (a.month < b.month) return -1;
+    if (a.month > b.month) return 1;
+    return 0;
+  }
 }
