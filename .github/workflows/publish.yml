@@ -1,0 +1,37 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Only need OIDC for npm publishing - no repo write access needed
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npx vite build
+
+      # Publish using OIDC trusted publishing (no token needed)
+      # Provenance is automatically generated with id-token: write permission
+      # Setup required: Configure this repo as a trusted publisher at:
+      # https://www.npmjs.com/package/cally/access
+      - name: Publish to npm
+        run: npm publish
