@@ -18,5 +18,5 @@ jobs:
           node-version: "20.x"
       - run: npm ci
       - run: npm run build
-      - run: npx playwright install chromium webkit --with-deps
+      - run: npx playwright install chromium --with-deps
       - run: npm test
