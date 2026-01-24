@@ -45,7 +45,8 @@ export const CalendarMonth = c(
               {context.showWeekNumbers && (
                 <th part="th weeknumber">
                   <slot name="weeknumber">
-                    <span aria-label="Week">#</span>
+                    <span class="vh">Week</span>
+                    <span aria-hidden="true">#</span>
                   </slot>
                 </th>
               )}
