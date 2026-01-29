@@ -22,6 +22,7 @@ function useCalendarSelectMonth(props: { formatMonth: "long" | "short" }) {
   const monthNames = useMemo(() => {
     const months = [];
     const day = new Date();
+    day.setUTCDate(1);
 
     for (var i = 0; i < 12; i++) {
       const index = (day.getUTCMonth() + 12) % 12;
