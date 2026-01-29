@@ -51,8 +51,11 @@ jobs:
       - name: Get current and previous tags
         id: tags
         run: |
-          echo "current=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
-          echo "previous=$(git describe --tags --abbrev=0 HEAD^)" >> "$GITHUB_OUTPUT"
+          current="${GITHUB_REF_NAME}"
+          previous=$(git describe --tags --abbrev=0 HEAD^)
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "previous=$previous" >> "$GITHUB_OUTPUT"
+          echo "Release range: $previous..$current"
 
       - name: Comment on released issues
         env:
@@ -67,6 +70,7 @@ jobs:
           # Resolve linked issues for each PR
           issues=""
           for pr in $prs; do
+            echo "Checking PR #$pr for linked issues"
             linked=$(gh pr view "$pr" --json closingIssuesReferences --jq '.closingIssuesReferences[].number')
             issues="$issues $linked"
           done
