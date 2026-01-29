@@ -54,19 +54,26 @@ jobs:
           echo "current=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           echo "previous=$(git describe --tags --abbrev=0 HEAD^)" >> "$GITHUB_OUTPUT"
 
-      - name: Comment on referenced issues
+      - name: Comment on released issues
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           current="${{ steps.tags.outputs.current }}"
           previous="${{ steps.tags.outputs.previous }}"
 
-          # Extract unique issue numbers referenced in commit messages
-          issues=$(git log "${previous}..${current}" --pretty=format:"%s %b" | grep -oP '#\K\d+' | sort -un)
+          # Extract PR numbers from merge commit messages, e.g. "Fix bug (#119)"
+          prs=$(git log "${previous}..${current}" --pretty=format:"%s" | grep -oP '\(#\K\d+(?=\))' | sort -un)
 
-          for issue in $issues; do
+          # Resolve linked issues for each PR
+          issues=""
+          for pr in $prs; do
+            linked=$(gh pr view "$pr" --json closingIssuesReferences --jq '.closingIssuesReferences[].number')
+            issues="$issues $linked"
+          done
+
+          for issue in $(echo "$issues" | tr ' ' '\n' | sort -un); do
+            [ -z "$issue" ] && continue
             echo "Commenting on issue #$issue"
             gh issue comment "$issue" \
-              --body "Released in [\`${current}\`](https://github.com/${{ github.repository }}/releases/tag/${current})" \
-              || echo "Skipping #$issue (not a commentable issue)"
+              --body "Released in [\`${current}\`](https://github.com/${{ github.repository }}/releases/tag/${current})"
           done
