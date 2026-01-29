@@ -52,8 +52,7 @@ jobs:
         id: tags
         run: |
           echo "current=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
-          previous=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          echo "previous=$previous" >> "$GITHUB_OUTPUT"
+          echo "previous=$(git describe --tags --abbrev=0 HEAD^)" >> "$GITHUB_OUTPUT"
 
       - name: Comment on referenced issues
         env:
@@ -62,14 +61,8 @@ jobs:
           current="${{ steps.tags.outputs.current }}"
           previous="${{ steps.tags.outputs.previous }}"
 
-          if [ -z "$previous" ]; then
-            range="$current"
-          else
-            range="${previous}..${current}"
-          fi
-
           # Extract unique issue numbers referenced in commit messages
-          issues=$(git log "$range" --pretty=format:"%s %b" | grep -oP '#\K\d+' | sort -un)
+          issues=$(git log "${previous}..${current}" --pretty=format:"%s %b" | grep -oP '#\K\d+' | sort -un)
 
           for issue in $issues; do
             echo "Commenting on issue #$issue"
