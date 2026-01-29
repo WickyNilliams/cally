@@ -75,5 +75,5 @@ jobs:
             [ -z "$issue" ] && continue
             echo "Commenting on issue #$issue"
             gh issue comment "$issue" \
-              --body "Released in [\`${current}\`](https://github.com/${{ github.repository }}/releases/tag/${current})"
+              --body "Released in \`${current}\`"
           done
