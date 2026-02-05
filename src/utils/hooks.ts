@@ -87,7 +87,9 @@ export function useDayNames(
 
   return useMemo(() => {
     const days = [];
-    const day = new Date();
+    // Use a fixed UTC date to avoid timezone issues
+    // Jan 7, 2024 is a Sunday (day 0), giving us a known starting point
+    const day = new Date(Date.UTC(2024, 0, 7));
 
     for (var i = 0; i < 7; i++) {
       const index = (day.getUTCDay() - firstDayOfWeek + 7) % 7;
