@@ -10,6 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        # Test in multiple timezones to catch timezone-related bugs (see issue #123)
+        timezone: [UTC, America/New_York, Australia/Sydney]
+
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js
@@ -19,4 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install chromium --with-deps
-      - run: npm test
+      - name: Run tests (TZ=${{ matrix.timezone }})
+        run: npm test
+        env:
+          TZ: ${{ matrix.timezone }}
