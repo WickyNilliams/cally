@@ -596,6 +596,47 @@ describe("CalendarDate", () => {
       const target = spy.last[0].target as InstanceType<typeof CalendarDate>;
       expect(target.value).toBe("2021-12-31");
     });
+
+    it("clamps focused date to visible range when navigating next", async () => {
+      const spy = createSpy<(e: CustomEvent<Date>) => void>();
+      const calendar = await mount(
+        <Fixture value="2022-01-15" months={2} pageBy="single" onfocusday={spy}>
+          <CalendarMonth />
+          <CalendarMonth offset={1} />
+        </Fixture>
+      );
+
+      // Starting at Jan-Feb, focused on Feb 15
+      // Click next → page Feb-Mar, Feb 15 is still in range, no change
+      await getNextPageButton(calendar).click();
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail).toEqual(new Date("2022-02-15"));
+
+      // Click next → page Mar-Apr, Feb 15 is before range, clamps to Mar 15
+      await getNextPageButton(calendar).click();
+      expect(spy.count).toBe(2);
+      expect(spy.last[0].detail).toEqual(new Date("2022-03-15"));
+    });
+
+    it("clamps focused date to visible range when navigating previous", async () => {
+      const spy = createSpy<(e: CustomEvent<Date>) => void>();
+      const calendar = await mount(
+        <Fixture value="2022-03-15" months={2} pageBy="single" onfocusday={spy}>
+          <CalendarMonth />
+          <CalendarMonth offset={1} />
+        </Fixture>
+      );
+
+      // Starting at Mar-Apr, focused on Mar 15
+      // Click previous → page Feb-Mar, Mar 15 is in range, no focusday
+      await getPrevPageButton(calendar).click();
+      expect(spy.count).toBe(0);
+
+      // Click previous → page Jan-Feb, Feb 15 is after range, clamps to Feb 15
+      await getPrevPageButton(calendar).click();
+      expect(spy.count).toBe(1);
+      expect(spy.last[0].detail).toEqual(new Date("2022-02-15"));
+    });
   });
 
   describe("focus management", () => {

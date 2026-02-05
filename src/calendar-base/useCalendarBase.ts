@@ -62,15 +62,27 @@ function usePagination({
     return diff >= 0 && diff < months;
   };
 
-  // page change -> update focused date
+  // page change -> clamp focused date to visible range
   useEffect(() => {
-    if (contains(focusedDate)) {
-      return;
+    const focusedMonth = focusedDate.toPlainYearMonth();
+
+    // Clamp the focused month to the page range
+    let clampedMonth = focusedMonth;
+    const startDiff = diffInMonths(focusedMonth, page.start);
+    const endDiff = diffInMonths(focusedMonth, page.end);
+
+    if (startDiff > 0) {
+      clampedMonth = page.start;
+    } else if (endDiff < 0) {
+      clampedMonth = page.end;
     }
 
-    const diff = diffInMonths(focusedDate.toPlainYearMonth(), page.start);
-    goto(focusedDate.add({ months: diff }));
-  }, [page.start]);
+    // If clamping changed the month, update the focused date
+    if (!focusedMonth.equals(clampedMonth)) {
+      const monthsToAdd = diffInMonths(focusedMonth, clampedMonth);
+      goto(focusedDate.add({ months: monthsToAdd }));
+    }
+  }, [page]);
 
   // focused date change -> update page
   useEffect(() => {
