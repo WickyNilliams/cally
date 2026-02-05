@@ -13,9 +13,9 @@ const DAY_MS = 86400000;
 export function getWeekNumber(plainDate: PlainDate) {
   const date = toDate(plainDate);
   // Thursday in current week decides the year.
-  date.setDate(date.getUTCDate() + 3 - ((date.getUTCDay() + 6) % 7));
+  date.setUTCDate(date.getUTCDate() + 3 - ((date.getUTCDay() + 6) % 7));
   // January 4 is always in week 1.
-  const week1 = new Date(date.getUTCFullYear(), 0, 4);
+  const week1 = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));
 
   // Adjust to Thursday in week 1 and count number of weeks from date to week1.
   return (
