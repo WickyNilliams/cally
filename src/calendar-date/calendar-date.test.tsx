@@ -77,6 +77,7 @@ describe("CalendarDate", () => {
       const formatter = new Intl.DateTimeFormat("en-GB", {
         month: "long",
         year: "numeric",
+        timeZone: "UTC",
       });
 
       const heading = getCalendarHeading(calendar);
@@ -96,6 +97,7 @@ describe("CalendarDate", () => {
       const formatter = new Intl.DateTimeFormat("en-GB", {
         month: "long",
         year: "numeric",
+        timeZone: "UTC",
       });
 
       // Use poll() instead of toHaveTextContent() because the formatter output
@@ -208,7 +210,7 @@ describe("CalendarDate", () => {
 
       // disable weekends
       calendar.isDateDisallowed = function isWeekend(date) {
-        return date.getDay() === 0 || date.getDay() === 6;
+        return date.getUTCDay() === 0 || date.getUTCDay() === 6;
       };
 
       // tab to next page button
@@ -705,7 +707,7 @@ describe("CalendarDate", () => {
 
       const heading = getMonthHeading(month);
       await expect.element(heading).toHaveTextContent(
-        todaysDate.toLocaleDateString("en-GB", { month: "long" })
+        todaysDate.toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" })
       );
 
       const button = getDayButton(
@@ -713,6 +715,7 @@ describe("CalendarDate", () => {
         todaysDate.toLocaleDateString("en-GB", {
           month: "long",
           day: "numeric",
+          timeZone: "UTC",
         })
       );
       await expect.element(page.elementLocator(button)).toHaveAttribute("tabindex", "0");

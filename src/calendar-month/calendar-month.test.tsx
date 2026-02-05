@@ -42,7 +42,7 @@ interface DateTestProps extends TestPropsBase, CalendarDateContext {}
 interface RangeTestProps extends TestPropsBase, CalendarRangeContext {}
 interface MultiTestProps extends TestPropsBase, CalendarMultiContext {}
 
-const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
+const isWeekend = (date: Date) => date.getUTCDay() === 0 || date.getUTCDay() === 6;
 
 function getWeekNumbers(month: MonthInstance) {
   const grid = getGrid(month);
@@ -228,6 +228,7 @@ describe("CalendarMonth", () => {
         const todaysDate = toDate(getToday()).toLocaleDateString("en-GB", {
           day: "numeric",
           month: "long",
+          timeZone: "UTC",
         });
         const button = getDayButton(month, todaysDate)!;
 
@@ -808,6 +809,60 @@ describe("CalendarMonth", () => {
           .element(page.elementLocator(weekNumber))
           .toHaveTextContent(current.toString());
         current++;
+      }
+    });
+
+    it("handles year boundary with week 53 correctly", async () => {
+      // January 2027 starts on Friday, so the calendar view includes
+      // days from late December 2026 which are in week 53.
+      // Week 53 of 2026: Dec 28, 2026 - Jan 3, 2027
+      // Week 1 of 2027:  Jan 4 - Jan 10, 2027
+      // This test ensures week numbers work correctly across year boundaries
+      // and in non-UTC timezones (see issue #123)
+      const month = await mount(
+        <Fixture
+          focusedDate={PlainDate.from("2027-01-01")}
+          showWeekNumbers
+          firstDayOfWeek={1}
+        />
+      );
+
+      const weekNumbers = getWeekNumbers(month);
+
+      // 5 weeks displayed for January 2027 (with Monday as first day)
+      expect(weekNumbers.length).toBe(5);
+
+      // Week numbers should be: 53, 1, 2, 3, 4
+      // (week 53 from 2026, then weeks 1-4 of 2027)
+      const expectedWeeks = [53, 1, 2, 3, 4];
+      for (let i = 0; i < weekNumbers.length; i++) {
+        await expect
+          .element(page.elementLocator(weekNumbers[i]!))
+          .toHaveTextContent(expectedWeeks[i]!.toString());
+      }
+    });
+
+    it("handles year boundary with week 1 starting in previous year", async () => {
+      // December 2019 / January 2020 boundary
+      // Week 1 of 2020 starts on Dec 30, 2019
+      // This tests that late December dates can be in week 1 of the next year
+      const month = await mount(
+        <Fixture
+          focusedDate={PlainDate.from("2020-01-01")}
+          showWeekNumbers
+          firstDayOfWeek={1}
+        />
+      );
+
+      const weekNumbers = getWeekNumbers(month);
+
+      // Week numbers should start with 1 (Dec 30, 2019 is in week 1 of 2020)
+      // then continue 2, 3, 4, 5
+      const expectedWeeks = [1, 2, 3, 4, 5];
+      for (let i = 0; i < weekNumbers.length; i++) {
+        await expect
+          .element(page.elementLocator(weekNumbers[i]!))
+          .toHaveTextContent(expectedWeeks[i]!.toString());
       }
     });
   });

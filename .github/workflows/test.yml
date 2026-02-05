@@ -19,4 +19,35 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install chromium --with-deps
-      - run: npm test
+      - uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # Test in multiple timezones to catch timezone-related bugs (see issue #123)
+        timezone: [UTC, America/New_York, Australia/Sydney]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+      - name: Run tests (TZ=${{ matrix.timezone }})
+        run: npm test
+        env:
+          TZ: ${{ matrix.timezone }}

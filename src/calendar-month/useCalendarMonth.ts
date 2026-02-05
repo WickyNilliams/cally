@@ -142,7 +142,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     }
 
     // prettier-ignore
-    const commonParts = `button day day-${asDate.getDay()} ${
+    const commonParts = `button day day-${asDate.getUTCDay()} ${
       // we don't want outside days to ever be shown as selected
       isInMonth ? (isSelected ? "selected" : "") : "outside"
     } ${
