@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `0.9.2`
+
+_Released: 2026-02-05_
+
+### Fixed
+
+- Week number calculations in non-GMT timezones.
+- Numbering for CSS parts for days eg `day-1` in non-GMT timezones.
+
 ## `0.9.1`
 
 _Released: 2026-01-29_
