@@ -42,7 +42,7 @@ interface DateTestProps extends TestPropsBase, CalendarDateContext {}
 interface RangeTestProps extends TestPropsBase, CalendarRangeContext {}
 interface MultiTestProps extends TestPropsBase, CalendarMultiContext {}
 
-const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
+const isWeekend = (date: Date) => date.getUTCDay() === 0 || date.getUTCDay() === 6;
 
 function getWeekNumbers(month: MonthInstance) {
   const grid = getGrid(month);
@@ -228,6 +228,7 @@ describe("CalendarMonth", () => {
         const todaysDate = toDate(getToday()).toLocaleDateString("en-GB", {
           day: "numeric",
           month: "long",
+          timeZone: "UTC",
         });
         const button = getDayButton(month, todaysDate)!;
 
@@ -836,8 +837,8 @@ describe("CalendarMonth", () => {
       const expectedWeeks = [53, 1, 2, 3, 4];
       for (let i = 0; i < weekNumbers.length; i++) {
         await expect
-          .element(page.elementLocator(weekNumbers[i]))
-          .toHaveTextContent(expectedWeeks[i].toString());
+          .element(page.elementLocator(weekNumbers[i]!))
+          .toHaveTextContent(expectedWeeks[i]!.toString());
       }
     });
 
@@ -860,8 +861,8 @@ describe("CalendarMonth", () => {
       const expectedWeeks = [1, 2, 3, 4, 5];
       for (let i = 0; i < weekNumbers.length; i++) {
         await expect
-          .element(page.elementLocator(weekNumbers[i]))
-          .toHaveTextContent(expectedWeeks[i].toString());
+          .element(page.elementLocator(weekNumbers[i]!))
+          .toHaveTextContent(expectedWeeks[i]!.toString());
       }
     });
   });
