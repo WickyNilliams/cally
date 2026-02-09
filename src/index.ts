@@ -4,6 +4,7 @@ import { CalendarSelectYear } from "./calendar-year-month/calendar-select-year";
 import { CalendarSelectMonth } from "./calendar-year-month/calendar-select-month";
 import { CalendarRange } from "./calendar-range/calendar-range";
 import { CalendarMulti } from "./calendar-multi/calendar-multi";
+import { CalendarHeading } from "./calendar-heading/calendar-heading";
 
 export {
   CalendarMonth,
@@ -12,6 +13,7 @@ export {
   CalendarMulti,
   CalendarSelectYear,
   CalendarSelectMonth,
+  CalendarHeading,
 };
 
 import type { AtomicoThis } from "atomico/types/dom";
@@ -33,3 +35,4 @@ export type CalendarSelectYearProps = ComponentProps<typeof CalendarSelectYear>;
 export type CalendarSelectMonthProps = ComponentProps<
   typeof CalendarSelectMonth
 >;
+export type CalendarHeadingProps = ComponentProps<typeof CalendarHeading>;
