@@ -35,3 +35,49 @@ jobs:
       # https://www.npmjs.com/package/cally/access
       - name: Publish to npm
         run: npm publish
+
+  notify-issues:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current and previous tags
+        id: tags
+        run: |
+          current="${GITHUB_REF_NAME}"
+          previous=$(git describe --tags --abbrev=0 HEAD^)
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "previous=$previous" >> "$GITHUB_OUTPUT"
+          echo "Release range: $previous..$current"
+
+      - name: Comment on released issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          current="${{ steps.tags.outputs.current }}"
+          previous="${{ steps.tags.outputs.previous }}"
+
+          # Extract PR numbers from merge commit messages, e.g. "Fix bug (#119)"
+          prs=$(git log "${previous}..${current}" --pretty=format:"%s" | grep -oP '\(#\K\d+(?=\))' | sort -un)
+
+          # Resolve linked issues for each PR
+          issues=""
+          for pr in $prs; do
+            echo "Checking PR #$pr for linked issues"
+            linked=$(gh pr view "$pr" --json closingIssuesReferences --jq '.closingIssuesReferences[].number')
+            issues="$issues $linked"
+          done
+
+          for issue in $(echo "$issues" | tr ' ' '\n' | sort -un); do
+            [ -z "$issue" ] && continue
+            echo "Commenting on issue #$issue"
+            gh issue comment "$issue" \
+              --body "Released in \`${current}\`"
+          done
