@@ -20,14 +20,8 @@ function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
   return (b.year - a.year) * 12 + b.month - a.month;
 }
 
-const createPage = (
-  start: PlainYearMonth,
-  months: number,
-  pageBy: Pagination = "months"
-) => {
-  if (months === 12 && pageBy !== "single") {
-    start = new PlainYearMonth(start.year, 1);
-  }
+const createPage = (start: PlainYearMonth, months: number) => {
+  start = months === 12 ? new PlainYearMonth(start.year, 1) : start;
   return {
     start,
     end: start.add({ months: months - 1 }),
@@ -57,11 +51,11 @@ function usePagination({
 }: UsePaginationOptions) {
   const step = pageBy === "single" ? 1 : months;
   const [page, setPage] = useState(() =>
-    createPage(focusedDate.toPlainYearMonth(), months, pageBy)
+    createPage(focusedDate.toPlainYearMonth(), months)
   );
 
   const updatePageBy = (by: number) =>
-    setPage(createPage(page.start.add({ months: by }), months, pageBy));
+    setPage(createPage(page.start.add({ months: by }), months));
 
   const contains = (date: PlainDate) => {
     const diff = diffInMonths(page.start, date.toPlainYearMonth());
