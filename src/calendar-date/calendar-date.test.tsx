@@ -107,7 +107,7 @@ describe("CalendarDate", () => {
         const group = calendar.shadowRoot!.querySelector(`[role="group"]`)!;
         const labelledById = group.getAttribute("aria-labelledby")!;
         const heading = calendar.shadowRoot!.getElementById(labelledById)!;
-        return heading.textContent;
+        return heading.shadowRoot!.querySelector("span")!.textContent;
       }).toBe(formatter.formatRange(toDate(start), toDate(end)));
     });
   });

@@ -23,7 +23,7 @@ function getSlottedHeading(root: CalendarInstance | MonthInstance) {
     throw new Error("Could not find slotted calendar-heading");
   }
 
-  return page.elementLocator(heading);
+  return page.elementLocator(heading).locator("span");
 }
 
 describe("CalendarHeading", () => {
@@ -79,7 +79,7 @@ describe("CalendarHeading", () => {
     // Use poll() instead of toHaveTextContent() because formatRange output
     // contains unicode characters (en-dash) that toHaveTextContent() normalizes differently
     await expect.poll(() => {
-      return calendar.querySelector("calendar-heading")!.textContent;
+      return calendar.querySelector("calendar-heading")!.shadowRoot?.querySelector("span")?.textContent;
     }).toBe(formatter.formatRange(start, end));
   });
 
