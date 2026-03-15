@@ -1,0 +1,83 @@
+---
+import ApiLayout from "../../layouts/ApiLayout.astro";
+import Table from "../../components/Table.astro";
+import Heading from "../../components/Heading.astro";
+import Link from "../../components/Link.astro";
+import Example from "../../components/Example.astro";
+---
+
+<ApiLayout
+  heading="<calendar-heading>"
+  meta={{
+    title: "<calendar-heading> API",
+    description:
+      "The calendar-heading component displays a formatted date or date range heading for the calendar. Find out how to use its properties and styling options.",
+  }}
+>
+  <p>
+    This component displays a formatted heading showing the current month and/or
+    year of the calendar. It should not be used alone, but placed in the
+    <code>heading</code> slot of
+    one of
+    <Link href="/components/calendar-date/"
+      ><code>{`<calendar-date>`}</code></Link
+    >,
+    <Link href="/components/calendar-range/"
+      ><code>{`<calendar-range>`}</code></Link
+    >,
+    <Link href="/components/calendar-multi/"
+      ><code>{`<calendar-multi>`}</code></Link
+    > or
+    <Link href="/components/calendar-month/"
+      ><code>{`<calendar-month>`}</code></Link
+    >.
+  </p>
+
+  <Example css="calendar-month::part(heading) { display: none; }">
+    <calendar-date>
+      <calendar-heading
+        slot="heading"
+        year="numeric"
+        month="long"
+      ></calendar-heading>
+      <calendar-month></calendar-month>
+    </calendar-date>
+  </Example>
+
+  <Heading level={2}>Properties and attributes</Heading>
+
+  <Table>
+    <tr slot="head">
+      <th>Property</th>
+      <th>Attribute</th>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Default</th>
+    </tr>
+
+    <tr>
+      <td><code>year</code></td>
+      <td><code>year</code></td>
+      <td>
+        How to display the year. When omitted, the year is not shown.
+      </td>
+      <td><code>"numeric" | "2-digit"</code></td>
+      <td><code>undefined</code></td>
+    </tr>
+    <tr>
+      <td><code>month</code></td>
+      <td><code>month</code></td>
+      <td>
+        How to display the month. When omitted, the month is not shown.
+      </td>
+      <td><code>"numeric" | "2-digit" | "long" | "short" | "narrow"</code></td>
+      <td><code>undefined</code></td>
+    </tr>
+  </Table>
+</ApiLayout>
+
+<style is:global>
+  calendar-date {
+    margin-inline: auto;
+  }
+</style>

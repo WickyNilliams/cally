@@ -1,4 +1,5 @@
-import { useEvent, useMemo } from "atomico";
+import { useEvent, useMemo, useProvider } from "atomico";
+import { CalendarHeadingContext } from "../calendar-heading/CalendarHeadingContext.js";
 import { useDayNames, useDateFormatter } from "../utils/hooks.js";
 import {
   clamp,
@@ -17,7 +18,6 @@ const inRange = (date: PlainDate, min?: PlainDate, max?: PlainDate) =>
 const isLTR = (e: Event) => (e.target as HTMLElement).matches(":dir(ltr)");
 
 const dayOptions = { month: "long", day: "numeric" } as const;
-const monthOptions = { month: "long" } as const;
 const longDayOptions = { weekday: "long" } as const;
 const dispatchOptions = { bubbles: true };
 
@@ -48,12 +48,13 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   );
   const daysVisible = useDayNames(visibleDayOptions, firstDayOfWeek, locale);
   const dayFormatter = useDateFormatter(dayOptions, locale);
-  const formatter = useDateFormatter(monthOptions, locale);
 
   const yearMonth = useMemo(
     () => page.start.add({ months: offset }),
     [page, offset]
   );
+
+  useProvider(CalendarHeadingContext, { type: "date", value: yearMonth, locale });
 
   const weeks = useMemo(
     () => getViewOfMonth(yearMonth, firstDayOfWeek),
@@ -181,7 +182,6 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     yearMonth,
     daysLong,
     daysVisible,
-    formatter,
     getDayProps,
   };
 }
