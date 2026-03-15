@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import { mount, getMonth, type CalendarInstance, type MonthInstance } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
@@ -22,11 +23,7 @@ function getSlottedHeading(root: CalendarInstance | MonthInstance) {
     throw new Error("Could not find slotted calendar-heading");
   }
 
-  return heading;
-}
-
-function headingText(heading: HTMLElement) {
-  return heading.shadowRoot?.textContent ?? heading.textContent;
+  return page.elementLocator(heading.shadowRoot!.querySelector("span")!);
 }
 
 describe("CalendarHeading", () => {
@@ -45,7 +42,7 @@ describe("CalendarHeading", () => {
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 3)));
 
-    await expect.poll(() => headingText(heading)).toBe(expected);
+    await expect.element(heading).toHaveTextContent(expected);
   });
 
   it("only includes options that are set", async () => {
@@ -60,7 +57,7 @@ describe("CalendarHeading", () => {
     const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", month: "long" });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 9)));
 
-    await expect.poll(() => headingText(heading)).toBe(expected);
+    await expect.element(heading).toHaveTextContent(expected);
   });
 
   it("formats a range when showing multiple months", async () => {
@@ -80,9 +77,7 @@ describe("CalendarHeading", () => {
       year: "numeric",
     });
 
-    await expect.poll(() => headingText(heading)).toBe(
-      formatter.formatRange(start, end)
-    );
+    await expect.element(heading).toHaveTextContent(formatter.formatRange(start, end));
   });
 
   it("can customise the month heading via slot", async () => {
@@ -103,7 +98,7 @@ describe("CalendarHeading", () => {
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 7)));
 
-    await expect.poll(() => headingText(heading)).toBe(expected);
+    await expect.element(heading).toHaveTextContent(expected);
   });
 
   it("respects the locale", async () => {
@@ -121,6 +116,6 @@ describe("CalendarHeading", () => {
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 3)));
 
-    await expect.poll(() => headingText(heading)).toBe(expected);
+    await expect.element(heading).toHaveTextContent(expected);
   });
 });
