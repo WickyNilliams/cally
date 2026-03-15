@@ -23,7 +23,7 @@ function getSlottedHeading(root: CalendarInstance | MonthInstance) {
     throw new Error("Could not find slotted calendar-heading");
   }
 
-  return page.elementLocator(heading.shadowRoot!.querySelector("span")!);
+  return page.elementLocator(heading);
 }
 
 describe("CalendarHeading", () => {
@@ -69,7 +69,6 @@ describe("CalendarHeading", () => {
       </Fixture>
     );
 
-    const heading = getSlottedHeading(calendar);
     const start = toDate(new PlainYearMonth(2023, 12));
     const end = toDate(new PlainYearMonth(2024, 1));
     const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC",
@@ -77,7 +76,11 @@ describe("CalendarHeading", () => {
       year: "numeric",
     });
 
-    await expect.element(heading).toHaveTextContent(formatter.formatRange(start, end));
+    // Use poll() instead of toHaveTextContent() because formatRange output
+    // contains unicode characters (en-dash) that toHaveTextContent() normalizes differently
+    await expect.poll(() => {
+      return calendar.querySelector("calendar-heading")!.textContent;
+    }).toBe(formatter.formatRange(start, end));
   });
 
   it("can customise the month heading via slot", async () => {
