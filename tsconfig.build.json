@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "./vitest.d.ts"],
+  "compilerOptions": {
+    "moduleResolution": "node"
+  }
+}

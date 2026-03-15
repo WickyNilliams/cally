@@ -25,6 +25,7 @@ export default defineConfig({
     dts({
       rollupTypes: true,
       bundledPackages: ["atomico"],
+      tsconfigPath: "./tsconfig.build.json",
 
       // workaround to include the global types
       async afterBuild() {
