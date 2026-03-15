@@ -1,5 +1,4 @@
 import { describe, it, expect } from "vitest";
-import { page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import { mount, getMonth, type CalendarInstance, type MonthInstance } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
@@ -16,8 +15,14 @@ function Fixture({ children, ...props }: Record<string, any>): VNodeAny {
   );
 }
 
-function getSlottedHeading(root: CalendarInstance | MonthInstance) {
-  return page.elementLocator(root).locator("calendar-heading span");
+function getSlottedHeadingText(root: CalendarInstance | MonthInstance) {
+  const heading = root.querySelector<HTMLElement>("calendar-heading");
+
+  if (!heading) {
+    throw new Error("Could not find slotted calendar-heading");
+  }
+
+  return () => heading.shadowRoot?.textContent ?? heading.textContent ?? "";
 }
 
 describe("CalendarHeading", () => {
@@ -29,14 +34,14 @@ describe("CalendarHeading", () => {
       </Fixture>
     );
 
-    const heading = getSlottedHeading(calendar);
+    const headingText = getSlottedHeadingText(calendar);
     const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC",
       month: "short",
       year: "2-digit",
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 3)));
 
-    await expect.element(heading).toHaveTextContent(expected);
+    await expect.poll(headingText).toBe(expected);
   });
 
   it("only includes options that are set", async () => {
@@ -47,11 +52,11 @@ describe("CalendarHeading", () => {
       </Fixture>
     );
 
-    const heading = getSlottedHeading(calendar);
+    const headingText = getSlottedHeadingText(calendar);
     const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", month: "long" });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 9)));
 
-    await expect.element(heading).toHaveTextContent(expected);
+    await expect.poll(headingText).toBe(expected);
   });
 
   it("formats a range when showing multiple months", async () => {
@@ -63,6 +68,7 @@ describe("CalendarHeading", () => {
       </Fixture>
     );
 
+    const headingText = getSlottedHeadingText(calendar);
     const start = toDate(new PlainYearMonth(2023, 12));
     const end = toDate(new PlainYearMonth(2024, 1));
     const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC",
@@ -70,11 +76,7 @@ describe("CalendarHeading", () => {
       year: "numeric",
     });
 
-    // Use poll() instead of toHaveTextContent() because formatRange output
-    // contains unicode characters (en-dash) that toHaveTextContent() normalizes differently
-    await expect.poll(() => {
-      return calendar.querySelector("calendar-heading")!.shadowRoot?.querySelector("span")?.textContent;
-    }).toBe(formatter.formatRange(start, end));
+    await expect.poll(headingText).toBe(formatter.formatRange(start, end));
   });
 
   it("can customise the month heading via slot", async () => {
@@ -87,7 +89,7 @@ describe("CalendarHeading", () => {
     );
 
     const month = getMonth(calendar);
-    const heading = getSlottedHeading(month);
+    const headingText = getSlottedHeadingText(month);
 
     const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC",
       month: "short",
@@ -95,7 +97,7 @@ describe("CalendarHeading", () => {
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 7)));
 
-    await expect.element(heading).toHaveTextContent(expected);
+    await expect.poll(headingText).toBe(expected);
   });
 
   it("respects the locale", async () => {
@@ -106,13 +108,13 @@ describe("CalendarHeading", () => {
       </Fixture>
     );
 
-    const heading = getSlottedHeading(calendar);
+    const headingText = getSlottedHeadingText(calendar);
     const formatter = new Intl.DateTimeFormat("de-DE", { timeZone: "UTC",
       month: "long",
       year: "numeric",
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 3)));
 
-    await expect.element(heading).toHaveTextContent(expected);
+    await expect.poll(headingText).toBe(expected);
   });
 });

@@ -69,12 +69,12 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const monthSelect = getMonthSelect(calendar);
 
     expect(monthSelect.value).toBe("12");
-    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2025");
+    await expect.poll(getCalendarHeading(calendar)).toContain("December 2025");
 
     await userEvent.selectOptions(monthSelect, "11");
 
     expect(monthSelect.value).toBe("11");
-    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("November 2025");
+    await expect.poll(getCalendarHeading(calendar)).toContain("November 2025");
   });
 
   it("can change the year", async () => {
@@ -82,12 +82,12 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const yearSelect = getYearSelect(calendar);
 
     expect(yearSelect.value).toBe("2025");
-    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2025");
+    await expect.poll(getCalendarHeading(calendar)).toContain("December 2025");
 
     await userEvent.selectOptions(yearSelect, "2026");
 
     expect(yearSelect.value).toBe("2026");
-    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2026");
+    await expect.poll(getCalendarHeading(calendar)).toContain("December 2026");
   });
 
   it("handles min and max dates", async () => {
