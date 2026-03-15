@@ -25,6 +25,10 @@ function getSlottedHeading(root: CalendarInstance | MonthInstance) {
   return heading;
 }
 
+function headingText(heading: HTMLElement) {
+  return heading.shadowRoot?.textContent ?? heading.textContent;
+}
+
 describe("CalendarHeading", () => {
   it("formats using the provided month and year options", async () => {
     const calendar = await mount(
@@ -41,7 +45,7 @@ describe("CalendarHeading", () => {
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 3)));
 
-    await expect.poll(() => heading.textContent).toBe(expected);
+    await expect.poll(() => headingText(heading)).toBe(expected);
   });
 
   it("only includes options that are set", async () => {
@@ -56,7 +60,7 @@ describe("CalendarHeading", () => {
     const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", month: "long" });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 9)));
 
-    await expect.poll(() => heading.textContent).toBe(expected);
+    await expect.poll(() => headingText(heading)).toBe(expected);
   });
 
   it("formats a range when showing multiple months", async () => {
@@ -76,7 +80,7 @@ describe("CalendarHeading", () => {
       year: "numeric",
     });
 
-    await expect.poll(() => heading.textContent).toBe(
+    await expect.poll(() => headingText(heading)).toBe(
       formatter.formatRange(start, end)
     );
   });
@@ -99,7 +103,7 @@ describe("CalendarHeading", () => {
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 7)));
 
-    await expect.poll(() => heading.textContent).toBe(expected);
+    await expect.poll(() => headingText(heading)).toBe(expected);
   });
 
   it("respects the locale", async () => {
@@ -117,6 +121,6 @@ describe("CalendarHeading", () => {
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 3)));
 
-    await expect.poll(() => heading.textContent).toBe(expected);
+    await expect.poll(() => headingText(heading)).toBe(expected);
   });
 });
