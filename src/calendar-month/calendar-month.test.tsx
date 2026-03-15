@@ -689,7 +689,7 @@ describe("CalendarMonth", () => {
         .toHaveTextContent("D");
 
       const title = getMonthHeading(month);
-      await expect.element(title).toHaveTextContent("janvier");
+      await expect.poll(title).toContain("janvier");
 
       const button = getDayButton(month, "15 janvier");
       expect(button).toBeTruthy();

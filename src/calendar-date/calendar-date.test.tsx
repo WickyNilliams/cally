@@ -81,7 +81,7 @@ describe("CalendarDate", () => {
       });
 
       const heading = getCalendarHeading(calendar);
-      await expect.element(heading).toHaveTextContent(formatter.format(yearMonth));
+      await expect.poll(heading).toContain(formatter.format(yearMonth));
     });
 
     it("correctly labels a range of months", async () => {
@@ -100,15 +100,7 @@ describe("CalendarDate", () => {
         timeZone: "UTC",
       });
 
-      // Use poll() instead of toHaveTextContent() because the formatter output
-      // contains unicode characters (en-dash "–") that toHaveTextContent() normalizes
-      // differently, causing false negatives. poll() does direct string comparison.
-      await expect.poll(() => {
-        const group = calendar.shadowRoot!.querySelector(`[role="group"]`)!;
-        const labelledById = group.getAttribute("aria-labelledby")!;
-        const heading = calendar.shadowRoot!.getElementById(labelledById)!;
-        return heading.textContent;
-      }).toBe(formatter.formatRange(toDate(start), toDate(end)));
+      await expect.poll(getCalendarHeading(calendar)).toBe(formatter.formatRange(toDate(start), toDate(end)));
     });
   });
 
@@ -266,8 +258,8 @@ describe("CalendarDate", () => {
         ];
 
         await getNextPageButton(calendar).click();
-        await expect.element(getMonthHeading(first!)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second!)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first!)).toContain("March");
+        await expect.poll(getMonthHeading(second!)).toContain("April");
       });
 
       it("updates page as user navigates dates", async () => {
@@ -289,53 +281,53 @@ describe("CalendarDate", () => {
 
         // move to feb, within page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
 
         // move to march, out of page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
 
         // move to april, should be on same page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
 
         // move to march, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
 
         // move to feb, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
 
         // move to jan, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
 
         // move to dec, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
+        await expect.poll(getMonthHeading(first)).toContain("November");
+        await expect.poll(getMonthHeading(second)).toContain("December");
 
         // sanity check
         expect(calendar.focusedDate).toBe("2019-12-01");
 
         // move one year ahead
         await sendShiftPress("PageDown");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2020");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2020");
+        await expect.poll(getMonthHeading(first)).toContain("November");
+        await expect.poll(getMonthHeading(second)).toContain("December");
 
         // move one year back
         await sendShiftPress("PageUp");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2019");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2019");
+        await expect.poll(getMonthHeading(first)).toContain("November");
+        await expect.poll(getMonthHeading(second)).toContain("December");
       });
 
       it("pages by number of months", async () => {
@@ -354,24 +346,24 @@ describe("CalendarDate", () => {
         ];
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("May");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("June");
+        await expect.poll(getMonthHeading(first)).toContain("May");
+        await expect.poll(getMonthHeading(second)).toContain("June");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
+        await expect.poll(getMonthHeading(first)).toContain("November");
+        await expect.poll(getMonthHeading(second)).toContain("December");
       });
 
       it("handles focused date prop changing", async () => {
@@ -389,30 +381,30 @@ describe("CalendarDate", () => {
         // one year ahead
         calendar.focusedDate = "2021-01-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2021");
 
         // one month outside of page
         calendar.focusedDate = "2021-03-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2021");
 
         // a few months ahead
         calendar.focusedDate = "2021-05-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("May");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("June");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        await expect.poll(getMonthHeading(first)).toContain("May");
+        await expect.poll(getMonthHeading(second)).toContain("June");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2021");
 
         // a few months back
         calendar.focusedDate = "2020-12-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2020");
+        await expect.poll(getMonthHeading(first)).toContain("November");
+        await expect.poll(getMonthHeading(second)).toContain("December");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2020");
       });
     });
 
@@ -437,55 +429,55 @@ describe("CalendarDate", () => {
 
         // move to feb, within page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
 
         // move to march, out of page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
+        await expect.poll(getMonthHeading(first)).toContain("February");
+        await expect.poll(getMonthHeading(second)).toContain("March");
 
         // move to april, should be on same page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
 
         // move to march, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
 
         // move to feb, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
+        await expect.poll(getMonthHeading(first)).toContain("February");
+        await expect.poll(getMonthHeading(second)).toContain("March");
 
         // move to jan, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
 
         // move to dec, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
+        await expect.poll(getMonthHeading(first)).toContain("December");
+        await expect.poll(getMonthHeading(second)).toContain("January");
 
         // sanity check
         expect(calendar.focusedDate).toBe("2019-12-01");
 
         // move one year ahead
         await sendShiftPress("PageDown");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2020/);
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2021/);
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toMatch(/2020/);
+        await expect.poll(getCalendarVisibleHeading(calendar)).toMatch(/2021/);
+        await expect.poll(getMonthHeading(first)).toContain("December");
+        await expect.poll(getMonthHeading(second)).toContain("January");
 
         // move one year back
         await sendShiftPress("PageUp");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2019/);
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2020/);
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
+        await expect.poll(getMonthHeading(first)).toContain("December");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toMatch(/2019/);
+        await expect.poll(getCalendarVisibleHeading(calendar)).toMatch(/2020/);
+        await expect.poll(getMonthHeading(second)).toContain("January");
       });
 
       it("pages by single month", async () => {
@@ -504,24 +496,24 @@ describe("CalendarDate", () => {
         const prev = getPrevPageButton(calendar);
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
+        await expect.poll(getMonthHeading(first)).toContain("February");
+        await expect.poll(getMonthHeading(second)).toContain("March");
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("March");
+        await expect.poll(getMonthHeading(second)).toContain("April");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
+        await expect.poll(getMonthHeading(first)).toContain("February");
+        await expect.poll(getMonthHeading(second)).toContain("March");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
+        await expect.poll(getMonthHeading(first)).toContain("December");
+        await expect.poll(getMonthHeading(second)).toContain("January");
       });
 
       it("pages by single month with 12 months", async () => {
@@ -547,23 +539,23 @@ describe("CalendarDate", () => {
 
         // with page-by="single", 12 months starting from June
         // should show Jun-May, not snap to Jan-Dec
-        await expect.element(getMonthHeading(first)).toHaveTextContent("June");
-        await expect.element(getMonthHeading(last)).toHaveTextContent("May");
+        await expect.poll(getMonthHeading(first)).toContain("June");
+        await expect.poll(getMonthHeading(last)).toContain("May");
 
         const next = getNextPageButton(calendar);
         const prev = getPrevPageButton(calendar);
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("July");
-        await expect.element(getMonthHeading(last)).toHaveTextContent("June");
+        await expect.poll(getMonthHeading(first)).toContain("July");
+        await expect.poll(getMonthHeading(last)).toContain("June");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("June");
-        await expect.element(getMonthHeading(last)).toHaveTextContent("May");
+        await expect.poll(getMonthHeading(first)).toContain("June");
+        await expect.poll(getMonthHeading(last)).toContain("May");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("May");
-        await expect.element(getMonthHeading(last)).toHaveTextContent("April");
+        await expect.poll(getMonthHeading(first)).toContain("May");
+        await expect.poll(getMonthHeading(last)).toContain("April");
       });
 
       it("handles focused date prop changing", async () => {
@@ -581,31 +573,31 @@ describe("CalendarDate", () => {
         // one year ahead
         calendar.focusedDate = "2021-01-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        await expect.poll(getMonthHeading(first)).toContain("January");
+        await expect.poll(getMonthHeading(second)).toContain("February");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2021");
 
         // one month outside of page
         calendar.focusedDate = "2021-03-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        await expect.poll(getMonthHeading(first)).toContain("February");
+        await expect.poll(getMonthHeading(second)).toContain("March");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2021");
 
         // a few months ahead
         calendar.focusedDate = "2021-05-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("April");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("May");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        await expect.poll(getMonthHeading(first)).toContain("April");
+        await expect.poll(getMonthHeading(second)).toContain("May");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toContain("2021");
 
         // a few months back
         calendar.focusedDate = "2020-12-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2020/);
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2021/);
+        await expect.poll(getMonthHeading(first)).toContain("December");
+        await expect.poll(getMonthHeading(second)).toContain("January");
+        await expect.poll(getCalendarVisibleHeading(calendar)).toMatch(/2020/);
+        await expect.poll(getCalendarVisibleHeading(calendar)).toMatch(/2021/);
       });
     });
   });
@@ -711,8 +703,8 @@ describe("CalendarDate", () => {
       );
 
       const [first, second] = getMonths(calendar);
-      await expect.element(getMonthHeading(first!)).toHaveTextContent("January");
-      await expect.element(getMonthHeading(second!)).toHaveTextContent("February");
+      await expect.poll(getMonthHeading(first!)).toContain("January");
+      await expect.poll(getMonthHeading(second!)).toContain("February");
     });
 
     it("respects `months` when paginating", async () => {
@@ -726,12 +718,12 @@ describe("CalendarDate", () => {
       const [first, second] = getMonths(calendar);
 
       await getNextPageButton(calendar).click();
-      await expect.element(getMonthHeading(first!)).toHaveTextContent("March");
-      await expect.element(getMonthHeading(second!)).toHaveTextContent("April");
+      await expect.poll(getMonthHeading(first!)).toContain("March");
+      await expect.poll(getMonthHeading(second!)).toContain("April");
 
       await getPrevPageButton(calendar).click();
-      await expect.element(getMonthHeading(first!)).toHaveTextContent("January");
-      await expect.element(getMonthHeading(second!)).toHaveTextContent("February");
+      await expect.poll(getMonthHeading(first!)).toContain("January");
+      await expect.poll(getMonthHeading(second!)).toContain("February");
     });
   });
 
@@ -748,7 +740,7 @@ describe("CalendarDate", () => {
       const month = getMonth(calendar);
 
       const heading = getMonthHeading(month);
-      await expect.element(heading).toHaveTextContent(
+      await expect.poll(heading).toContain(
         todaysDate.toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" })
       );
 
@@ -799,40 +791,40 @@ describe("CalendarDate", () => {
         <Fixture value="2020-01-01" locale="de-DE" />
       );
 
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Januar 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("Januar 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Februar 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("Februar 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("März 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("März 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("April 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("April 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Mai 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("Mai 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Juni 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("Juni 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Juli 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("Juli 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("August 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("August 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("September 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("September 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Oktober 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("Oktober 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("November 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("November 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Dezember 2020");
+      await expect.poll(getCalendarHeading(calendar)).toContain("Dezember 2020");
     });
   });
 
@@ -853,7 +845,7 @@ describe("CalendarDate", () => {
       const month = getMonth(calendar);
       const firstJan = getDayButton(month, "1 January");
 
-      await expect.element(getMonthHeading(month)).toHaveTextContent("January");
+      await expect.poll(getMonthHeading(month)).toContain("January");
       await expect.element(page.elementLocator(firstJan)).toHaveAttribute("aria-pressed", "true");
     });
   });
