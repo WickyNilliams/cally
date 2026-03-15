@@ -71,6 +71,10 @@ export function getGrid(month: MonthInstance): HTMLTableElement {
   return month.shadowRoot!.querySelector(`[part="table"]`)!;
 }
 
+function getHeadingText(heading: HTMLElement): () => string {
+  return () => heading.shadowRoot?.textContent ?? heading.textContent ?? "";
+}
+
 export function getCalendarVisibleHeading(calendar: CalendarInstance) {
   const slot = calendar.shadowRoot!.querySelector(`[part=heading]`);
   const heading = slot?.querySelector<HTMLElement>(`[aria-hidden]`);
@@ -79,7 +83,7 @@ export function getCalendarVisibleHeading(calendar: CalendarInstance) {
     throw new Error("Could not find visible heading for calendar");
   }
 
-  return page.elementLocator(heading);
+  return getHeadingText(heading);
 }
 
 export function getCalendarHeading(calendar: CalendarInstance) {
@@ -95,7 +99,7 @@ export function getCalendarHeading(calendar: CalendarInstance) {
     throw new Error("No heading found for calendar");
   }
 
-  return page.elementLocator(heading);
+  return getHeadingText(heading);
 }
 
 export function getMonthHeading(month: MonthInstance) {
@@ -111,7 +115,7 @@ export function getMonthHeading(month: MonthInstance) {
     throw new Error("No heading found for month");
   }
 
-  return page.elementLocator(heading);
+  return getHeadingText(heading);
 }
 
 export function getPrevPageButton(calendar: CalendarInstance) {
