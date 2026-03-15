@@ -1,6 +1,8 @@
 name: Publish Preview Packages
 
 on:
+  pull_request:
+    types: [opened, synchronize]
   pull_request_review:
     types: [submitted]
 
@@ -8,27 +10,46 @@ permissions: {}
 
 jobs:
   check:
-    if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     outputs:
-      has-permissions: ${{ steps.checkPermissions.outputs.require-result }}
+      allowed: ${{ steps.decide.outputs.allowed }}
     steps:
-      - name: Check permissions
-        id: checkPermissions
+      - name: Check PR author permissions
+        if: github.event_name == 'pull_request'
+        id: authorPermissions
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: "write"
+          username: ${{ github.event.pull_request.user.login }}
+
+      - name: Check reviewer permissions
+        if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+        id: reviewerPermissions
         uses: actions-cool/check-user-permission@v2
         with:
           require: "write"
 
+      - name: Decide whether to publish
+        id: decide
+        run: |
+          # Maintainers can publish directly from their PRs
+          if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.authorPermissions.outputs.require-result }}" == "true" ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          # Non-maintainer PRs need approval from a maintainer
+          elif [[ "${{ github.event_name }}" == "pull_request_review" && "${{ steps.reviewerPermissions.outputs.require-result }}" == "true" ]]; then
+            echo "allowed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "allowed=false" >> "$GITHUB_OUTPUT"
+          fi
+
   publish:
     needs: check
-    if: needs.check.outputs.has-permissions == 'true'
+    if: needs.check.outputs.allowed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # Check out the reviewed commit, not the latest PR head, to prevent
-          # publishing code that was pushed after approval.
           ref: ${{ github.event.pull_request.head.sha }}
 
       - uses: actions/setup-node@v4
