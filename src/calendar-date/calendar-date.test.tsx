@@ -524,6 +524,48 @@ describe("CalendarDate", () => {
         await expect.element(getMonthHeading(second)).toHaveTextContent("January");
       });
 
+      it("pages by single month with 12 months", async () => {
+        const calendar = await mount(
+          <Fixture value="2020-06-01" months={12} pageBy="single">
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+            <CalendarMonth offset={2} />
+            <CalendarMonth offset={3} />
+            <CalendarMonth offset={4} />
+            <CalendarMonth offset={5} />
+            <CalendarMonth offset={6} />
+            <CalendarMonth offset={7} />
+            <CalendarMonth offset={8} />
+            <CalendarMonth offset={9} />
+            <CalendarMonth offset={10} />
+            <CalendarMonth offset={11} />
+          </Fixture>
+        );
+        const months = getMonths(calendar);
+        const first = months[0] as MonthInstance;
+        const last = months[11] as MonthInstance;
+
+        // with page-by="single", 12 months starting from June
+        // should show Jun-May, not snap to Jan-Dec
+        await expect.element(getMonthHeading(first)).toHaveTextContent("June");
+        await expect.element(getMonthHeading(last)).toHaveTextContent("May");
+
+        const next = getNextPageButton(calendar);
+        const prev = getPrevPageButton(calendar);
+
+        await next.click();
+        await expect.element(getMonthHeading(first)).toHaveTextContent("July");
+        await expect.element(getMonthHeading(last)).toHaveTextContent("June");
+
+        await prev.click();
+        await expect.element(getMonthHeading(first)).toHaveTextContent("June");
+        await expect.element(getMonthHeading(last)).toHaveTextContent("May");
+
+        await prev.click();
+        await expect.element(getMonthHeading(first)).toHaveTextContent("May");
+        await expect.element(getMonthHeading(last)).toHaveTextContent("April");
+      });
+
       it("handles focused date prop changing", async () => {
         const calendar = await mount(
           <Fixture value="2020-01-01" months={2} pageBy="single">
