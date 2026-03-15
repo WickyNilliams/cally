@@ -80,6 +80,12 @@
           }
         }
       }
+
+      #custom-heading {
+        calendar-month::part(heading) {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -145,6 +151,13 @@
       <calendar-month></calendar-month>
       <calendar-month offset="1"></calendar-month>
     </calendar-multi>
+
+    <h2>Custom Heading</h2>
+    <calendar-date id="custom-heading" page-by="single">
+      <calendar-heading slot="heading" month="long" year="numeric"></calendar-heading>
+      <calendar-month></calendar-month>
+    </calendar-multi>
+
 
     <script type="module">
       import "./src/index.ts";

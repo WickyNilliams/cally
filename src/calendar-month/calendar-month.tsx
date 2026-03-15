@@ -2,7 +2,8 @@ import { c, css, useContext, useRef, type Host } from "atomico";
 import { reset, vh } from "../utils/styles.js";
 import { useCalendarMonth } from "./useCalendarMonth.js";
 import { CalendarContext } from "./CalendarMonthContext.js";
-import { getWeekNumber, toDate } from "../utils/date.js";
+import { CalendarHeading } from "../calendar-heading/calendar-heading.js";
+import { getWeekNumber } from "../utils/date.js";
 
 const mapToDayNumber = (firstDayOfWeek: number, i: number) =>
   (i + firstDayOfWeek) % 7;
@@ -25,9 +26,11 @@ export const CalendarMonth = c(
 
     return (
       <host shadowDom focus={focus}>
-        <div id="h" part="heading">
-          {calendar.formatter.format(toDate(calendar.yearMonth))}
-        </div>
+        <CalendarHeading month="long" id="h" class="vh" />
+
+        <slot name="heading" part="heading">
+          <CalendarHeading month="long" aria-hidden="true" />
+        </slot>
 
         <table ref={table} aria-labelledby="h" part="table">
           <colgroup>

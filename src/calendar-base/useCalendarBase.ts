@@ -1,6 +1,7 @@
-import { useState, useEvent, useHost, useEffect, useMemo } from "atomico";
+import { useState, useEvent, useHost, useEffect, useMemo, useProvider } from "atomico";
+import { CalendarHeadingContext } from "../calendar-heading/CalendarHeadingContext.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
-import { useDateProp, useDateFormatter } from "../utils/hooks.js";
+import { useDateProp } from "../utils/hooks.js";
 import { clamp, toDate, getToday } from "../utils/date.js";
 
 export type Pagination = "single" | "months";
@@ -12,9 +13,6 @@ type CalendarBaseOptions = {
   focusedDate: PlainDate | undefined;
   setFocusedDate: (date: PlainDate) => void;
 };
-
-const formatOptions = { year: "numeric" } as const;
-const formatVerboseOptions = { year: "numeric", month: "long" } as const;
 
 function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
   return (b.year - a.year) * 12 + b.month - a.month;
@@ -130,6 +128,8 @@ export function useCalendarBase({
     goto,
   });
 
+  useProvider(CalendarHeadingContext, { type: "range", value: page, locale });
+
   const host = useHost();
   function focus(options?: CalendarFocusOptions) {
     const target = options?.target ?? "day";
@@ -145,8 +145,6 @@ export function useCalendarBase({
   }
 
   return {
-    format: useDateFormatter(formatOptions, locale),
-    formatVerbose: useDateFormatter(formatVerboseOptions, locale),
     page,
     focusedDate,
     dispatch,
