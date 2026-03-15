@@ -17,13 +17,7 @@ function Fixture({ children, ...props }: Record<string, any>): VNodeAny {
 }
 
 function getSlottedHeading(root: CalendarInstance | MonthInstance) {
-  const heading = root.querySelector<HTMLElement>("calendar-heading");
-
-  if (!heading) {
-    throw new Error("Could not find slotted calendar-heading");
-  }
-
-  return page.elementLocator(heading).locator("span");
+  return page.elementLocator(root).locator("calendar-heading span");
 }
 
 describe("CalendarHeading", () => {
