@@ -12,8 +12,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      allowed: ${{ steps.decide.outputs.allowed }}
+      author-allowed: ${{ steps.authorPermissions.outputs.require-result }}
+      reviewer-allowed: ${{ steps.reviewerPermissions.outputs.require-result }}
     steps:
+      # Maintainers can publish directly from their PRs
       - name: Check PR author permissions
         if: github.event_name == 'pull_request'
         id: authorPermissions
@@ -22,6 +24,7 @@ jobs:
           require: "write"
           username: ${{ github.event.pull_request.user.login }}
 
+      # Non-maintainer PRs need approval from a maintainer
       - name: Check reviewer permissions
         if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
         id: reviewerPermissions
@@ -29,22 +32,9 @@ jobs:
         with:
           require: "write"
 
-      - name: Decide whether to publish
-        id: decide
-        run: |
-          # Maintainers can publish directly from their PRs
-          if [[ "${{ github.event_name }}" == "pull_request" && "${{ steps.authorPermissions.outputs.require-result }}" == "true" ]]; then
-            echo "allowed=true" >> "$GITHUB_OUTPUT"
-          # Non-maintainer PRs need approval from a maintainer
-          elif [[ "${{ github.event_name }}" == "pull_request_review" && "${{ steps.reviewerPermissions.outputs.require-result }}" == "true" ]]; then
-            echo "allowed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "allowed=false" >> "$GITHUB_OUTPUT"
-          fi
-
   publish:
     needs: check
-    if: needs.check.outputs.allowed == 'true'
+    if: needs.check.outputs.author-allowed == 'true' || needs.check.outputs.reviewer-allowed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
