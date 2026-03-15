@@ -23,7 +23,7 @@ export const CalendarHeading = c(
         ? formatter.formatRange(toDate(context.value.start), toDate(context.value.end))
         : formatter.format(toDate(context.value));
 
-    return <host>{formattedDate}</host>;
+    return <host shadowDom><span>{formattedDate}</span></host>;
   },
   {
     props: {

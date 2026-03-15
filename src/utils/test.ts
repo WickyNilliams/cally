@@ -95,7 +95,7 @@ export function getCalendarHeading(calendar: CalendarInstance) {
     throw new Error("No heading found for calendar");
   }
 
-  return page.elementLocator(heading);
+  return page.elementLocator(heading.shadowRoot!.querySelector("span")!);
 }
 
 export function getMonthHeading(month: MonthInstance) {
@@ -111,7 +111,7 @@ export function getMonthHeading(month: MonthInstance) {
     throw new Error("No heading found for month");
   }
 
-  return page.elementLocator(heading);
+  return page.elementLocator(heading.shadowRoot!.querySelector("span")!);
 }
 
 export function getPrevPageButton(calendar: CalendarInstance) {
