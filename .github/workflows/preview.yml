@@ -1,6 +1,8 @@
 name: Publish Preview Packages
 
 on:
+  pull_request:
+    types: [opened, synchronize]
   pull_request_review:
     types: [submitted]
 
@@ -8,27 +10,36 @@ permissions: {}
 
 jobs:
   check:
-    if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     outputs:
-      has-permissions: ${{ steps.checkPermissions.outputs.require-result }}
+      author-allowed: ${{ steps.authorPermissions.outputs.require-result }}
+      reviewer-allowed: ${{ steps.reviewerPermissions.outputs.require-result }}
     steps:
-      - name: Check permissions
-        id: checkPermissions
+      # Maintainers can publish directly from their PRs
+      - name: Check PR author permissions
+        if: github.event_name == 'pull_request'
+        id: authorPermissions
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: "write"
+          username: ${{ github.event.pull_request.user.login }}
+
+      # Non-maintainer PRs need approval from a maintainer
+      - name: Check reviewer permissions
+        if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+        id: reviewerPermissions
         uses: actions-cool/check-user-permission@v2
         with:
           require: "write"
 
   publish:
     needs: check
-    if: needs.check.outputs.has-permissions == 'true'
+    if: needs.check.outputs.author-allowed == 'true' || needs.check.outputs.reviewer-allowed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # Check out the reviewed commit, not the latest PR head, to prevent
-          # publishing code that was pushed after approval.
           ref: ${{ github.event.pull_request.head.sha }}
 
       - uses: actions/setup-node@v4
