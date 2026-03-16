@@ -2,7 +2,7 @@ name: Publish Preview Packages
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, labeled]
   pull_request_review:
     types: [submitted]
 
@@ -10,6 +10,7 @@ permissions: {}
 
 jobs:
   check:
+    if: contains(github.event.pull_request.labels.*.name, 'preview')
     runs-on: ubuntu-latest
     outputs:
       author-allowed: ${{ steps.authorPermissions.outputs.require-result }}
