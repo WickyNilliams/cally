@@ -2,7 +2,7 @@ import { createContext, signal, type ReadonlySignal } from "../signal-element.js
 import type { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { getToday, type DaysOfWeek } from "../utils/date.js";
 
-interface CalendarContextBase {
+export interface CalendarContextBase {
   min?: PlainDate;
   max?: PlainDate;
   today?: PlainDate;
