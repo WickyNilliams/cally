@@ -33,7 +33,7 @@
     "astro:preview": "astro preview --root ./docs"
   },
   "dependencies": {
-    "usignal": "^0.10.0"
+    "dom-cue": "^0.2.8"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",

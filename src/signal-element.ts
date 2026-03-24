@@ -4,7 +4,7 @@ import {
   effect,
   batch,
   type Signal,
-} from "usignal";
+} from "dom-cue";
 
 type ReadonlySignal<T> = Readonly<Signal<T>>;
 

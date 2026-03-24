@@ -1,5 +1,5 @@
 import { reset, vh } from "../utils/styles.js";
-import { signal, computed, batch, type Signal } from "../signal-element.js";
+import { signal, batch, type Signal } from "../signal-element.js";
 import { SignalElement } from "../signal-element.js";
 import { CalendarCtx, type CalendarContextValue, type CalendarContextBase } from "../calendar-month/CalendarMonthContext.js";
 import { createPage, diffInMonths, type Pagination, type CalendarFocusOptions } from "./useCalendarBase.js";
@@ -193,7 +193,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     return diff >= 0 && diff < (self.$.months.value as number);
   };
 
-  const ctxSignal = computed(() => buildCtxValue(focusedDate.value, page.value));
+  const ctxSignal = signal(buildCtxValue(focusedDate.value, page.value));
   CalendarCtx.provide(self, ctxSignal);
 
   prevBtn.addEventListener("click", () => updatePage(-getStep()));
@@ -210,6 +210,11 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   });
 
   const registerEffects = () => {
+    // Keep context signal in sync with page, focusedDate, and all reactive props
+    self.createEffect(() => {
+      ctxSignal.value = buildCtxValue(focusedDate.value, page.value);
+    });
+
     // Sync focusedDate from prop when it changes
     self.createEffect(() => {
       const fd = parseDateProp(self.$.focusedDate.value as string);
