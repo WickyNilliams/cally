@@ -1,14 +1,18 @@
 import { SignalElement } from "../signal-element.js";
 import { CalendarCtx } from "./CalendarMonthContext.js";
-import { getWeekNumber, toDate } from "../utils/date.js";
-import { reset, vh } from "../utils/styles.js";
 import {
-  getCalendarMonthData,
-  handleKeyDown,
-} from "./useCalendarMonth.js";
+  clamp,
+  endOfWeek,
+  getToday,
+  getViewOfMonth,
+  getWeekNumber,
+  startOfWeek,
+  toDate,
+} from "../utils/date.js";
+import { getDayNames, makeDateFormatter } from "../utils/hooks.js";
+import { reset, vh } from "../utils/styles.js";
 import type { CalendarFocusOptions } from "../calendar-base/useCalendarBase.js";
 import { PlainDate } from "../utils/temporal.js";
-import { clamp } from "../utils/date.js";
 
 const ROWS = 6;
 const COLS = 7;
@@ -115,6 +119,10 @@ const MONTH_STYLES = `
   }
 `;
 
+const longDayOptions = { weekday: "long" } as const;
+const monthOptions = { month: "long" } as const;
+const dayOptions = { month: "long", day: "numeric" } as const;
+
 export class CalendarMonth extends SignalElement<{
   offset: { type: typeof Number };
 }> {
@@ -175,9 +183,22 @@ export class CalendarMonth extends SignalElement<{
     table.addEventListener("keydown", (e) => {
       const ctxSig = CalendarCtx.consume(this);
       if (!ctxSig) return;
-      handleKeyDown(e, ctxSig.value, (date: PlainDate) => {
-        this.dispatchEvent(new CustomEvent("focusday", { bubbles: true, detail: date }));
-      });
+      const { focusedDate, min, max, firstDayOfWeek } = ctxSig.value;
+      const ltr = (e.target as HTMLElement).matches(":dir(ltr)");
+      let date: PlainDate;
+      switch (e.key) {
+        case "ArrowRight": date = focusedDate.add({ days: ltr ? 1 : -1 }); break;
+        case "ArrowLeft":  date = focusedDate.add({ days: ltr ? -1 : 1 }); break;
+        case "ArrowDown":  date = focusedDate.add({ days: 7 }); break;
+        case "ArrowUp":    date = focusedDate.add({ days: -7 }); break;
+        case "PageUp":     date = focusedDate.add(e.shiftKey ? { years: -1 } : { months: -1 }); break;
+        case "PageDown":   date = focusedDate.add(e.shiftKey ? { years: 1 } : { months: 1 }); break;
+        case "Home":       date = startOfWeek(focusedDate, firstDayOfWeek); break;
+        case "End":        date = endOfWeek(focusedDate, firstDayOfWeek); break;
+        default: return;
+      }
+      this.dispatchEvent(new CustomEvent("focusday", { bubbles: true, detail: clamp(date, min, max) }));
+      e.preventDefault();
     });
 
     table.addEventListener("mouseover", (e) => {
@@ -199,12 +220,16 @@ export class CalendarMonth extends SignalElement<{
 
       this.createEffect(() => {
         const ctx = ctxSig.value;
+        const { min, max, today, focusedDate, firstDayOfWeek, locale, formatWeekday,
+                isDateDisallowed, getDayParts, showOutsideDays } = ctx;
         const offset = this.$.offset.value as number;
-        const { weeks, yearMonth, daysLong, daysVisible, formatter, getDayPart } =
-          getCalendarMonthData(ctx, offset);
+
+        const todaysDate = today ?? getToday();
+        const yearMonth = ctx.page.start.add({ months: offset });
+        const weeks = getViewOfMonth(yearMonth, firstDayOfWeek);
 
         // ── Heading ───────────────────────────────────────────────────────
-        heading.textContent = formatter.format(toDate(yearMonth));
+        heading.textContent = makeDateFormatter(monthOptions, locale).format(toDate(yearMonth));
 
         // ── Week numbers column (header) ──────────────────────────────────
         if (ctx.showWeekNumbers && !weekNumbersShown) {
@@ -219,23 +244,24 @@ export class CalendarMonth extends SignalElement<{
         }
 
         // ── Thead day names ───────────────────────────────────────────────
+        const daysLong = getDayNames(longDayOptions, firstDayOfWeek, locale);
+        const daysVisible = getDayNames({ weekday: formatWeekday }, firstDayOfWeek, locale);
         for (let c = 0; c < COLS; c++) {
           const th = theadRow.cells[weekNumbersShown ? c + 1 : c] as HTMLTableCellElement;
-          const dayIndex = (c + ctx.firstDayOfWeek) % 7;
+          const dayIndex = (c + firstDayOfWeek) % 7;
           th.setAttribute("part", `th day day-${dayIndex}`);
           th.querySelector<HTMLElement>(".vh")!.textContent = daysLong[c];
           th.querySelector<HTMLElement>("[aria-hidden]")!.textContent = daysVisible[c];
         }
 
         // ── Tbody rows ────────────────────────────────────────────────────
+        const dayFormatter = makeDateFormatter(dayOptions, locale);
         for (let r = 0; r < ROWS; r++) {
           const row = tbody.rows[r];
           const week = weeks[r];
 
           row.hidden = !week;
 
-          // Insert/remove weeknumber cell per-row based on visibility
-          // (cells must only exist in visible rows so querySelectorAll counts are correct)
           if (weekNumbersShown) {
             if (week) {
               if (wnBodyThs[r].parentNode !== row) row.prepend(wnBodyThs[r]);
@@ -245,15 +271,13 @@ export class CalendarMonth extends SignalElement<{
             }
           }
 
-          // Cell offset: 1 when weeknumber cell is present in this row
           const dayOffset = weekNumbersShown && !!week ? 1 : 0;
           for (let c = 0; c < COLS; c++) {
             const btn = row.cells[c + dayOffset].querySelector<HTMLButtonElement>("button")!;
             const date = week?.[c];
-            const dayProps = date ? getDayPart(date) : undefined;
+            const isInMonth = date ? yearMonth.equals(date) : false;
 
-            if (!dayProps || !date) {
-              // No visible day — button stays but is inert/hidden
+            if (!date || (!showOutsideDays && !isInMonth)) {
               btn.setAttribute("part", "button day");
               btn.setAttribute("aria-label", "");
               btn.tabIndex = -1;
@@ -266,22 +290,44 @@ export class CalendarMonth extends SignalElement<{
               continue;
             }
 
-            btn.setAttribute("part", dayProps.part);
-            btn.setAttribute("aria-label", dayProps.ariaLabel);
-            btn.tabIndex = dayProps.tabindex;
-            btn.disabled = dayProps.disabled;
-            if (dayProps.ariaDisabled) {
-              btn.setAttribute("aria-disabled", dayProps.ariaDisabled);
+            const isFocused = date.equals(focusedDate);
+            const isToday = date.equals(todaysDate);
+            const asDate = toDate(date);
+            const isDisallowed = isDateDisallowed?.(asDate);
+            const isDisabled = clamp(date, min, max) !== date;
+
+            let isSelected: boolean | undefined;
+            let rangeParts = "";
+            if (ctx.type === "range") {
+              const [start, end] = ctx.value;
+              const isRangeStart = start?.equals(date);
+              const isRangeEnd = end?.equals(date);
+              isSelected = !!(start && end && clamp(date, start, end) === date);
+              // prettier-ignore
+              rangeParts = `${isRangeStart ? "range-start" : ""} ${isRangeEnd ? "range-end" : ""} ${isSelected && !isRangeStart && !isRangeEnd ? "range-inner" : ""}`;
+            } else if (ctx.type === "multi") {
+              isSelected = ctx.value.some((d) => d.equals(date));
             } else {
-              btn.removeAttribute("aria-disabled");
+              isSelected = ctx.value?.equals(date);
             }
-            btn.setAttribute("aria-pressed", dayProps.ariaPressed);
-            if (dayProps.ariaCurrent) {
-              btn.setAttribute("aria-current", dayProps.ariaCurrent);
-            } else {
-              btn.removeAttribute("aria-current");
-            }
-            btn.textContent = String(dayProps.day);
+
+            // prettier-ignore
+            const part = `button day day-${asDate.getUTCDay()} ${
+              isInMonth ? (isSelected ? "selected" : "") : "outside"
+            } ${isDisallowed ? "disallowed" : ""} ${isToday ? "today" : ""} ${
+              getDayParts?.(asDate) ?? ""
+            } ${rangeParts}`.replace(/\s+/g, " ").trim();
+
+            btn.setAttribute("part", part);
+            btn.setAttribute("aria-label", dayFormatter.format(asDate));
+            btn.tabIndex = isInMonth && isFocused ? 0 : -1;
+            btn.disabled = isDisabled;
+            if (isDisallowed) btn.setAttribute("aria-disabled", "true");
+            else btn.removeAttribute("aria-disabled");
+            btn.setAttribute("aria-pressed", String(!!(isInMonth && isSelected)));
+            if (isToday) btn.setAttribute("aria-current", "date");
+            else btn.removeAttribute("aria-current");
+            btn.textContent = String(date.day);
             btn.dataset.date = date.toString();
           }
         }
