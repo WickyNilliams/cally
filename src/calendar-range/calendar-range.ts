@@ -1,9 +1,8 @@
-import { SignalElement, signal, batch } from "../signal-element.js";
-import { BASE_STYLES, createBaseTemplate, sharedProps, setupCalendarBase, buildSharedCtx } from "../calendar-base/calendar-base.js";
+import { signal, batch } from "../signal-element.js";
+import { BASE_STYLES, createBaseTemplate, sharedProps, setupCalendarBase, buildSharedCtx, CalendarBaseElement } from "../calendar-base/calendar-base.js";
 import { parseDateProp, parseDateRangeProp } from "../utils/hooks.js";
 import { getToday, toDate } from "../utils/date.js";
 import { PlainDate } from "../utils/temporal.js";
-import type { CalendarFocusOptions } from "../calendar-base/useCalendarBase.js";
 
 const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
   PlainDate.compare(a, b) < 0 ? [a, b] : [b, a];
@@ -13,7 +12,7 @@ const rangeProps = {
   tentative: { type: String, value: "" },
 } as const;
 
-export class CalendarRange extends SignalElement<typeof rangeProps> {
+export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
   static properties = rangeProps;
   static styles = BASE_STYLES;
   static template = createBaseTemplate();
@@ -82,14 +81,6 @@ export class CalendarRange extends SignalElement<typeof rangeProps> {
     };
   }
 
-  override focus(options?: CalendarFocusOptions) {
-    const target = options?.target ?? "day";
-    if (target === "day") {
-      this.querySelectorAll<HTMLElement>("calendar-month").forEach((m) => m.focus(options));
-    } else {
-      this.shadowRoot!.querySelector<HTMLButtonElement>(`[part~='${target}']`)!.focus(options);
-    }
-  }
 }
 
 customElements.define("calendar-range", CalendarRange);

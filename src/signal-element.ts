@@ -41,7 +41,6 @@ export class SignalElement<
   /** Reactive signal proxies for each declared property */
   $!: SignalProps<T>;
 
-  #effects: (() => void)[] = [];
   #cleanups: (() => void)[] = [];
   #connected = false;
 
@@ -112,30 +111,15 @@ export class SignalElement<
   }
 
   connectedCallback() {
-    if (!this.#connected) {
-      this.#connected = true;
-      const setupResult = this.setup();
-      if (typeof setupResult === "function") {
-        this.#runEffects(setupResult);
-      }
-    } else {
-      // Re-running effects on reconnect
-      this.#cleanupEffects();
-      const setupResult = this.setup();
-      if (typeof setupResult === "function") {
-        this.#runEffects(setupResult);
-      }
-    }
+    if (this.#connected) this.#cleanupEffects();
+    this.#connected = true;
+    const result = this.setup();
+    if (typeof result === "function") result();
   }
 
   disconnectedCallback() {
     this.#cleanupEffects();
     this.#connected = false;
-  }
-
-  #runEffects(effectsFn: () => void) {
-    // Run the effects function; it will call createEffect internally
-    effectsFn();
   }
 
   #cleanupEffects() {

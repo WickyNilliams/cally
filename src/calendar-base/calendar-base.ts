@@ -1,6 +1,6 @@
 import { reset, vh } from "../utils/styles.js";
 import { signal, computed, batch, type Signal } from "../signal-element.js";
-import type { SignalElement } from "../signal-element.js";
+import { SignalElement } from "../signal-element.js";
 import { CalendarCtx, type CalendarContextValue, type CalendarContextBase } from "../calendar-month/CalendarMonthContext.js";
 import { createPage, diffInMonths, type Pagination, type CalendarFocusOptions } from "./useCalendarBase.js";
 import { parseDateProp, makeDateFormatter } from "../utils/hooks.js";
@@ -253,4 +253,17 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   };
 
   return { focusedDate, page, containsDate, registerEffects };
+}
+
+export class CalendarBaseElement<
+  T extends typeof sharedProps = typeof sharedProps,
+> extends SignalElement<T> {
+  override focus(options?: CalendarFocusOptions) {
+    const target = options?.target ?? "day";
+    if (target === "day") {
+      this.querySelectorAll<HTMLElement>("calendar-month").forEach((m) => m.focus(options));
+    } else {
+      this.shadowRoot!.querySelector<HTMLButtonElement>(`[part~='${target}']`)!.focus(options);
+    }
+  }
 }

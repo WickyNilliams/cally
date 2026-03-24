@@ -1,11 +1,10 @@
-import { SignalElement, batch } from "../signal-element.js";
-import { BASE_STYLES, createBaseTemplate, sharedProps, setupCalendarBase, buildSharedCtx } from "../calendar-base/calendar-base.js";
+import { batch } from "../signal-element.js";
+import { BASE_STYLES, createBaseTemplate, sharedProps, setupCalendarBase, buildSharedCtx, CalendarBaseElement } from "../calendar-base/calendar-base.js";
 import { parseDateProp, parseDateMultiProp } from "../utils/hooks.js";
 import { getToday } from "../utils/date.js";
 import { PlainDate } from "../utils/temporal.js";
-import type { CalendarFocusOptions } from "../calendar-base/useCalendarBase.js";
 
-export class CalendarMulti extends SignalElement<typeof sharedProps> {
+export class CalendarMulti extends CalendarBaseElement {
   static properties = sharedProps;
   static styles = BASE_STYLES;
   static template = createBaseTemplate();
@@ -39,15 +38,6 @@ export class CalendarMulti extends SignalElement<typeof sharedProps> {
     });
 
     return registerEffects;
-  }
-
-  override focus(options?: CalendarFocusOptions) {
-    const target = options?.target ?? "day";
-    if (target === "day") {
-      this.querySelectorAll<HTMLElement>("calendar-month").forEach((m) => m.focus(options));
-    } else {
-      this.shadowRoot!.querySelector<HTMLButtonElement>(`[part~='${target}']`)!.focus(options);
-    }
   }
 }
 
