@@ -1,6 +1,4 @@
-import { css } from "atomico";
-
-export const reset = css`
+export const reset = `
   *,
   *::before,
   *::after {
@@ -15,7 +13,7 @@ export const reset = css`
   }
 `;
 
-export const vh = css`
+export const vh = `
   .vh {
     position: absolute;
     transform: scale(0);

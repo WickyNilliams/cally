@@ -1,5 +1,4 @@
-import { useEvent, useMemo } from "atomico";
-import { useDayNames, useDateFormatter } from "../utils/hooks.js";
+import { getDayNames, makeDateFormatter } from "../utils/hooks.js";
 import {
   clamp,
   endOfWeek,
@@ -11,23 +10,17 @@ import {
 import type { PlainDate } from "../utils/temporal.js";
 import type { CalendarContextValue } from "./CalendarMonthContext.js";
 
-const inRange = (date: PlainDate, min?: PlainDate, max?: PlainDate) =>
-  clamp(date, min, max) === date;
-
-const isLTR = (e: Event) => (e.target as HTMLElement).matches(":dir(ltr)");
-
 const dayOptions = { month: "long", day: "numeric" } as const;
 const monthOptions = { month: "long" } as const;
 const longDayOptions = { weekday: "long" } as const;
-const dispatchOptions = { bubbles: true };
 
-type UseCalendarMonthOptions = {
-  props: { offset: number };
-  context: CalendarContextValue;
-};
+const inRange = (date: PlainDate, min?: PlainDate, max?: PlainDate) =>
+  clamp(date, min, max) === date;
 
-export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
-  const { offset } = props;
+export const isLTR = (e: Event) =>
+  (e.target as HTMLElement).matches(":dir(ltr)");
+
+export function getCalendarMonthData(context: CalendarContextValue, offset: number) {
   const {
     firstDayOfWeek,
     isDateDisallowed,
@@ -41,75 +34,18 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   } = context;
 
   const todaysDate = today ?? getToday();
-  const daysLong = useDayNames(longDayOptions, firstDayOfWeek, locale);
-  const visibleDayOptions = useMemo(
-    () => ({ weekday: formatWeekday }),
-    [formatWeekday]
-  );
-  const daysVisible = useDayNames(visibleDayOptions, firstDayOfWeek, locale);
-  const dayFormatter = useDateFormatter(dayOptions, locale);
-  const formatter = useDateFormatter(monthOptions, locale);
+  const daysLong = getDayNames(longDayOptions, firstDayOfWeek, locale);
+  const daysVisible = getDayNames({ weekday: formatWeekday }, firstDayOfWeek, locale);
+  const dayFormatter = makeDateFormatter(dayOptions, locale);
+  const formatter = makeDateFormatter(monthOptions, locale);
+  const yearMonth = page.start.add({ months: offset });
+  const weeks = getViewOfMonth(yearMonth, firstDayOfWeek);
 
-  const yearMonth = useMemo(
-    () => page.start.add({ months: offset }),
-    [page, offset]
-  );
-
-  const weeks = useMemo(
-    () => getViewOfMonth(yearMonth, firstDayOfWeek),
-    [yearMonth, firstDayOfWeek]
-  );
-
-  const dispatchFocusDay = useEvent<PlainDate>("focusday", dispatchOptions);
-  const dispatchSelectDay = useEvent<PlainDate>("selectday", dispatchOptions);
-  const dispatchHoverDay = useEvent<PlainDate>("hoverday", dispatchOptions);
-
-  function focusDay(date: PlainDate) {
-    dispatchFocusDay(clamp(date, min, max));
-  }
-
-  function onKeyDown(e: KeyboardEvent) {
-    let date: PlainDate;
-
-    switch (e.key) {
-      case "ArrowRight":
-        date = focusedDate.add({ days: isLTR(e) ? 1 : -1 });
-        break;
-      case "ArrowLeft":
-        date = focusedDate.add({ days: isLTR(e) ? -1 : 1 });
-        break;
-      case "ArrowDown":
-        date = focusedDate.add({ days: 7 });
-        break;
-      case "ArrowUp":
-        date = focusedDate.add({ days: -7 });
-        break;
-      case "PageUp":
-        date = focusedDate.add(e.shiftKey ? { years: -1 } : { months: -1 });
-        break;
-      case "PageDown":
-        date = focusedDate.add(e.shiftKey ? { years: 1 } : { months: 1 });
-        break;
-      case "Home":
-        date = startOfWeek(focusedDate, firstDayOfWeek);
-        break;
-      case "End":
-        date = endOfWeek(focusedDate, firstDayOfWeek);
-        break;
-      default:
-        return;
-    }
-
-    focusDay(date);
-    e.preventDefault();
-  }
-
-  function getDayProps(date: PlainDate) {
+  function getDayPart(date: PlainDate): string | undefined {
     const isInMonth = yearMonth.equals(date);
 
-    // days outside of month are only shown if `showOutsideDays` is true
     if (!context.showOutsideDays && !isInMonth) {
-      return;
+      return undefined;
     }
 
     const isFocusedDay = date.equals(focusedDate);
@@ -118,7 +54,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     const isDisallowed = isDateDisallowed?.(asDate);
     const isDisabled = !inRange(date, min, max);
 
-    let parts = "";
+    let rangeParts = "";
     let isSelected: boolean | undefined;
 
     if (context.type === "range") {
@@ -126,15 +62,8 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       const isRangeStart = start?.equals(date);
       const isRangeEnd = end?.equals(date);
       isSelected = start && end && inRange(date, start, end);
-
       // prettier-ignore
-      parts = `${
-        isRangeStart ? "range-start" : ""
-      } ${
-        isRangeEnd ? "range-end" : ""
-      } ${
-        isSelected && !isRangeStart && !isRangeEnd ? "range-inner" : ""
-      }`;
+      rangeParts = `${isRangeStart ? "range-start" : ""} ${isRangeEnd ? "range-end" : ""} ${isSelected && !isRangeStart && !isRangeEnd ? "range-inner" : ""}`;
     } else if (context.type === "multi") {
       isSelected = context.value.some((d) => d.equals(date));
     } else {
@@ -142,46 +71,75 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     }
 
     // prettier-ignore
-    const commonParts = `button day day-${asDate.getUTCDay()} ${
-      // we don't want outside days to ever be shown as selected
+    const part = `button day day-${asDate.getUTCDay()} ${
       isInMonth ? (isSelected ? "selected" : "") : "outside"
-    } ${
-      isDisallowed ? "disallowed" : ""
-    } ${
-      isToday ? "today" : ""
-    } ${
+    } ${isDisallowed ? "disallowed" : ""} ${isToday ? "today" : ""} ${
       context.getDayParts?.(asDate) ?? ""
-    }`;
+    } ${rangeParts}`;
 
     return {
-      part: `${commonParts} ${parts}`,
+      part: part.replace(/\s+/g, " ").trim(),
       tabindex: isInMonth && isFocusedDay ? 0 : -1,
       disabled: isDisabled,
-      "aria-disabled": isDisallowed ? "true" : undefined,
-      "aria-pressed": isInMonth && isSelected,
-      "aria-current": isToday ? "date" : undefined,
-      "aria-label": dayFormatter.format(asDate),
-      onkeydown: onKeyDown,
-      onclick() {
-        if (!isDisallowed) {
-          dispatchSelectDay(date);
-        }
-        focusDay(date);
-      },
-      onmouseover() {
-        if (!isDisallowed && !isDisabled) {
-          dispatchHoverDay(date);
-        }
-      },
-    };
+      ariaDisabled: isDisallowed ? "true" : null,
+      ariaPressed: isInMonth && isSelected ? "true" : "false",
+      ariaCurrent: isToday ? "date" : null,
+      ariaLabel: dayFormatter.format(asDate),
+      day: date.day,
+    } as DayProps;
   }
 
-  return {
-    weeks,
-    yearMonth,
-    daysLong,
-    daysVisible,
-    formatter,
-    getDayProps,
-  };
+  return { weeks, yearMonth, daysLong, daysVisible, formatter, getDayPart };
+}
+
+export type DayProps = {
+  part: string;
+  tabindex: number;
+  disabled: boolean;
+  ariaDisabled: string | null;
+  ariaPressed: string;
+  ariaCurrent: string | null;
+  ariaLabel: string;
+  day: number;
+};
+
+export function handleKeyDown(
+  e: KeyboardEvent,
+  context: CalendarContextValue,
+  dispatchFocusDay: (date: PlainDate) => void
+) {
+  const { focusedDate, min, max, firstDayOfWeek } = context;
+  let date: PlainDate;
+
+  switch (e.key) {
+    case "ArrowRight":
+      date = focusedDate.add({ days: isLTR(e) ? 1 : -1 });
+      break;
+    case "ArrowLeft":
+      date = focusedDate.add({ days: isLTR(e) ? -1 : 1 });
+      break;
+    case "ArrowDown":
+      date = focusedDate.add({ days: 7 });
+      break;
+    case "ArrowUp":
+      date = focusedDate.add({ days: -7 });
+      break;
+    case "PageUp":
+      date = focusedDate.add(e.shiftKey ? { years: -1 } : { months: -1 });
+      break;
+    case "PageDown":
+      date = focusedDate.add(e.shiftKey ? { years: 1 } : { months: 1 });
+      break;
+    case "Home":
+      date = startOfWeek(focusedDate, firstDayOfWeek);
+      break;
+    case "End":
+      date = endOfWeek(focusedDate, firstDayOfWeek);
+      break;
+    default:
+      return;
+  }
+
+  dispatchFocusDay(clamp(date, min, max));
+  e.preventDefault();
 }

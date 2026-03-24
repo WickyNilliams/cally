@@ -24,7 +24,7 @@ export default defineConfig({
 
     dts({
       rollupTypes: true,
-      bundledPackages: ["atomico"],
+      bundledPackages: ["@preact/signals-core"],
       tsconfigPath: "./tsconfig.build.json",
 
       // workaround to include the global types

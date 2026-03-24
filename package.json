@@ -33,9 +33,10 @@
     "astro:preview": "astro preview --root ./docs"
   },
   "dependencies": {
-    "atomico": "^1.79.2"
+    "@preact/signals-core": "^1.8.0"
   },
   "devDependencies": {
+    "atomico": "^1.79.2",
     "@astrojs/check": "^0.9.4",
     "@atomico/tsconfig": "^1.1.2",
     "@atomico/vite": "^2.21.1",

@@ -1,4 +1,4 @@
-import { createContext } from "atomico";
+import { createContext, signal, type ReadonlySignal } from "../signal-element.js";
 import type { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { getToday, type DaysOfWeek } from "../utils/date.js";
 
@@ -37,13 +37,35 @@ export type CalendarContextValue =
   | CalendarRangeContext
   | CalendarMultiContext;
 
-const t = getToday();
+/** Signal-based context handle used by all components */
+export const CalendarCtx = createContext<ReadonlySignal<CalendarContextValue>>("calendar");
 
-export const CalendarContext = createContext<CalendarContextValue>({
+const t = getToday();
+const DEFAULT_CONTEXT: CalendarContextValue = {
   type: "date",
   firstDayOfWeek: 1,
   focusedDate: t,
   page: { start: t.toPlainYearMonth(), end: t.toPlainYearMonth() },
-} as CalendarContextValue);
+};
+
+/**
+ * Vanilla WC wrapper used in calendar-month tests.
+ * Tests wrap <CalendarMonth> in <CalendarContext value={...}> to provide context.
+ */
+export class CalendarContext extends HTMLElement {
+  #sig = signal<CalendarContextValue>(DEFAULT_CONTEXT);
+
+  connectedCallback() {
+    CalendarCtx.provide(this, this.#sig);
+  }
+
+  get value(): CalendarContextValue {
+    return this.#sig.value;
+  }
+
+  set value(v: CalendarContextValue) {
+    this.#sig.value = v;
+  }
+}
 
 customElements.define("calendar-ctx", CalendarContext);

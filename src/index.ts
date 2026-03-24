@@ -14,22 +14,15 @@ export {
   CalendarSelectMonth,
 };
 
-import type { AtomicoThis } from "atomico/types/dom";
-
-type Simplify<T> = {
-  [K in keyof T]: T[K];
-} & {};
+type Simplify<T> = { [K in keyof T]: T[K] } & {};
 
 type ComponentProps<T extends abstract new (...args: any) => any> = Simplify<
-  Partial<Omit<InstanceType<T>, keyof HTMLElement | keyof AtomicoThis>>
+  Partial<Omit<InstanceType<T>, keyof HTMLElement>>
 >;
 
-// export props for use in react/vue/etc
 export type CalendarMonthProps = ComponentProps<typeof CalendarMonth>;
 export type CalendarDateProps = ComponentProps<typeof CalendarDate>;
 export type CalendarRangeProps = ComponentProps<typeof CalendarRange>;
 export type CalendarMultiProps = ComponentProps<typeof CalendarMulti>;
 export type CalendarSelectYearProps = ComponentProps<typeof CalendarSelectYear>;
-export type CalendarSelectMonthProps = ComponentProps<
-  typeof CalendarSelectMonth
->;
+export type CalendarSelectMonthProps = ComponentProps<typeof CalendarSelectMonth>;
