@@ -4,8 +4,9 @@ import {
   effect,
   batch,
   type Signal,
-  type ReadonlySignal,
-} from "@preact/signals-core";
+} from "usignal";
+
+type ReadonlySignal<T> = Readonly<Signal<T>>;
 
 export { signal, computed, effect, batch };
 export type { Signal, ReadonlySignal };

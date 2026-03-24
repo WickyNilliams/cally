@@ -33,10 +33,10 @@
     "astro:preview": "astro preview --root ./docs"
   },
   "dependencies": {
-    "@preact/signals-core": "^1.8.0"
+    "usignal": "^0.10.0"
   },
   "devDependencies": {
-    "atomico": "^1.79.2",
+    "@arethetypeswrong/cli": "^0.18.2",
     "@astrojs/check": "^0.9.4",
     "@atomico/tsconfig": "^1.1.2",
     "@atomico/vite": "^2.21.1",
@@ -44,13 +44,13 @@
     "@vitest/browser-playwright": "^4.0.16",
     "@vitest/ui": "^4.0.16",
     "astro": "^5.5.6",
+    "atomico": "^1.79.2",
     "hastscript": "^9.0.1",
     "playwright": "^1.50.1",
     "postcss-nesting": "^13.0.1",
     "prettier": "^3.5.3",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
-    "@arethetypeswrong/cli": "^0.18.2",
     "typescript": "^5.8.2",
     "vite": "^6.2.4",
     "vite-plugin-dts": "^4.5.3",
