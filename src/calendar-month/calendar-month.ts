@@ -19,12 +19,12 @@ const COLS = 7;
 
 /** Build static template — NO weeknumber cells here; those are created once in setup() */
 function buildTemplate(): string {
-  const th = `<th scope="col"><span class="vh"></span><span aria-hidden="true"></span></th>`;
-  const td = `<td part="td"><button class="num" type="button" tabindex="-1"></button></td>`;
+  const th = `<th scope=col><span class=vh></span><span aria-hidden=true></span></th>`;
+  const td = `<td part=td><button class=num type=button tabindex=-1></button></td>`;
   const tr = `<tr part="tr week">${td.repeat(COLS)}</tr>`;
   let cols = "";
-  for (let i = 1; i <= COLS; i++) cols += `<col part="col-${i}">`;
-  return `<div id="h" part="heading"></div><table aria-labelledby="h" part="table"><colgroup>${cols}</colgroup><thead><tr part="tr head">${th.repeat(COLS)}</tr></thead><tbody>${tr.repeat(ROWS)}</tbody></table>`;
+  for (let i = 1; i <= COLS; i++) cols += `<col part=col-${i}>`;
+  return `<div id=h part=heading></div><table aria-labelledby=h part=table><colgroup>${cols}</colgroup><thead><tr part="tr head">${th.repeat(COLS)}</tr></thead><tbody>${tr.repeat(ROWS)}</tbody></table>`;
 }
 
 const MONTH_STYLES = `${reset}${vh}:host{--color-accent:black;--color-text-on-accent:white;display:flex;flex-direction:column;gap:.25rem;text-align:center;inline-size:fit-content}table{border-collapse:collapse;font-size:.875rem}th{inline-size:2.25rem;block-size:2.25rem}td{padding:0}.num{font-variant-numeric:tabular-nums}button{color:inherit;font-size:inherit;background:#0000;border:0;block-size:2.25rem;inline-size:2.25rem}button:hover:where(:not(:disabled,[aria-disabled])){background:#0000000d}button:is([aria-pressed=true],:focus-visible){background:var(--color-accent);color:var(--color-text-on-accent)}button:focus-visible{outline:1px solid var(--color-text-on-accent);outline-offset:-2px}button:disabled,:host::part(outside),:host::part(disallowed){cursor:default;opacity:.5}`;
