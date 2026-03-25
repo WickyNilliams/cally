@@ -166,9 +166,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
       const snap = page.peek();
       const diff = diffInMonths(snap.start, fd.toPlainYearMonth());
       if (diff >= 0 && diff < months) return;
-      if (diff === -1) updatePage(-getStep());
-      else if (diff === months) updatePage(getStep());
-      else updatePage(Math.floor(diff / months) * months);
+      updatePage(diff === -1 ? -getStep() : diff === months ? getStep() : Math.floor(diff / months) * months);
     });
 
     // Update headings and prev/next button states

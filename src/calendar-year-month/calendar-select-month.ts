@@ -27,7 +27,7 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
     const pool: HTMLOptionElement[] = [];
     for (let i = 0; i < MONTH_COUNT; i++) {
       const opt = document.createElement("option");
-      opt.setAttribute("part", "option");
+      opt.part.add("option");
       pool.push(opt);
     }
     select.replaceChildren(...pool);

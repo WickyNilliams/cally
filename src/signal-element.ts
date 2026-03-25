@@ -87,9 +87,7 @@ export class SignalElement<
 
   static get observedAttributes(): string[] {
     const props = (this as typeof SignalElement).properties;
-    return Object.entries(props)
-      .filter(([, c]) => c.type !== Function)
-      .map(([k]) => toKebab(k));
+    return Object.keys(props).filter(k => props[k].type !== Function).map(toKebab);
   }
 
   attributeChangedCallback(name: string, _old: string | null, next: string | null) {

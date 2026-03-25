@@ -13,8 +13,8 @@ import {
   getTodayButton,
   type MonthInstance,
 } from "../utils/test.js";
+import { CalendarContext } from "./CalendarMonthContext.test-helper.js";
 import {
-  CalendarContext,
   type CalendarDateContext,
   type CalendarMultiContext,
   type CalendarRangeContext,

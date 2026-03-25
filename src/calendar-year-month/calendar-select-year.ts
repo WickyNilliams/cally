@@ -25,7 +25,7 @@ export class CalendarSelectYear extends SignalElement<typeof yearProps> {
     const pool: HTMLOptionElement[] = [];
     for (let i = 0; i < MAX_POOL; i++) {
       const opt = document.createElement("option");
-      opt.setAttribute("part", "option");
+      opt.part.add("option");
       pool.push(opt);
     }
 
