@@ -67,7 +67,7 @@ export class SignalElement<
     const signals: Record<string, Signal<unknown>> = {};
 
     for (const [key, config] of Object.entries(props)) {
-      signals[key] = signal(config.value ?? (config.type === String ? "" : config.type === Number ? 0 : config.type === Boolean ? false : undefined));
+      signals[key] = signal(config.value ?? coerce(undefined, config.type));
 
       // Define property getter/setter on the element
       Object.defineProperty(this, key, {

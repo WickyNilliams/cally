@@ -84,9 +84,10 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   const prevBtn = root.querySelector<HTMLButtonElement>("[part~='previous']")!;
   const nextBtn = root.querySelector<HTMLButtonElement>("[part~='next']")!;
 
-  const focusedDate = signal<PlainDate>(
-    clamp(initFd, parseDateProp(self.$.min.value as string), parseDateProp(self.$.max.value as string))
-  );
+  const clampToSelf = (d: PlainDate) =>
+    clamp(d, parseDateProp(self.$.min.value as string), parseDateProp(self.$.max.value as string));
+
+  const focusedDate = signal<PlainDate>(clampToSelf(initFd));
   const page = signal<PageType>(
     createPage(
       focusedDate.value.tym(),
@@ -115,7 +116,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     if (diff < 0 || diff >= months) {
       const targetMonth = newPage.start;
       const day = Math.min(fd.day, endOfMonth(targetMonth).day);
-      newFd = clamp(new PlainDate(targetMonth.year, targetMonth.month, day), parseDateProp(self.$.min.value as string), parseDateProp(self.$.max.value as string));
+      newFd = clampToSelf(new PlainDate(targetMonth.year, targetMonth.month, day));
     }
     batch(() => {
       page.value = newPage;
@@ -162,10 +163,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
 
     // Sync focusedDate from prop and clamp to min/max
     self.fx(() => {
-      const propFd = parseDateProp(self.$.focusedDate.value as string);
-      const min = parseDateProp(self.$.min.value as string);
-      const max = parseDateProp(self.$.max.value as string);
-      focusedDate.value = clamp(propFd ?? focusedDate.value, min, max);
+      focusedDate.value = clampToSelf(parseDateProp(self.$.focusedDate.value as string) ?? focusedDate.value);
     });
 
     // Sync page when focusedDate moves outside the current page
