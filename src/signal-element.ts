@@ -1,6 +1,5 @@
 import {
   signal,
-  computed,
   effect,
   batch,
   type Signal,
@@ -8,7 +7,7 @@ import {
 
 type ReadonlySignal<T> = Readonly<Signal<T>>;
 
-export { signal, computed, effect, batch };
+export { signal, effect, batch };
 export type { Signal, ReadonlySignal };
 
 type PropertyConfig = {
@@ -43,7 +42,6 @@ export class SignalElement<
   $!: SignalProps<T>;
 
   #cleanups: (() => void)[] = [];
-  #connected = false;
 
   constructor() {
     super();
@@ -69,15 +67,7 @@ export class SignalElement<
     const signals: Record<string, Signal<unknown>> = {};
 
     for (const [key, config] of Object.entries(props)) {
-      // Function-typed props: value IS the default function, not a factory.
-      // All other types: value can be a factory (() => default) or literal.
-      const defaultValue =
-        config.type === Function
-          ? config.value
-          : typeof config.value === "function"
-            ? (config.value as () => unknown)()
-            : config.value;
-      signals[key] = signal(defaultValue ?? getTypeDefault(config.type));
+      signals[key] = signal(config.value ?? (config.type === String ? "" : config.type === Number ? 0 : config.type === Boolean ? false : undefined));
 
       // Define property getter/setter on the element
       Object.defineProperty(this, key, {
@@ -105,50 +95,38 @@ export class SignalElement<
   attributeChangedCallback(name: string, _old: string | null, next: string | null) {
     const key = toCamel(name);
     const ctor = this.constructor as typeof SignalElement;
-    const config = ctor.properties[key];
-    if (!config) return;
-    const sig = (this.$ as Record<string, Signal<unknown>>)[key];
-    sig.value = coerce(next ?? "", config.type);
+    (this.$ as Record<string, Signal<unknown>>)[key].value = coerce(next ?? "", ctor.properties[key].type);
   }
 
   connectedCallback() {
-    if (this.#connected) this.#cleanupEffects();
-    this.#connected = true;
-    const result = this.setup();
-    if (typeof result === "function") result();
+    this.#cleanupEffects();
+    this.setup()?.();
   }
 
   disconnectedCallback() {
     this.#cleanupEffects();
-    this.#connected = false;
   }
 
   #cleanupEffects() {
-    for (const cleanup of this.#cleanups) {
-      cleanup();
-    }
+    this.#cleanups.forEach(c => c());
     this.#cleanups = [];
   }
 
   /** Register a reactive effect that runs immediately and re-runs on signal changes */
   createEffect(fn: () => void): void {
-    const dispose = effect(fn);
-    this.#cleanups.push(dispose);
+    this.#cleanups.push(effect(fn));
   }
 
   /**
    * Override in subclass to set up DOM event listeners and reactive effects.
    * Return a function that will be called immediately after setup to register effects.
    */
-  setup(): void | (() => void) {}
+  setup(): (() => void) | undefined {}
 }
 
-function getTypeDefault(type: PropertyConfig["type"]): unknown {
-  if (type === String) return "";
-  if (type === Number) return 0;
-  if (type === Boolean) return false;
-  if (type === Function) return undefined;
-  return undefined;
+
+export function fire(el: Element, name: string, detail: unknown): void {
+  el.dispatchEvent(new CustomEvent(name, { bubbles: true, detail }));
 }
 
 function coerce(value: unknown, type: PropertyConfig["type"]): unknown {
@@ -156,12 +134,9 @@ function coerce(value: unknown, type: PropertyConfig["type"]): unknown {
     if (typeof value === "boolean") return value;
     return value === "true" || value === "";
   }
-  if (type === Number) {
-    const n = Number(value);
-    return isNaN(n) ? 0 : n;
-  }
+  if (type === Number) return Number(value) || 0;
   if (type === Function) return value;
-  return value == null ? "" : String(value);
+  return ""+( value ?? "");
 }
 
 function toKebab(camel: string): string {
@@ -172,29 +147,3 @@ function toCamel(kebab: string): string {
   return kebab.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 }
 
-// ── Context ──────────────────────────────────────────────────────────────────
-
-export function createContext<T>(name: string) {
-  const eventName = `__ctx:${name}`;
-
-  return {
-    provide(host: HTMLElement, value: T) {
-      host.addEventListener(eventName, (e: Event) => {
-        e.stopPropagation();
-        (e as CustomEvent<{ value?: T }>).detail.value = value;
-      });
-    },
-
-    consume(host: HTMLElement): T | undefined {
-      const detail: { value?: T } = {};
-      host.dispatchEvent(
-        new CustomEvent(eventName, {
-          bubbles: true,
-          composed: true,
-          detail,
-        })
-      );
-      return detail.value;
-    },
-  };
-}

@@ -1,32 +1,21 @@
-import { PlainDate, type PlainYearMonth } from "./temporal.js";
+import { PlainDate } from "./temporal.js";
 import { type DaysOfWeek } from "./date.js";
 
-function safeFrom<T extends PlainDate | PlainYearMonth>(
-  Ctr: { from(value: string): T },
-  value: string | undefined
-) {
-  if (value) {
-    try {
-      return Ctr.from(value);
-    } catch {}
-  }
-}
-
 export function parseDateProp(value: string | undefined): PlainDate | undefined {
-  return safeFrom(PlainDate, value);
+  if (value) try { return PlainDate.from(value); } catch {}
 }
 
 export function parseDateRangeProp(value: string): [PlainDate, PlainDate] | [] {
-  const [s, e] = (value ?? "").split("/");
-  const start = safeFrom(PlainDate, s);
-  const end = safeFrom(PlainDate, e);
+  const [s, e] = value.split("/");
+  const start = parseDateProp(s);
+  const end = parseDateProp(e);
   return start && end ? [start, end] : [];
 }
 
 export function parseDateMultiProp(value: string): PlainDate[] {
   const result = [];
-  for (const date of (value ?? "").trim().split(/\s+/)) {
-    const parsed = safeFrom(PlainDate, date);
+  for (const date of value.trim().split(/\s+/)) {
+    const parsed = parseDateProp(date);
     if (parsed) result.push(parsed);
   }
   return result;
@@ -52,12 +41,11 @@ export function getDayNames(
 ): string[] {
   const formatter = makeDateFormatter(options, locale);
   const days: string[] = [];
-  const day = new Date();
+  const day = new Date(Date.UTC(2023, 0, 1)); // Sunday
 
   for (let i = 0; i < 7; i++) {
-    const index = (day.getUTCDay() - firstDayOfWeek + 7) % 7;
-    days[index] = formatter.format(day);
-    day.setUTCDate(day.getUTCDate() + 1);
+    day.setUTCDate((firstDayOfWeek + i) % 7 + 1);
+    days.push(formatter.format(day));
   }
 
   return days;

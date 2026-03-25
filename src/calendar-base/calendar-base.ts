@@ -1,85 +1,30 @@
 import { reset, vh } from "../utils/styles.js";
-import { signal, batch, type Signal } from "../signal-element.js";
-import { SignalElement } from "../signal-element.js";
+import { signal, batch, fire, SignalElement } from "../signal-element.js";
 import { CalendarCtx, type CalendarContextValue, type CalendarContextBase } from "../calendar-month/CalendarMonthContext.js";
 import { createPage, diffInMonths, type Pagination, type CalendarFocusOptions } from "./useCalendarBase.js";
 import { parseDateProp, makeDateFormatter } from "../utils/hooks.js";
 import { clamp, endOfMonth, getToday, toDate, type DaysOfWeek } from "../utils/date.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 
-export const BASE_STYLES = `
-  ${reset}
-  ${vh}
+export const BASE_STYLES = `${reset}${vh}:host{display:block;inline-size:fit-content}[part~=container]{display:flex;flex-direction:column;gap:1em}[part~=header]{display:flex;align-items:center;justify-content:space-between}[part~=heading]{font-weight:bold;font-size:1.25em}[part~=button]{display:flex;align-items:center;justify-content:center}[part~=button][part~=disabled]{cursor:default;opacity:.5}`;
 
-  :host {
-    display: block;
-    inline-size: fit-content;
-  }
-
-  [part~="container"] {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-  }
-
-  [part~="header"] {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  [part~="heading"] {
-    font-weight: bold;
-    font-size: 1.25em;
-  }
-
-  [part~="button"] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  [part~="button"][part~="disabled"] {
-    cursor: default;
-    opacity: 0.5;
-  }
-`;
-
-export function createBaseTemplate(): string {
-  return `
-    <div class="vh" id="h" aria-live="polite" aria-atomic="true"></div>
-    <div role="group" aria-labelledby="h" part="container">
-      <div part="header">
-        <button part="button previous">
-          <slot name="previous">Previous</slot>
-        </button>
-        <slot part="heading" name="heading">
-          <div aria-hidden="true"></div>
-        </slot>
-        <button part="button next">
-          <slot name="next">Next</slot>
-        </button>
-      </div>
-      <slot part="months"></slot>
-    </div>
-  `;
-}
+export const BASE_TEMPLATE = `<div class="vh" id="h" aria-live="polite" aria-atomic="true"></div><div role="group" aria-labelledby="h" part="container"><div part="header"><button part="button previous"><slot name="previous">Previous</slot></button><slot part="heading" name="heading"><div aria-hidden="true"></div></slot><button part="button next"><slot name="next">Next</slot></button></div><slot part="months"></slot></div>`;
 
 // Shared property definitions (mirrors the old `props` export shape for reference)
 export const sharedProps = {
-  value: { type: String, value: "" },
-  min: { type: String, value: "" },
-  max: { type: String, value: "" },
-  today: { type: String, value: "" },
-  isDateDisallowed: { type: Function, value: (_date: Date) => false },
-  formatWeekday: { type: String, value: (): "narrow" | "short" => "narrow" },
-  getDayParts: { type: Function, value: (_date: Date): string => "" },
-  firstDayOfWeek: { type: Number, value: (): DaysOfWeek => 1 },
+  value: { type: String },
+  min: { type: String },
+  max: { type: String },
+  today: { type: String },
+  isDateDisallowed: { type: Function },
+  formatWeekday: { type: String, value: "narrow" },
+  getDayParts: { type: Function },
+  firstDayOfWeek: { type: Number, value: 1 },
   showOutsideDays: { type: Boolean, value: false },
-  locale: { type: String, value: (): string | undefined => undefined },
+  locale: { type: String },
   months: { type: Number, value: 1 },
-  focusedDate: { type: String, value: (): string | undefined => undefined },
-  pageBy: { type: String, value: (): Pagination => "months" },
+  focusedDate: { type: String },
+  pageBy: { type: String, value: "months" },
   showWeekNumbers: { type: Boolean, value: false },
 } as const;
 
@@ -114,9 +59,8 @@ export function buildSharedCtx<P extends typeof sharedProps>(
 }
 
 export function setPrevNext(btn: HTMLButtonElement, enabled: boolean) {
-  const name = btn.part.contains("previous") ? "previous" : "next";
-  btn.setAttribute("part", `button ${name}${enabled ? "" : " disabled"}`);
-  btn.setAttribute("aria-disabled", enabled ? "false" : "true");
+  btn.part.toggle("disabled", !enabled);
+  btn.setAttribute("aria-disabled", ""+!enabled);
 }
 
 /**
@@ -133,12 +77,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   initFd: PlainDate,
   buildCtxValue: (fd: PlainDate, page: PageType) => CalendarContextValue,
   onFocusDay?: (date: PlainDate) => void
-): {
-  focusedDate: Signal<PlainDate>;
-  page: Signal<PageType>;
-  containsDate: (d: PlainDate) => boolean;
-  registerEffects: () => void;
-} {
+): () => void {
   const root = self.shadowRoot!;
   const hiddenHeading = root.querySelector<HTMLElement>("#h")!;
   const visibleHeading = root.querySelector<HTMLElement>('[part="heading"] [aria-hidden]')!;
@@ -158,7 +97,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
 
   Object.defineProperty(self, "focusedDate", {
     get: () => focusedDate.value.toString(),
-    set: (v: string) => { self.$.focusedDate.value = v; },
+    set: (v: string) => { (self.$.focusedDate as unknown as { value: string }).value = v; },
     enumerable: true,
     configurable: true,
   });
@@ -175,17 +114,14 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     let newFd = fd;
     if (diff < 0 || diff >= months) {
       const targetMonth = newPage.start;
-      const maxDay = endOfMonth(targetMonth).day;
-      const day = Math.min(fd.day, maxDay);
-      const min = parseDateProp(self.$.min.value as string);
-      const max = parseDateProp(self.$.max.value as string);
-      newFd = clamp(new PlainDate(targetMonth.year, targetMonth.month, day), min, max);
+      const day = Math.min(fd.day, endOfMonth(targetMonth).day);
+      newFd = clamp(new PlainDate(targetMonth.year, targetMonth.month, day), parseDateProp(self.$.min.value as string), parseDateProp(self.$.max.value as string));
     }
     batch(() => {
       page.value = newPage;
       focusedDate.value = newFd;
     });
-    self.dispatchEvent(new CustomEvent("focusday", { bubbles: true, detail: toDate(newFd) }));
+    fire(self, "focusday", toDate(newFd));
   };
 
   const containsDate = (d: PlainDate) => {
@@ -201,11 +137,11 @@ export function setupCalendarBase<P extends typeof sharedProps>(
 
   self.addEventListener("focusday", (e) => {
     const detail = (e as CustomEvent).detail;
-    if (!(detail instanceof PlainDate)) return;
+    if (!detail?.day) return;
     e.stopPropagation();
     focusedDate.value = detail;
     onFocusDay?.(detail);
-    self.dispatchEvent(new CustomEvent("focusday", { bubbles: true, detail: toDate(detail) }));
+    fire(self, "focusday", toDate(detail));
     setTimeout(() => (self as unknown as { focus(): void }).focus());
   });
 
@@ -215,17 +151,12 @@ export function setupCalendarBase<P extends typeof sharedProps>(
       ctxSignal.value = buildCtxValue(focusedDate.value, page.value);
     });
 
-    // Sync focusedDate from prop when it changes
+    // Sync focusedDate from prop and clamp to min/max
     self.createEffect(() => {
-      const fd = parseDateProp(self.$.focusedDate.value as string);
-      if (fd) focusedDate.value = clamp(fd, parseDateProp(self.$.min.value as string), parseDateProp(self.$.max.value as string));
-    });
-
-    // Clamp focused date to min/max
-    self.createEffect(() => {
+      const propFd = parseDateProp(self.$.focusedDate.value as string);
       const min = parseDateProp(self.$.min.value as string);
       const max = parseDateProp(self.$.max.value as string);
-      focusedDate.value = clamp(focusedDate.value, min, max);
+      focusedDate.value = clamp(propFd ?? focusedDate.value, min, max);
     });
 
     // Sync page when focusedDate moves outside the current page
@@ -243,21 +174,18 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     // Update headings and prev/next button states
     self.createEffect(() => {
       const ctx = ctxSignal.value;
-      const locale = (self.$.locale.value as string) || undefined;
-      const format = makeDateFormatter(formatOptions, locale);
-      const formatVerbose = makeDateFormatter(formatVerboseOptions, locale);
+      const format = makeDateFormatter(formatOptions, ctx.locale);
+      const formatVerbose = makeDateFormatter(formatVerboseOptions, ctx.locale);
       const start = toDate(ctx.page.start);
       const end = toDate(ctx.page.end);
       hiddenHeading.textContent = formatVerbose.formatRange(start, end);
       visibleHeading.textContent = format.formatRange(start, end);
-      const min = parseDateProp(self.$.min.value as string);
-      const max = parseDateProp(self.$.max.value as string);
-      setPrevNext(prevBtn, !min || !containsDate(min));
-      setPrevNext(nextBtn, !max || !containsDate(max));
+      setPrevNext(prevBtn, !ctx.min || !containsDate(ctx.min));
+      setPrevNext(nextBtn, !ctx.max || !containsDate(ctx.max));
     });
   };
 
-  return { focusedDate, page, containsDate, registerEffects };
+  return registerEffects;
 }
 
 export class CalendarBaseElement<

@@ -1,4 +1,4 @@
-import { SignalElement } from "../signal-element.js";
+import { SignalElement, fire } from "../signal-element.js";
 import { CalendarCtx } from "./CalendarMonthContext.js";
 import {
   clamp,
@@ -19,105 +19,15 @@ const COLS = 7;
 
 /** Build static template — NO weeknumber cells here; those are created once in setup() */
 function buildTemplate(): string {
-  // thead: 7 day th cells (no weeknumber)
-  let theadCells = "";
-  for (let c = 0; c < COLS; c++) {
-    theadCells += `<th scope="col"><span class="vh"></span><span aria-hidden="true"></span></th>`;
-  }
-
-  // tbody: 6 rows × 7 td with button (no weeknumber cells)
-  let tbodyRows = "";
-  for (let r = 0; r < ROWS; r++) {
-    let cells = "";
-    for (let c = 0; c < COLS; c++) {
-      cells += `<td part="td"><button class="num" type="button" tabindex="-1"></button></td>`;
-    }
-    tbodyRows += `<tr part="tr week">${cells}</tr>`;
-  }
-
-  return `
-    <div id="h" part="heading"></div>
-    <table aria-labelledby="h" part="table">
-      <colgroup>
-        <col part="col-1" />
-        <col part="col-2" />
-        <col part="col-3" />
-        <col part="col-4" />
-        <col part="col-5" />
-        <col part="col-6" />
-        <col part="col-7" />
-      </colgroup>
-      <thead>
-        <tr part="tr head">${theadCells}</tr>
-      </thead>
-      <tbody>${tbodyRows}</tbody>
-    </table>
-  `;
+  const th = `<th scope="col"><span class="vh"></span><span aria-hidden="true"></span></th>`;
+  const td = `<td part="td"><button class="num" type="button" tabindex="-1"></button></td>`;
+  const tr = `<tr part="tr week">${td.repeat(COLS)}</tr>`;
+  let cols = "";
+  for (let i = 1; i <= COLS; i++) cols += `<col part="col-${i}">`;
+  return `<div id="h" part="heading"></div><table aria-labelledby="h" part="table"><colgroup>${cols}</colgroup><thead><tr part="tr head">${th.repeat(COLS)}</tr></thead><tbody>${tr.repeat(ROWS)}</tbody></table>`;
 }
 
-const MONTH_STYLES = `
-  ${reset}
-  ${vh}
-
-  :host {
-    --color-accent: black;
-    --color-text-on-accent: white;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    text-align: center;
-    inline-size: fit-content;
-  }
-
-  table {
-    border-collapse: collapse;
-    font-size: 0.875rem;
-  }
-
-  th {
-    inline-size: 2.25rem;
-    block-size: 2.25rem;
-  }
-
-  td {
-    padding-inline: 0;
-  }
-
-  .num {
-    font-variant-numeric: tabular-nums;
-  }
-
-  button {
-    color: inherit;
-    font-size: inherit;
-    background: transparent;
-    border: 0;
-    block-size: 2.25rem;
-    inline-size: 2.25rem;
-  }
-
-  button:hover:where(:not(:disabled, [aria-disabled])) {
-    background: #0000000d;
-  }
-
-  button:is([aria-pressed="true"], :focus-visible) {
-    background: var(--color-accent);
-    color: var(--color-text-on-accent);
-  }
-
-  button:focus-visible {
-    outline: 1px solid var(--color-text-on-accent);
-    outline-offset: -2px;
-  }
-
-  button:disabled,
-  :host::part(outside),
-  :host::part(disallowed) {
-    cursor: default;
-    opacity: 0.5;
-  }
-`;
+const MONTH_STYLES = `${reset}${vh}:host{--color-accent:black;--color-text-on-accent:white;display:flex;flex-direction:column;gap:.25rem;text-align:center;inline-size:fit-content}table{border-collapse:collapse;font-size:.875rem}th{inline-size:2.25rem;block-size:2.25rem}td{padding-inline:0}.num{font-variant-numeric:tabular-nums}button{color:inherit;font-size:inherit;background:#0000;border:0;block-size:2.25rem;inline-size:2.25rem}button:hover:where(:not(:disabled,[aria-disabled])){background:#0000000d}button:is([aria-pressed=true],:focus-visible){background:var(--color-accent);color:var(--color-text-on-accent)}button:focus-visible{outline:1px solid var(--color-text-on-accent);outline-offset:-2px}button:disabled,:host::part(outside),:host::part(disallowed){cursor:default;opacity:.5}`;
 
 const longDayOptions = { weekday: "long" } as const;
 const monthOptions = { month: "long" } as const;
@@ -127,7 +37,7 @@ export class CalendarMonth extends SignalElement<{
   offset: { type: typeof Number };
 }> {
   static properties = {
-    offset: { type: Number, value: 0 },
+    offset: { type: Number },
   };
 
   static styles = MONTH_STYLES;
@@ -162,61 +72,53 @@ export class CalendarMonth extends SignalElement<{
 
     let weekNumbersShown = false;
 
-    // ── Event delegation ──────────────────────────────────────────────────
-    table.addEventListener("click", (e) => {
-      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button");
-      if (!btn) return;
-      const date = getDateFromButton(btn);
-      if (!date) return;
-      const ctxSig = CalendarCtx.consume(this);
-      if (!ctxSig) return;
-      const ctx = ctxSig.value;
-      const isDisallowed = ctx.isDateDisallowed?.(toDate(date));
-      if (!isDisallowed) {
-        this.dispatchEvent(new CustomEvent("selectday", { bubbles: true, detail: date }));
-      }
-      this.dispatchEvent(
-        new CustomEvent("focusday", { bubbles: true, detail: clamp(date, ctx.min, ctx.max) })
-      );
-    });
-
-    table.addEventListener("keydown", (e) => {
-      const ctxSig = CalendarCtx.consume(this);
-      if (!ctxSig) return;
-      const { focusedDate, min, max, firstDayOfWeek } = ctxSig.value;
-      const ltr = (e.target as HTMLElement).matches(":dir(ltr)");
-      let date: PlainDate;
-      switch (e.key) {
-        case "ArrowRight": date = focusedDate.add({ days: ltr ? 1 : -1 }); break;
-        case "ArrowLeft":  date = focusedDate.add({ days: ltr ? -1 : 1 }); break;
-        case "ArrowDown":  date = focusedDate.add({ days: 7 }); break;
-        case "ArrowUp":    date = focusedDate.add({ days: -7 }); break;
-        case "PageUp":     date = focusedDate.add(e.shiftKey ? { years: -1 } : { months: -1 }); break;
-        case "PageDown":   date = focusedDate.add(e.shiftKey ? { years: 1 } : { months: 1 }); break;
-        case "Home":       date = startOfWeek(focusedDate, firstDayOfWeek); break;
-        case "End":        date = endOfWeek(focusedDate, firstDayOfWeek); break;
-        default: return;
-      }
-      this.dispatchEvent(new CustomEvent("focusday", { bubbles: true, detail: clamp(date, min, max) }));
-      e.preventDefault();
-    });
-
-    table.addEventListener("mouseover", (e) => {
-      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button");
-      if (!btn) return;
-      const date = getDateFromButton(btn);
-      if (!date) return;
-      const ctxSig = CalendarCtx.consume(this);
-      if (!ctxSig) return;
-      const ctx = ctxSig.value;
-      if (!ctx.isDateDisallowed?.(toDate(date)) && clamp(date, ctx.min, ctx.max) === date) {
-        this.dispatchEvent(new CustomEvent("hoverday", { bubbles: true, detail: date }));
-      }
-    });
-
     return () => {
       const ctxSig = CalendarCtx.consume(this);
       if (!ctxSig) return;
+
+      // ── Event delegation ──────────────────────────────────────────────────
+      table.addEventListener("click", (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button");
+        if (!btn) return;
+        const date = getDateFromButton(btn);
+        if (!date) return;
+        const ctx = ctxSig.value;
+        const isDisallowed = ctx.isDateDisallowed?.(toDate(date));
+        if (!isDisallowed) {
+          fire(this, "selectday", date);
+        }
+        fire(this, "focusday", clamp(date, ctx.min, ctx.max));
+      });
+
+      table.addEventListener("keydown", (e) => {
+        const { focusedDate, min, max, firstDayOfWeek } = ctxSig.value;
+        const ltr = (e.target as HTMLElement).matches(":dir(ltr)");
+        let date: PlainDate;
+        switch (e.key) {
+          case "ArrowRight": date = focusedDate.add({ days: ltr ? 1 : -1 }); break;
+          case "ArrowLeft":  date = focusedDate.add({ days: ltr ? -1 : 1 }); break;
+          case "ArrowDown":  date = focusedDate.add({ days: 7 }); break;
+          case "ArrowUp":    date = focusedDate.add({ days: -7 }); break;
+          case "PageUp":     date = focusedDate.add(e.shiftKey ? { years: -1 } : { months: -1 }); break;
+          case "PageDown":   date = focusedDate.add(e.shiftKey ? { years: 1 } : { months: 1 }); break;
+          case "Home":       date = startOfWeek(focusedDate, firstDayOfWeek); break;
+          case "End":        date = endOfWeek(focusedDate, firstDayOfWeek); break;
+          default: return;
+        }
+        fire(this, "focusday", clamp(date, min, max));
+        e.preventDefault();
+      });
+
+      table.addEventListener("mouseover", (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button");
+        if (!btn) return;
+        const date = getDateFromButton(btn);
+        if (!date) return;
+        const ctx = ctxSig.value;
+        if (!ctx.isDateDisallowed?.(toDate(date)) && clamp(date, ctx.min, ctx.max) === date) {
+          fire(this, "hoverday", date);
+        }
+      });
 
       this.createEffect(() => {
         const ctx = ctxSig.value;
@@ -265,7 +167,7 @@ export class CalendarMonth extends SignalElement<{
           if (weekNumbersShown) {
             if (week) {
               if (wnBodyThs[r].parentNode !== row) row.prepend(wnBodyThs[r]);
-              wnBodyThs[r].textContent = String(getWeekNumber(week[0]));
+              wnBodyThs[r].textContent = ""+getWeekNumber(week[0]);
             } else if (wnBodyThs[r].parentNode === row) {
               wnBodyThs[r].remove();
             }
@@ -286,7 +188,7 @@ export class CalendarMonth extends SignalElement<{
               btn.setAttribute("aria-pressed", "false");
               btn.removeAttribute("aria-current");
               btn.textContent = "";
-              btn.removeAttribute("data-date");
+              delete btn.dataset.date;
               continue;
             }
 
@@ -324,10 +226,10 @@ export class CalendarMonth extends SignalElement<{
             btn.disabled = isDisabled;
             if (isDisallowed) btn.setAttribute("aria-disabled", "true");
             else btn.removeAttribute("aria-disabled");
-            btn.setAttribute("aria-pressed", String(!!(isInMonth && isSelected)));
+            btn.setAttribute("aria-pressed", ""+!!(isInMonth && isSelected));
             if (isToday) btn.setAttribute("aria-current", "date");
             else btn.removeAttribute("aria-current");
-            btn.textContent = String(date.day);
+            btn.textContent = ""+date.day;
             btn.dataset.date = date.toString();
           }
         }
@@ -346,10 +248,5 @@ customElements.define("calendar-month", CalendarMonth);
 
 function getDateFromButton(btn: HTMLButtonElement): PlainDate | undefined {
   const s = btn.dataset.date;
-  if (!s) return undefined;
-  try {
-    return PlainDate.from(s);
-  } catch {
-    return undefined;
-  }
+  return s ? PlainDate.from(s) : undefined;
 }

@@ -35,7 +35,7 @@ export function startOfWeek(
 ): PlainDate {
   const d = toDate(date);
   const day = d.getUTCDay();
-  const diff = (day < firstDayOfWeek ? 7 : 0) + day - firstDayOfWeek;
+  const diff = (day - firstDayOfWeek + 7) % 7;
 
   d.setUTCDate(d.getUTCDate() - diff);
   return PlainDate.from(d);

@@ -1,11 +1,11 @@
-import { SignalElement } from "../signal-element.js";
+import { SignalElement, fire } from "../signal-element.js";
 import { CalendarCtx } from "../calendar-month/CalendarMonthContext.js";
 import { SELECT_STYLES, SELECT_TEMPLATE } from "./calendar-year-month-base.js";
 import { PlainYearMonth } from "../utils/temporal.js";
 import { makeDateFormatter } from "../utils/hooks.js";
 
 const monthProps = {
-  formatMonth: { type: String, value: (): "long" | "short" => "long" },
+  formatMonth: { type: String, value: "long" },
 } as const;
 
 // Pre-create 12 options — fixed for month select
@@ -32,21 +32,17 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
     }
     select.replaceChildren(...pool);
 
-    select.addEventListener("change", () => {
-      const ctxSig = CalendarCtx.consume(this);
-      if (!ctxSig) return;
-      const ctx = ctxSig.value;
-      const value = parseInt(select.value);
-      const diff = value - ctx.focusedDate.toPlainYearMonth().month;
-      const newDate = ctx.focusedDate.add({ months: diff });
-      this.dispatchEvent(
-        new CustomEvent("focusday", { bubbles: true, detail: newDate })
-      );
-    });
-
     return () => {
       const ctxSig = CalendarCtx.consume(this);
       if (!ctxSig) return;
+
+      select.addEventListener("change", () => {
+        const ctx = ctxSig.value;
+        const value = +select.value;
+        const diff = value - ctx.focusedDate.toPlainYearMonth().month;
+        const newDate = ctx.focusedDate.add({ months: diff });
+        fire(this, "focusday", newDate);
+      });
 
       this.createEffect(() => {
         const ctx = ctxSig.value;
@@ -56,32 +52,21 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
         );
 
         const focusedYearMonth = ctx.focusedDate.toPlainYearMonth();
-
-        // Build month names (ordered Jan–Dec)
-        const monthNames: string[] = [];
-        const day = new Date();
-        day.setUTCDate(1);
-        for (let i = 0; i < MONTH_COUNT; i++) {
-          const idx = (day.getUTCMonth() + 12) % 12;
-          monthNames[idx] = fmt.format(day);
-          day.setUTCMonth(day.getUTCMonth() + 1);
-        }
+        const day = new Date(Date.UTC(2000, 0, 1));
 
         for (let i = 0; i < MONTH_COUNT; i++) {
           const monthNum = i + 1;
-          const yearMonth = focusedYearMonth.add({
-            months: monthNum - focusedYearMonth.month,
-          });
+          day.setUTCMonth(i);
+          const ym = new PlainYearMonth(focusedYearMonth.year, monthNum);
           const isDisabled =
-            (ctx.min != null && PlainYearMonth.compare(yearMonth, ctx.min) < 0) ||
-            (ctx.max != null && PlainYearMonth.compare(yearMonth, ctx.max) > 0);
-
-          pool[i].value = String(monthNum);
-          pool[i].textContent = monthNames[i];
+            (ctx.min != null && PlainYearMonth.compare(ym, ctx.min) < 0) ||
+            (ctx.max != null && PlainYearMonth.compare(ym, ctx.max) > 0);
+          pool[i].value = ""+monthNum;
+          pool[i].textContent = fmt.format(day);
           pool[i].disabled = isDisabled;
         }
 
-        select.value = String(focusedYearMonth.month);
+        select.value = ""+focusedYearMonth.month;
       });
     };
   }

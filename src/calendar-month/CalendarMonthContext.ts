@@ -1,6 +1,6 @@
-import { createContext, signal, type ReadonlySignal } from "../signal-element.js";
+import type { ReadonlySignal } from "../signal-element.js";
 import type { PlainDate, PlainYearMonth } from "../utils/temporal.js";
-import { getToday, type DaysOfWeek } from "../utils/date.js";
+import type { DaysOfWeek } from "../utils/date.js";
 
 export interface CalendarContextBase {
   min?: PlainDate;
@@ -37,35 +37,19 @@ export type CalendarContextValue =
   | CalendarRangeContext
   | CalendarMultiContext;
 
+const CTX_EVENT = "__ctx:calendar";
+
 /** Signal-based context handle used by all components */
-export const CalendarCtx = createContext<ReadonlySignal<CalendarContextValue>>("calendar");
-
-const t = getToday();
-const DEFAULT_CONTEXT: CalendarContextValue = {
-  type: "date",
-  firstDayOfWeek: 1,
-  focusedDate: t,
-  page: { start: t.toPlainYearMonth(), end: t.toPlainYearMonth() },
+export const CalendarCtx = {
+  provide(host: HTMLElement, value: ReadonlySignal<CalendarContextValue>) {
+    host.addEventListener(CTX_EVENT, (e: Event) => {
+      e.stopPropagation();
+      (e as CustomEvent<{ value?: ReadonlySignal<CalendarContextValue> }>).detail.value = value;
+    });
+  },
+  consume(host: HTMLElement): ReadonlySignal<CalendarContextValue> | undefined {
+    const detail: { value?: ReadonlySignal<CalendarContextValue> } = {};
+    host.dispatchEvent(new CustomEvent(CTX_EVENT, { bubbles: true, composed: true, detail }));
+    return detail.value;
+  },
 };
-
-/**
- * Vanilla WC wrapper used in calendar-month tests.
- * Tests wrap <CalendarMonth> in <CalendarContext value={...}> to provide context.
- */
-export class CalendarContext extends HTMLElement {
-  #sig = signal<CalendarContextValue>(DEFAULT_CONTEXT);
-
-  connectedCallback() {
-    CalendarCtx.provide(this, this.#sig);
-  }
-
-  get value(): CalendarContextValue {
-    return this.#sig.value;
-  }
-
-  set value(v: CalendarContextValue) {
-    this.#sig.value = v;
-  }
-}
-
-customElements.define("calendar-ctx", CalendarContext);

@@ -1,8 +1,6 @@
-import { SignalElement } from "../signal-element.js";
+import { SignalElement, fire } from "../signal-element.js";
 import { CalendarCtx } from "../calendar-month/CalendarMonthContext.js";
 import { SELECT_STYLES, SELECT_TEMPLATE } from "./calendar-year-month-base.js";
-import { PlainDate } from "../utils/temporal.js";
-import { toDate } from "../utils/date.js";
 
 const MAX_POOL = 400; // max option pool size
 
@@ -31,21 +29,17 @@ export class CalendarSelectYear extends SignalElement<typeof yearProps> {
       pool.push(opt);
     }
 
-    select.addEventListener("change", () => {
-      const ctxSig = CalendarCtx.consume(this);
-      if (!ctxSig) return;
-      const ctx = ctxSig.value;
-      const value = parseInt(select.value);
-      const diff = value - ctx.focusedDate.toPlainYearMonth().year;
-      const newDate = ctx.focusedDate.add({ years: diff });
-      this.dispatchEvent(
-        new CustomEvent("focusday", { bubbles: true, detail: newDate })
-      );
-    });
-
     return () => {
       const ctxSig = CalendarCtx.consume(this);
       if (!ctxSig) return;
+
+      select.addEventListener("change", () => {
+        const ctx = ctxSig.value;
+        const value = +select.value;
+        const diff = value - ctx.focusedDate.toPlainYearMonth().year;
+        const newDate = ctx.focusedDate.add({ years: diff });
+        fire(this, "focusday", newDate);
+      });
 
       this.createEffect(() => {
         const ctx = ctxSig.value;
@@ -62,13 +56,11 @@ export class CalendarSelectYear extends SignalElement<typeof yearProps> {
         const count = Math.min(maxYear - minYear + 1, MAX_POOL);
 
         for (let i = 0; i < count; i++) {
-          const year = minYear + i;
-          pool[i].value = String(year);
-          pool[i].textContent = String(year);
+          pool[i].value = pool[i].textContent = ""+(minYear + i);
         }
 
         select.replaceChildren(...pool.slice(0, count));
-        select.value = String(currentYear);
+        select.value = ""+currentYear;
       });
     };
   }

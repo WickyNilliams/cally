@@ -1,5 +1,5 @@
-import { signal, batch } from "../signal-element.js";
-import { BASE_STYLES, createBaseTemplate, sharedProps, setupCalendarBase, buildSharedCtx, CalendarBaseElement } from "../calendar-base/calendar-base.js";
+import { signal, batch, fire } from "../signal-element.js";
+import { BASE_STYLES, BASE_TEMPLATE, sharedProps, setupCalendarBase, buildSharedCtx, CalendarBaseElement } from "../calendar-base/calendar-base.js";
 import { parseDateProp, parseDateRangeProp } from "../utils/hooks.js";
 import { getToday, toDate } from "../utils/date.js";
 import { PlainDate } from "../utils/temporal.js";
@@ -9,13 +9,13 @@ const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
 
 const rangeProps = {
   ...sharedProps,
-  tentative: { type: String, value: "" },
+  tentative: { type: String },
 } as const;
 
 export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
   static properties = rangeProps;
   static styles = BASE_STYLES;
-  static template = createBaseTemplate();
+  static template = BASE_TEMPLATE;
 
   setup() {
     const rangeInit = parseDateRangeProp(this.$.value.value as string);
@@ -27,7 +27,7 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
     const hovered = signal<PlainDate | undefined>(undefined);
     const getTentative = () => parseDateProp((this.$ as any).tentative.value as string);
 
-    const { registerEffects } = setupCalendarBase(
+    const registerEffects = setupCalendarBase(
       this,
       initFd,
       (fd, page) => {
@@ -53,7 +53,7 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
       if (!tentative) {
         (this.$ as any).tentative.value = date.toString();
         hovered.value = undefined;
-        this.dispatchEvent(new CustomEvent("rangestart", { bubbles: true, detail: toDate(date) }));
+        fire(this, "rangestart", toDate(date));
       } else {
         const [start, end] = sort(tentative, date);
         batch(() => {
@@ -61,7 +61,7 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
           (this.$ as any).tentative.value = "";
           hovered.value = undefined;
         });
-        this.dispatchEvent(new CustomEvent("rangeend", { bubbles: true, detail: toDate(date) }));
+        fire(this, "rangeend", toDate(date));
         this.dispatchEvent(new Event("change", { bubbles: true }));
       }
     });

@@ -3,10 +3,8 @@ import { endOfMonth, clamp, toDate } from "./date.js";
 type Duration = { months: number } | { years: number } | { days: number };
 type CompareResult = -1 | 0 | 1;
 
-const ISO_DATE = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])$/;
-
 const padZero = (value: number, length: number) =>
-  value.toString().padStart(length, "0");
+  (""+value).padStart(length, "0");
 
 export class PlainDate {
   constructor(
@@ -55,40 +53,20 @@ export class PlainDate {
   }
 
   equals(date: PlainDate): boolean {
-    return PlainDate.compare(this, date) === 0;
+    return !PlainDate.compare(this, date);
   }
 
   static compare(a: PlainDate, b: PlainDate): CompareResult {
-    if (a.year < b.year) return -1;
-    if (a.year > b.year) return 1;
-    if (a.month < b.month) return -1;
-    if (a.month > b.month) return 1;
-    if (a.day < b.day) return -1;
-    if (a.day > b.day) return 1;
-    return 0;
+    return (a.year - b.year || a.month - b.month || a.day - b.day) as CompareResult;
   }
 
   static from(value: string | Date): PlainDate {
     if (typeof value === "string") {
-      const match = value.match(ISO_DATE);
-
-      if (!match) {
-        throw new TypeError(value);
-      }
-
-      const [, year, month, day] = match;
-      return new PlainDate(
-        parseInt(year!, 10),
-        parseInt(month!, 10),
-        parseInt(day!, 10)
-      );
+      if (!/^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])$/.test(value)) throw new TypeError(value);
+      const [y, m, d] = value.split("-");
+      return new PlainDate(+y!, +m!, +d!);
     }
-
-    return new PlainDate(
-      value.getUTCFullYear(),
-      value.getUTCMonth() + 1,
-      value.getUTCDate()
-    );
+    return new PlainDate(value.getUTCFullYear(), value.getUTCMonth() + 1, value.getUTCDate());
   }
 }
 
@@ -120,10 +98,6 @@ export class PlainYearMonth {
     a: PlainYearMonth | { year: number; month: number },
     b: PlainYearMonth | { year: number; month: number }
   ): CompareResult {
-    if (a.year < b.year) return -1;
-    if (a.year > b.year) return 1;
-    if (a.month < b.month) return -1;
-    if (a.month > b.month) return 1;
-    return 0;
+    return (a.year - b.year || a.month - b.month) as CompareResult;
   }
 }
