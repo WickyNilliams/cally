@@ -29,9 +29,6 @@ function buildTemplate(): string {
 
 const MONTH_STYLES = `${reset}${vh}:host{--color-accent:black;--color-text-on-accent:white;display:flex;flex-direction:column;gap:.25rem;text-align:center;inline-size:fit-content}table{border-collapse:collapse;font-size:.875rem}th{inline-size:2.25rem;block-size:2.25rem}td{padding:0}.num{font-variant-numeric:tabular-nums}button{color:inherit;font-size:inherit;background:#0000;border:0;block-size:2.25rem;inline-size:2.25rem}button:hover:where(:not(:disabled,[aria-disabled])){background:#0000000d}button:is([aria-pressed=true],:focus-visible){background:var(--color-accent);color:var(--color-text-on-accent)}button:focus-visible{outline:1px solid var(--color-text-on-accent);outline-offset:-2px}button:disabled,:host::part(outside),:host::part(disallowed){cursor:default;opacity:.5}`;
 
-const longDayOptions = { weekday: "long" } as const;
-const monthOptions = { month: "long" } as const;
-const dayOptions = { month: "long", day: "numeric" } as const;
 
 export class CalendarMonth extends SignalElement<{
   offset: { type: typeof Number };
@@ -131,7 +128,7 @@ export class CalendarMonth extends SignalElement<{
         const weeks = getViewOfMonth(yearMonth, firstDayOfWeek);
 
         // ── Heading ───────────────────────────────────────────────────────
-        heading.textContent = makeDateFormatter(monthOptions, locale).format(toDate(yearMonth));
+        heading.textContent = makeDateFormatter({ month: "long" }, locale).format(toDate(yearMonth));
 
         // ── Week numbers column (header) ──────────────────────────────────
         if (ctx.showWeekNumbers && !weekNumbersShown) {
@@ -146,7 +143,7 @@ export class CalendarMonth extends SignalElement<{
         }
 
         // ── Thead day names ───────────────────────────────────────────────
-        const daysLong = getDayNames(longDayOptions, firstDayOfWeek, locale);
+        const daysLong = getDayNames({ weekday: "long" }, firstDayOfWeek, locale);
         const daysVisible = getDayNames({ weekday: formatWeekday }, firstDayOfWeek, locale);
         for (let c = 0; c < COLS; c++) {
           const th = theadRow.cells[weekNumbersShown ? c + 1 : c] as HTMLTableCellElement;
@@ -157,7 +154,7 @@ export class CalendarMonth extends SignalElement<{
         }
 
         // ── Tbody rows ────────────────────────────────────────────────────
-        const dayFormatter = makeDateFormatter(dayOptions, locale);
+        const dayFormatter = makeDateFormatter({ month: "long", day: "numeric" }, locale);
         for (let r = 0; r < ROWS; r++) {
           const row = tbody.rows[r];
           const week = weeks[r];

@@ -5,15 +5,12 @@ import { PlainYearMonth } from "../utils/temporal.js";
 import { makeDateFormatter } from "../utils/hooks.js";
 import { diffInMonths } from "../calendar-base/useCalendarBase.js";
 
-const monthProps = {
-  formatMonth: { type: String, value: "long" },
-} as const;
-
-// Pre-create 12 options — fixed for month select
-const MONTH_COUNT = 12;
-
-export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
-  static properties = monthProps;
+export class CalendarSelectMonth extends SignalElement<{
+  formatMonth: { type: typeof String; value: string };
+}> {
+  static properties = {
+    formatMonth: { type: String, value: "long" },
+  };
   static styles = SELECT_STYLES;
   static template = SELECT_TEMPLATE;
 
@@ -24,9 +21,8 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
 
     labelSlot.textContent = "Month";
 
-    // Pre-create exactly 12 options
     const pool: HTMLOptionElement[] = [];
-    for (let i = 0; i < MONTH_COUNT; i++) {
+    for (let i = 0; i < 12; i++) {
       const opt = document.createElement("option");
       opt.part.add("option");
       pool.push(opt);
@@ -55,7 +51,7 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
         const focusedYearMonth = ctx.focusedDate.toPlainYearMonth();
         const day = new Date(Date.UTC(2000, 0, 1));
 
-        for (let i = 0; i < MONTH_COUNT; i++) {
+        for (let i = 0; i < 12; i++) {
           const monthNum = i + 1;
           day.setUTCMonth(i);
           const ym = new PlainYearMonth(focusedYearMonth.year, monthNum);

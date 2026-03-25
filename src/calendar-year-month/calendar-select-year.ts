@@ -2,14 +2,14 @@ import { SignalElement, fire } from "../signal-element.js";
 import { CalendarCtx } from "../calendar-month/CalendarMonthContext.js";
 import { SELECT_STYLES, SELECT_TEMPLATE } from "./calendar-year-month-base.js";
 
-const MAX_POOL = 400; // max option pool size
+const MAX_POOL = 400;
 
-const yearProps = {
-  maxYears: { type: Number, value: 20 },
-} as const;
-
-export class CalendarSelectYear extends SignalElement<typeof yearProps> {
-  static properties = yearProps;
+export class CalendarSelectYear extends SignalElement<{
+  maxYears: { type: typeof Number; value: number };
+}> {
+  static properties = {
+    maxYears: { type: Number, value: 20 },
+  };
   static styles = SELECT_STYLES;
   static template = SELECT_TEMPLATE;
 

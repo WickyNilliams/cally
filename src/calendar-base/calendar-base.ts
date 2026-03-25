@@ -28,9 +28,6 @@ export const sharedProps = {
   showWeekNumbers: { type: Boolean, value: false },
 } as const;
 
-const formatOptions = { year: "numeric" } as const;
-const formatVerboseOptions = { year: "numeric", month: "long" } as const;
-
 type PageType = { start: PlainYearMonth; end: PlainYearMonth };
 
 /**
@@ -151,8 +148,8 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     self.fx(() => {
       const ctx = buildCtxValue(focusedDate.value, page.value);
       ctxSignal.value = ctx;
-      const format = makeDateFormatter(formatOptions, ctx.locale);
-      const formatVerbose = makeDateFormatter(formatVerboseOptions, ctx.locale);
+      const format = makeDateFormatter({ year: "numeric" }, ctx.locale);
+      const formatVerbose = makeDateFormatter({ year: "numeric", month: "long" }, ctx.locale);
       const start = toDate(ctx.page.start);
       const end = toDate(ctx.page.end);
       hiddenHeading.textContent = formatVerbose.formatRange(start, end);

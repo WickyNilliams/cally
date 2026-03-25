@@ -7,13 +7,10 @@ import { PlainDate } from "../utils/temporal.js";
 const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
   ""+a < ""+b ? [a, b] : [b, a];
 
-const rangeProps = {
-  ...sharedProps,
-  tentative: { type: String },
-} as const;
-
-export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
-  static properties = rangeProps;
+export class CalendarRange extends CalendarBaseElement<typeof sharedProps & {
+  tentative: { type: typeof String };
+}> {
+  static properties = { ...sharedProps, tentative: { type: String } };
   static styles = BASE_STYLES;
   static template = BASE_TEMPLATE;
 
