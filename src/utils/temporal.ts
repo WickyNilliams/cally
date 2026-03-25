@@ -1,5 +1,7 @@
 import { endOfMonth, clamp, toDate } from "./date.js";
 
+type CompareResult = -1 | 0 | 1;
+
 export class PlainDate {
   constructor(
     public readonly year: number,
@@ -32,8 +34,12 @@ export class PlainDate {
     return toDate(this).toISOString().slice(0, 10);
   }
 
-  tym() {
+  toPlainYearMonth() {
     return new PlainYearMonth(this.year, this.month);
+  }
+
+  equals(date: PlainDate): boolean {
+    return ""+this === ""+date;
   }
 
   static from(value: string | Date): PlainDate {
@@ -58,4 +64,18 @@ export class PlainYearMonth {
     return new PlainYearMonth(date.getUTCFullYear(), date.getUTCMonth() + 1);
   }
 
+  equals(date: PlainDate | PlainYearMonth) {
+    return this.year === date.year && this.month === date.month;
+  }
+
+  toPlainDate({day}: {day: number} = {day: 1}): PlainDate {
+    return new PlainDate(this.year, this.month, day);
+  }
+
+  static compare(
+    a: PlainYearMonth | { year: number; month: number },
+    b: PlainYearMonth | { year: number; month: number }
+  ): CompareResult {
+    return (a.year - b.year || a.month - b.month) as CompareResult;
+  }
 }

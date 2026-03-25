@@ -7,7 +7,7 @@ const DEFAULT_CONTEXT: CalendarContextValue = {
   type: "date",
   firstDayOfWeek: 1,
   focusedDate: t,
-  page: { start: t.tym(), end: t.tym() },
+  page: { start: t.toPlainYearMonth(), end: t.toPlainYearMonth() },
 };
 
 /**
