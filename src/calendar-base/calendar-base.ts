@@ -60,7 +60,7 @@ export function buildSharedCtx<P extends typeof sharedProps>(
 
 export function setPrevNext(btn: HTMLButtonElement, enabled: boolean) {
   btn.part.toggle("disabled", !enabled);
-  btn.setAttribute("aria-disabled", ""+!enabled);
+  btn.ariaDisabled = ""+!enabled;
 }
 
 /**

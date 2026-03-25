@@ -181,12 +181,12 @@ export class CalendarMonth extends SignalElement<{
 
             if (!date || (!showOutsideDays && !isInMonth)) {
               btn.setAttribute("part", "button day");
-              btn.setAttribute("aria-label", "");
+              btn.ariaLabel = "";
               btn.tabIndex = -1;
               btn.disabled = false;
-              btn.removeAttribute("aria-disabled");
-              btn.setAttribute("aria-pressed", "false");
-              btn.removeAttribute("aria-current");
+              btn.ariaDisabled = null;
+              btn.ariaPressed = "false";
+              btn.ariaCurrent = null;
               btn.textContent = "";
               delete btn.dataset.date;
               continue;
@@ -221,14 +221,12 @@ export class CalendarMonth extends SignalElement<{
             } ${rangeParts}`.replace(/\s+/g, " ").trim();
 
             btn.setAttribute("part", part);
-            btn.setAttribute("aria-label", dayFormatter.format(asDate));
+            btn.ariaLabel = dayFormatter.format(asDate);
             btn.tabIndex = isInMonth && isFocused ? 0 : -1;
             btn.disabled = isDisabled;
-            if (isDisallowed) btn.setAttribute("aria-disabled", "true");
-            else btn.removeAttribute("aria-disabled");
-            btn.setAttribute("aria-pressed", ""+!!(isInMonth && isSelected));
-            if (isToday) btn.setAttribute("aria-current", "date");
-            else btn.removeAttribute("aria-current");
+            btn.ariaDisabled = isDisallowed ? "true" : null;
+            btn.ariaPressed = ""+!!(isInMonth && isSelected);
+            btn.ariaCurrent = isToday ? "date" : null;
             btn.textContent = ""+date.day;
             btn.dataset.date = date.toString();
           }
