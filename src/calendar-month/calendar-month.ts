@@ -54,19 +54,19 @@ export class CalendarMonth extends SignalElement<{
     // ── Pre-create weeknumber cells once (NOT in effects) ─────────────────
     // Created in setup, inserted/removed by effect when showWeekNumbers changes
     const wnCol = document.createElement("col");
-    wnCol.setAttribute("part", "col-weeknumber");
+    wnCol.part.add("col-weeknumber");
 
     const wnHeadTh = document.createElement("th");
-    wnHeadTh.setAttribute("part", "th weeknumber");
-    wnHeadTh.setAttribute("scope", "col");
-    wnHeadTh.innerHTML = `<slot name="weeknumber"><span class="vh">Week</span><span aria-hidden="true">#</span></slot>`;
+    wnHeadTh.part.value = "th weeknumber";
+    wnHeadTh.scope = "col";
+    wnHeadTh.innerHTML = `<slot name=weeknumber><span class=vh>Week</span><span aria-hidden=true>#</span></slot>`;
 
     const wnBodyThs: HTMLTableCellElement[] = [];
     for (let r = 0; r < ROWS; r++) {
       const th = document.createElement("th");
       th.className = "num";
-      th.setAttribute("part", "th weeknumber");
-      th.setAttribute("scope", "row");
+      th.part.value = "th weeknumber";
+      th.scope = "row";
       wnBodyThs.push(th);
     }
 
@@ -151,7 +151,7 @@ export class CalendarMonth extends SignalElement<{
         for (let c = 0; c < COLS; c++) {
           const th = theadRow.cells[weekNumbersShown ? c + 1 : c] as HTMLTableCellElement;
           const dayIndex = (c + firstDayOfWeek) % 7;
-          th.setAttribute("part", `th day day-${dayIndex}`);
+          th.part.value = `th day day-${dayIndex}`;
           th.querySelector<HTMLElement>(".vh")!.textContent = daysLong[c];
           th.querySelector<HTMLElement>("[aria-hidden]")!.textContent = daysVisible[c];
         }
@@ -180,7 +180,7 @@ export class CalendarMonth extends SignalElement<{
             const isInMonth = date ? yearMonth.equals(date) : false;
 
             if (!date || (!showOutsideDays && !isInMonth)) {
-              btn.setAttribute("part", "button day");
+              btn.part.value = "button day";
               btn.ariaLabel = "";
               btn.tabIndex = -1;
               btn.disabled = false;
@@ -220,7 +220,7 @@ export class CalendarMonth extends SignalElement<{
               getDayParts?.(asDate) ?? ""
             } ${rangeParts}`.replace(/\s+/g, " ").trim();
 
-            btn.setAttribute("part", part);
+            btn.part.value = part;
             btn.ariaLabel = dayFormatter.format(asDate);
             btn.tabIndex = isInMonth && isFocused ? 0 : -1;
             btn.disabled = isDisabled;
