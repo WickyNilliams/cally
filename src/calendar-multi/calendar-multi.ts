@@ -28,7 +28,7 @@ export class CalendarMulti extends CalendarBaseElement {
       const date = (e as CustomEvent<PlainDate>).detail;
       e.stopPropagation();
       const multi = parseDateMultiProp(this.$.value.value as string);
-      const idx = multi.findIndex((d) => d.equals(date));
+      const idx = multi.findIndex((d) => ""+d === ""+date);
       const newValues = [...multi];
       if (idx < 0) newValues.push(date);
       else newValues.splice(idx, 1);

@@ -78,17 +78,17 @@ describe("PlainDate", () => {
     });
   });
 
-  describe("equals()", () => {
-    it("returns true when dates are equal", () => {
+  describe("string equality", () => {
+    it("same date produces same string", () => {
       const date = new PlainDate(2020, 1, 1);
       const date2 = new PlainDate(2020, 1, 1);
-      expect(date.equals(date2)).toBe(true);
+      expect(""+date === ""+date2).toBe(true);
     });
 
-    it("returns false when dates are not equal", () => {
+    it("different dates produce different strings", () => {
       const date = new PlainDate(2020, 1, 1);
       const date2 = new PlainDate(2020, 1, 2);
-      expect(date.equals(date2)).toBe(false);
+      expect(""+date === ""+date2).toBe(false);
     });
   });
 });
@@ -110,29 +110,17 @@ describe("PlainYearMonth", () => {
     });
   });
 
-  describe("toPlainDate()", () => {
-    it("returns a PlainDate", () => {
-      const yearMonth = new PlainYearMonth(2020, 1);
-      const date = yearMonth.toPlainDate();
-
-      expect(date).toBeInstanceOf(PlainDate);
-      expect(date.year).toBe(2020);
-      expect(date.month).toBe(1);
-      expect(date.day).toBe(1);
-    });
-  });
-
-  describe("equals()", () => {
-    it("returns true when dates are equal", () => {
-      const yearMonth = new PlainYearMonth(2020, 1);
-      const yearMonth2 = new PlainYearMonth(2020, 1);
-      expect(yearMonth.equals(yearMonth2)).toBe(true);
+  describe("year/month equality", () => {
+    it("same year/month are equal", () => {
+      const ym = new PlainYearMonth(2020, 1);
+      const ym2 = new PlainYearMonth(2020, 1);
+      expect(ym.year === ym2.year && ym.month === ym2.month).toBe(true);
     });
 
-    it("returns false when dates are not equal", () => {
-      const yearMonth = new PlainYearMonth(2020, 1);
-      const yearMonth2 = new PlainYearMonth(2020, 2);
-      expect(yearMonth.equals(yearMonth2)).toBe(false);
+    it("different year/month are not equal", () => {
+      const ym = new PlainYearMonth(2020, 1);
+      const ym2 = new PlainYearMonth(2020, 2);
+      expect(ym.year === ym2.year && ym.month === ym2.month).toBe(false);
     });
   });
 });

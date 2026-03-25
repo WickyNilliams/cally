@@ -177,7 +177,7 @@ export class CalendarMonth extends SignalElement<{
           for (let c = 0; c < COLS; c++) {
             const btn = row.cells[c + dayOffset].querySelector<HTMLButtonElement>("button")!;
             const date = week?.[c];
-            const isInMonth = date ? yearMonth.equals(date) : false;
+            const isInMonth = date && yearMonth.year === date.year && yearMonth.month === date.month;
 
             if (!date || (!showOutsideDays && !isInMonth)) {
               btn.part.value = "button day";
@@ -192,8 +192,8 @@ export class CalendarMonth extends SignalElement<{
               continue;
             }
 
-            const isFocused = date.equals(focusedDate);
-            const isToday = date.equals(todaysDate);
+            const isFocused = ""+date === ""+focusedDate;
+            const isToday = ""+date === ""+todaysDate;
             const asDate = toDate(date);
             const isDisallowed = isDateDisallowed?.(asDate);
             const isDisabled = clamp(date, min, max) !== date;
@@ -202,15 +202,15 @@ export class CalendarMonth extends SignalElement<{
             let rangeParts = "";
             if (ctx.type === "range") {
               const [start, end] = ctx.value;
-              const isRangeStart = start?.equals(date);
-              const isRangeEnd = end?.equals(date);
+              const isRangeStart = start && ""+start === ""+date;
+              const isRangeEnd = end && ""+end === ""+date;
               isSelected = !!(start && end && clamp(date, start, end) === date);
               // prettier-ignore
               rangeParts = `${isRangeStart ? "range-start" : ""} ${isRangeEnd ? "range-end" : ""} ${isSelected && !isRangeStart && !isRangeEnd ? "range-inner" : ""}`;
             } else if (ctx.type === "multi") {
-              isSelected = ctx.value.some((d) => d.equals(date));
+              isSelected = ctx.value.some((d) => ""+d === ""+date);
             } else {
-              isSelected = ctx.value?.equals(date);
+              isSelected = ctx.value && ""+ctx.value === ""+date;
             }
 
             // prettier-ignore

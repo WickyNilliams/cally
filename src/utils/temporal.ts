@@ -36,10 +36,6 @@ export class PlainDate {
     return new PlainYearMonth(this.year, this.month);
   }
 
-  equals(date: PlainDate): boolean {
-    return ""+this === ""+date;
-  }
-
   static from(value: string | Date): PlainDate {
     if (typeof value === "string") {
       if (!/^\d{4}-\d\d-\d\d$/.test(value)) throw new TypeError(value);
@@ -62,11 +58,4 @@ export class PlainYearMonth {
     return new PlainYearMonth(date.getUTCFullYear(), date.getUTCMonth() + 1);
   }
 
-  equals(date: PlainDate | PlainYearMonth) {
-    return this.year === date.year && this.month === date.month;
-  }
-
-  toPlainDate() {
-    return new PlainDate(this.year, this.month, 1);
-  }
 }

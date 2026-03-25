@@ -83,7 +83,7 @@ export function getViewOfMonth(
   yearMonth: PlainYearMonth,
   firstDayOfWeek: DaysOfWeek = 0
 ): Week[] {
-  let start = startOfWeek(yearMonth.toPlainDate(), firstDayOfWeek);
+  let start = startOfWeek(new PlainDate(yearMonth.year, yearMonth.month, 1), firstDayOfWeek);
   const end = endOfWeek(endOfMonth(yearMonth), firstDayOfWeek);
 
   const weeks = [];
