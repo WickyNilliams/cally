@@ -58,7 +58,7 @@ export class PlainDate {
 
   static from(value: string | Date): PlainDate {
     if (typeof value === "string") {
-      if (!/^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])$/.test(value)) throw new TypeError(value);
+      if (!/^\d{4}-\d\d-\d\d$/.test(value)) throw new TypeError(value);
       const [y, m, d] = value.split("-");
       return new PlainDate(+y!, +m!, +d!);
     }

@@ -130,11 +130,8 @@ export function fire(el: Element, name: string, detail: unknown): void {
 }
 
 function coerce(value: unknown, type: PropertyConfig["type"]): unknown {
-  if (type === Boolean) {
-    if (typeof value === "boolean") return value;
-    return value === "true" || value === "";
-  }
-  if (type === Number) return Number(value) || 0;
+  if (type === Boolean) return value === true || value === "true" || value === "";
+  if (type === Number) return +value! || 0;
   if (type === Function) return value;
   return ""+( value ?? "");
 }
