@@ -5,7 +5,7 @@ import { getToday, toDate } from "../utils/date.js";
 import { PlainDate } from "../utils/temporal.js";
 
 const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
-  PlainDate.compare(a, b) < 0 ? [a, b] : [b, a];
+  ""+a < ""+b ? [a, b] : [b, a];
 
 const rangeProps = {
   ...sharedProps,

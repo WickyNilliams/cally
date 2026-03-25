@@ -53,11 +53,7 @@ export class PlainDate {
   }
 
   equals(date: PlainDate): boolean {
-    return !PlainDate.compare(this, date);
-  }
-
-  static compare(a: PlainDate, b: PlainDate): CompareResult {
-    return (a.year - b.year || a.month - b.month || a.day - b.day) as CompareResult;
+    return ""+this === ""+date;
   }
 
   static from(value: string | Date): PlainDate {

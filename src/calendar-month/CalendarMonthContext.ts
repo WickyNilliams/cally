@@ -37,7 +37,7 @@ export type CalendarContextValue =
   | CalendarRangeContext
   | CalendarMultiContext;
 
-const CTX_EVENT = "__ctx:calendar";
+const CTX_EVENT = "_c";
 
 /** Signal-based context handle used by all components */
 export const CalendarCtx = {

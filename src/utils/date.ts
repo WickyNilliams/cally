@@ -60,8 +60,8 @@ export function clamp(
   min?: PlainDate,
   max?: PlainDate
 ): PlainDate {
-  if (min && PlainDate.compare(date, min) < 0) return min;
-  if (max && PlainDate.compare(date, max) > 0) return max;
+  if (min && ""+date < ""+min) return min;
+  if (max && ""+date > ""+max) return max;
   return date;
 }
 
@@ -90,7 +90,7 @@ export function getViewOfMonth(
   const weeks = [];
 
   // get all days in range
-  while (PlainDate.compare(start, end) < 0) {
+  while (""+start < ""+end) {
     const week = [];
 
     // chunk into weeks
