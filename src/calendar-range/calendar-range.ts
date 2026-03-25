@@ -22,7 +22,7 @@ export class CalendarRange extends CalendarBaseElement<typeof sharedProps & {
       getToday();
 
     const hovered = signal<PlainDate | undefined>(undefined);
-    const getTentative = () => parseDateProp((this.$ as any).tentative.value as string);
+    const getTentative = () => parseDateProp(this.$.tentative.value as string);
 
     const registerEffects = setupCalendarBase(
       this,
@@ -48,14 +48,14 @@ export class CalendarRange extends CalendarBaseElement<typeof sharedProps & {
       e.stopPropagation();
       const tentative = getTentative();
       if (!tentative) {
-        (this.$ as any).tentative.value = date.toString();
+        this.$.tentative.value = date.toString();
         hovered.value = undefined;
         fire(this, "rangestart", toDate(date));
       } else {
         const [start, end] = sort(tentative, date);
         batch(() => {
           this.$.value.value = `${start}/${end}`;
-          (this.$ as any).tentative.value = "";
+          this.$.tentative.value = "";
           hovered.value = undefined;
         });
         fire(this, "rangeend", toDate(date));
@@ -72,7 +72,7 @@ export class CalendarRange extends CalendarBaseElement<typeof sharedProps & {
       registerEffects();
       // Reset hovered when tentative is cleared
       this.fx(() => {
-        void (this.$ as any).tentative.value;
+        void this.$.tentative.value;
         hovered.value = undefined;
       });
     };
