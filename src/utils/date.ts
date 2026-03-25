@@ -7,8 +7,6 @@ export function getToday() {
   return new PlainDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
 }
 
-const DAY_MS = 86400000;
-
 // slightly modified from https://weeknumber.co.uk/how-to/javascript
 export function getWeekNumber(plainDate: PlainDate) {
   const date = toDate(plainDate);
@@ -21,7 +19,7 @@ export function getWeekNumber(plainDate: PlainDate) {
   return (
     1 +
     Math.round(
-      ((date.getTime() - week1.getTime()) / DAY_MS -
+      ((date.getTime() - week1.getTime()) / 86400000 -
         3 +
         ((week1.getUTCDay() + 6) % 7)) /
         7

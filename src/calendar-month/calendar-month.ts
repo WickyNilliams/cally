@@ -9,7 +9,7 @@ import {
   startOfWeek,
   toDate,
 } from "../utils/date.js";
-import { getDayNames, makeDateFormatter } from "../utils/hooks.js";
+import { makeDateFormatter } from "../utils/hooks.js";
 import { reset, vh } from "../utils/styles.js";
 import type { CalendarFocusOptions } from "../calendar-base/useCalendarBase.js";
 import { PlainDate } from "../utils/temporal.js";
@@ -31,7 +31,7 @@ export class CalendarMonth extends SignalElement<{
     offset: { type: Number },
   };
 
-  static styles = `${reset}${vh}:host{--color-accent:black;--color-text-on-accent:white;display:flex;flex-direction:column;gap:.25rem;text-align:center;inline-size:fit-content}table{border-collapse:collapse;font-size:.875rem}th{inline-size:2.25rem;block-size:2.25rem}td{padding:0}.num{font-variant-numeric:tabular-nums}button{color:inherit;font-size:inherit;background:#0000;border:0;block-size:2.25rem;inline-size:2.25rem}button:hover:where(:not(:disabled,[aria-disabled])){background:#0000000d}button:is([aria-pressed=true],:focus-visible){background:var(--color-accent);color:var(--color-text-on-accent)}button:focus-visible{outline:1px solid var(--color-text-on-accent);outline-offset:-2px}button:disabled,:host::part(outside),:host::part(disallowed){cursor:default;opacity:.5}`;
+  static styles = `${reset}${vh}:host{--color-accent:black;--color-text-on-accent:white;display:flex;flex-direction:column;gap:.25rem;text-align:center;width:fit-content}table{border-collapse:collapse;font-size:.875rem}th{width:2.25rem;height:2.25rem}td{padding:0}.num{font-variant-numeric:tabular-nums}button{color:inherit;font-size:inherit;background:#0000;border:0;height:2.25rem;width:2.25rem}button:hover:where(:not(:disabled,[aria-disabled])){background:#0000000d}button:is([aria-pressed=true],:focus-visible){background:var(--color-accent);color:var(--color-text-on-accent)}button:focus-visible{outline:1px solid var(--color-text-on-accent);outline-offset:-2px}button:disabled,:host::part(outside),:host::part(disallowed){cursor:default;opacity:.5}`;
   static template = buildTemplate();
 
   setup() {
@@ -137,14 +137,16 @@ export class CalendarMonth extends SignalElement<{
         }
 
         // ── Thead day names ───────────────────────────────────────────────
-        const daysLong = getDayNames({ weekday: "long" }, firstDayOfWeek, locale);
-        const daysVisible = getDayNames({ weekday: formatWeekday }, firstDayOfWeek, locale);
+        const fmtLong = makeDateFormatter({ weekday: "long" }, locale);
+        const fmtVis = makeDateFormatter({ weekday: formatWeekday }, locale);
+        const dayRef = new Date(Date.UTC(2023, 0, 1));
         for (let c = 0; c < 7; c++) {
           const th = theadRow.cells[weekNumbersShown ? c + 1 : c] as HTMLTableCellElement;
           const dayIndex = (c + firstDayOfWeek) % 7;
+          dayRef.setUTCDate(dayIndex + 1);
           th.part.value = `th day day-${dayIndex}`;
-          th.querySelector<HTMLElement>(".vh")!.textContent = daysLong[c];
-          th.querySelector<HTMLElement>("[aria-hidden]")!.textContent = daysVisible[c];
+          th.querySelector<HTMLElement>(".vh")!.textContent = fmtLong.format(dayRef);
+          th.querySelector<HTMLElement>("[aria-hidden]")!.textContent = fmtVis.format(dayRef);
         }
 
         // ── Tbody rows ────────────────────────────────────────────────────

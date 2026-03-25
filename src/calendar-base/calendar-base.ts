@@ -6,7 +6,7 @@ import { parseDateProp, makeDateFormatter } from "../utils/hooks.js";
 import { clamp, endOfMonth, getToday, toDate, type DaysOfWeek } from "../utils/date.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 
-export const BASE_STYLES = `${reset}${vh}:host{display:block;inline-size:fit-content}[part~=container]{display:flex;flex-direction:column;gap:1em}[part~=header]{display:flex;align-items:center;justify-content:space-between}[part~=heading]{font-weight:bold;font-size:1.25em}[part~=button]{display:flex;align-items:center;justify-content:center}[part~=button][part~=disabled]{cursor:default;opacity:.5}`;
+export const BASE_STYLES = `${reset}${vh}:host{display:block;width:fit-content}[part~=container]{display:flex;flex-direction:column;gap:1em}[part~=header]{display:flex;align-items:center;justify-content:space-between}[part~=heading]{font-weight:bold;font-size:1.25em}[part~=button]{display:flex;align-items:center;justify-content:center}[part~=button][part~=disabled]{cursor:default;opacity:.5}`;
 
 export const BASE_TEMPLATE = `<div class=vh id=h aria-live=polite aria-atomic=true></div><div role=group aria-labelledby=h part=container><div part=header><button part="button previous"><slot name=previous>Previous</slot></button><slot part=heading name=heading><div aria-hidden=true></div></slot><button part="button next"><slot name=next>Next</slot></button></div><slot part=months></slot></div>`;
 
@@ -17,15 +17,15 @@ export const sharedProps = {
   max: { type: String },
   today: { type: String },
   isDateDisallowed: { type: Function },
-  formatWeekday: { type: String, value: "narrow" },
+  formatWeekday: { type: String },
   getDayParts: { type: Function },
   firstDayOfWeek: { type: Number, value: 1 },
-  showOutsideDays: { type: Boolean, value: false },
+  showOutsideDays: { type: Boolean },
   locale: { type: String },
   months: { type: Number, value: 1 },
   focusedDate: { type: String },
-  pageBy: { type: String, value: "months" },
-  showWeekNumbers: { type: Boolean, value: false },
+  pageBy: { type: String },
+  showWeekNumbers: { type: Boolean },
 } as const;
 
 type PageType = { start: PlainYearMonth; end: PlainYearMonth };
