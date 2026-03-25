@@ -3,6 +3,7 @@ import { CalendarCtx } from "../calendar-month/CalendarMonthContext.js";
 import { SELECT_STYLES, SELECT_TEMPLATE } from "./calendar-year-month-base.js";
 import { PlainYearMonth } from "../utils/temporal.js";
 import { makeDateFormatter } from "../utils/hooks.js";
+import { diffInMonths } from "../calendar-base/useCalendarBase.js";
 
 const monthProps = {
   formatMonth: { type: String, value: "long" },
@@ -59,8 +60,8 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
           day.setUTCMonth(i);
           const ym = new PlainYearMonth(focusedYearMonth.year, monthNum);
           const isDisabled =
-            (ctx.min != null && PlainYearMonth.compare(ym, ctx.min) < 0) ||
-            (ctx.max != null && PlainYearMonth.compare(ym, ctx.max) > 0);
+            (ctx.min != null && diffInMonths(ym, ctx.min) > 0) ||
+            (ctx.max != null && diffInMonths(ym, ctx.max) < 0);
           pool[i].value = ""+monthNum;
           pool[i].textContent = fmt.format(day);
           pool[i].disabled = isDisabled;

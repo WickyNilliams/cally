@@ -146,9 +146,18 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   });
 
   const registerEffects = () => {
-    // Keep context signal in sync with page, focusedDate, and all reactive props
+    // Keep context signal in sync and update headings/prev/next
     self.createEffect(() => {
-      ctxSignal.value = buildCtxValue(focusedDate.value, page.value);
+      const ctx = buildCtxValue(focusedDate.value, page.value);
+      ctxSignal.value = ctx;
+      const format = makeDateFormatter(formatOptions, ctx.locale);
+      const formatVerbose = makeDateFormatter(formatVerboseOptions, ctx.locale);
+      const start = toDate(ctx.page.start);
+      const end = toDate(ctx.page.end);
+      hiddenHeading.textContent = formatVerbose.formatRange(start, end);
+      visibleHeading.textContent = format.formatRange(start, end);
+      setPrevNext(prevBtn, !ctx.min || !containsDate(ctx.min));
+      setPrevNext(nextBtn, !ctx.max || !containsDate(ctx.max));
     });
 
     // Sync focusedDate from prop and clamp to min/max
@@ -169,18 +178,6 @@ export function setupCalendarBase<P extends typeof sharedProps>(
       updatePage(diff === -1 ? -getStep() : diff === months ? getStep() : Math.floor(diff / months) * months);
     });
 
-    // Update headings and prev/next button states
-    self.createEffect(() => {
-      const ctx = ctxSignal.value;
-      const format = makeDateFormatter(formatOptions, ctx.locale);
-      const formatVerbose = makeDateFormatter(formatVerboseOptions, ctx.locale);
-      const start = toDate(ctx.page.start);
-      const end = toDate(ctx.page.end);
-      hiddenHeading.textContent = formatVerbose.formatRange(start, end);
-      visibleHeading.textContent = format.formatRange(start, end);
-      setPrevNext(prevBtn, !ctx.min || !containsDate(ctx.min));
-      setPrevNext(nextBtn, !ctx.max || !containsDate(ctx.max));
-    });
   };
 
   return registerEffects;

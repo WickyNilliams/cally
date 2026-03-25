@@ -1,7 +1,5 @@
 import { endOfMonth, clamp, toDate } from "./date.js";
 
-type CompareResult = -1 | 0 | 1;
-
 export class PlainDate {
   constructor(
     public readonly year: number,
@@ -70,12 +68,5 @@ export class PlainYearMonth {
 
   toPlainDate() {
     return new PlainDate(this.year, this.month, 1);
-  }
-
-  static compare(
-    a: PlainYearMonth | { year: number; month: number },
-    b: PlainYearMonth | { year: number; month: number }
-  ): CompareResult {
-    return (a.year - b.year || a.month - b.month) as CompareResult;
   }
 }
