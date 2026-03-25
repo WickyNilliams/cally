@@ -39,7 +39,7 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
       select.addEventListener("change", () => {
         const ctx = ctxSig.value;
         const value = +select.value;
-        const diff = value - ctx.focusedDate.toPlainYearMonth().month;
+        const diff = value - ctx.focusedDate.tym().month;
         const newDate = ctx.focusedDate.add("m", diff);
         fire(this, "focusday", newDate);
       });
@@ -51,7 +51,7 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
           ctx.locale
         );
 
-        const focusedYearMonth = ctx.focusedDate.toPlainYearMonth();
+        const focusedYearMonth = ctx.focusedDate.tym();
         const day = new Date(Date.UTC(2000, 0, 1));
 
         for (let i = 0; i < MONTH_COUNT; i++) {

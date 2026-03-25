@@ -2,9 +2,6 @@ import { endOfMonth, clamp, toDate } from "./date.js";
 
 type CompareResult = -1 | 0 | 1;
 
-const padZero = (value: number, length: number) =>
-  (""+value).padStart(length, "0");
-
 export class PlainDate {
   constructor(
     public readonly year: number,
@@ -34,10 +31,10 @@ export class PlainDate {
   }
 
   toString(): string {
-    return `${padZero(this.year, 4)}-${padZero(this.month, 2)}-${padZero(this.day, 2)}`;
+    return toDate(this).toISOString().slice(0, 10);
   }
 
-  toPlainYearMonth() {
+  tym() {
     return new PlainYearMonth(this.year, this.month);
   }
 

@@ -89,7 +89,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   );
   const page = signal<PageType>(
     createPage(
-      focusedDate.value.toPlainYearMonth(),
+      focusedDate.value.tym(),
       (self.$.months.value as number) || 1,
       (self.$.pageBy.value as Pagination) || "months"
     )
@@ -110,7 +110,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     const pageBy = self.$.pageBy.value as Pagination;
     const newPage = createPage(page.value.start.add(by), months, pageBy);
     const fd = focusedDate.value;
-    const diff = diffInMonths(newPage.start, fd.toPlainYearMonth());
+    const diff = diffInMonths(newPage.start, fd.tym());
     let newFd = fd;
     if (diff < 0 || diff >= months) {
       const targetMonth = newPage.start;
@@ -125,7 +125,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   };
 
   const containsDate = (d: PlainDate) => {
-    const diff = diffInMonths(page.value.start, d.toPlainYearMonth());
+    const diff = diffInMonths(page.value.start, d.tym());
     return diff >= 0 && diff < (self.$.months.value as number);
   };
 
@@ -164,7 +164,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
       const fd = focusedDate.value;
       const months = self.$.months.value as number;
       const snap = page.peek();
-      const diff = diffInMonths(snap.start, fd.toPlainYearMonth());
+      const diff = diffInMonths(snap.start, fd.tym());
       if (diff >= 0 && diff < months) return;
       updatePage(diff === -1 ? -getStep() : diff === months ? getStep() : Math.floor(diff / months) * months);
     });

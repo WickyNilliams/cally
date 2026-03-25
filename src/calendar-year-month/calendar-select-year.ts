@@ -36,7 +36,7 @@ export class CalendarSelectYear extends SignalElement<typeof yearProps> {
       select.addEventListener("change", () => {
         const ctx = ctxSig.value;
         const value = +select.value;
-        const diff = value - ctx.focusedDate.toPlainYearMonth().year;
+        const diff = value - ctx.focusedDate.tym().year;
         const newDate = ctx.focusedDate.add("y", diff);
         fire(this, "focusday", newDate);
       });
@@ -44,7 +44,7 @@ export class CalendarSelectYear extends SignalElement<typeof yearProps> {
       this.createEffect(() => {
         const ctx = ctxSig.value;
         const maxYears = this.$.maxYears.value as number;
-        const focusedYearMonth = ctx.focusedDate.toPlainYearMonth();
+        const focusedYearMonth = ctx.focusedDate.tym();
         const currentYear = focusedYearMonth.year;
 
         const halfRange = Math.floor(maxYears / 2);

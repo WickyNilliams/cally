@@ -67,8 +67,8 @@ function Fixture({
         firstDayOfWeek: 1,
         locale: "en-GB",
         page: {
-          start: focusedDate.toPlainYearMonth(),
-          end: focusedDate.toPlainYearMonth(),
+          start: focusedDate.tym(),
+          end: focusedDate.tym(),
         },
         focusedDate,
         formatWeekday,

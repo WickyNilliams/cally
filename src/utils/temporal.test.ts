@@ -67,10 +67,10 @@ describe("PlainDate", () => {
     });
   });
 
-  describe("toPlainYearMonth()", () => {
+  describe("tym()", () => {
     it("returns a PlainYearMonth", () => {
       const date = new PlainDate(2020, 1, 1);
-      const yearMonth = date.toPlainYearMonth();
+      const yearMonth = date.tym();
 
       expect(yearMonth).toBeInstanceOf(PlainYearMonth);
       expect(yearMonth.year).toBe(2020);
