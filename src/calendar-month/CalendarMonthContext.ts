@@ -37,19 +37,17 @@ export type CalendarContextValue =
   | CalendarRangeContext
   | CalendarMultiContext;
 
-const CTX_EVENT = "_c";
-
 /** Signal-based context handle used by all components */
 export const CalendarCtx = {
   provide(host: HTMLElement, value: ReadonlySignal<CalendarContextValue>) {
-    host.addEventListener(CTX_EVENT, (e: Event) => {
+    host.addEventListener("_c", (e: Event) => {
       e.stopPropagation();
       (e as CustomEvent<{ value?: ReadonlySignal<CalendarContextValue> }>).detail.value = value;
     });
   },
   consume(host: HTMLElement): ReadonlySignal<CalendarContextValue> | undefined {
     const detail: { value?: ReadonlySignal<CalendarContextValue> } = {};
-    host.dispatchEvent(new CustomEvent(CTX_EVENT, { bubbles: true, composed: true, detail }));
+    host.dispatchEvent(new CustomEvent("_c", { bubbles: true, composed: true, detail }));
     return detail.value;
   },
 };

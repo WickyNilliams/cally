@@ -50,7 +50,7 @@ export class SignalElement<
     // Create shadow root
     const shadow = this.attachShadow({ mode: "open" });
 
-    shadow.innerHTML = (ctor.styles ? `<style>${ctor.styles}</style>` : "") + ctor.template;
+    shadow.innerHTML = `<style>${ctor.styles}</style>` + ctor.template;
 
     // Create signals for each declared property
     const props = ctor.properties as T;

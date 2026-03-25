@@ -16,7 +16,7 @@ export class CalendarSelectMonth extends SignalElement<{
 
   setup() {
     const root = this.shadowRoot!;
-    const select = root.querySelector<HTMLSelectElement>("select")!;
+    const select = root.children[2] as HTMLSelectElement;
     const labelSlot = root.querySelector<HTMLSlotElement>("slot")!;
 
     labelSlot.textContent = "Month";

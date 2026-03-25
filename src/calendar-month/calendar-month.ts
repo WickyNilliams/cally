@@ -36,10 +36,10 @@ export class CalendarMonth extends SignalElement<{
 
   setup() {
     const root = this.shadowRoot!;
-    const heading = root.querySelector<HTMLElement>('[part="heading"]')!;
-    const table = root.querySelector<HTMLTableElement>('[part="table"]')!;
-    const colgroup = table.querySelector("colgroup")!;
-    const theadRow = table.tHead!.rows[0];
+    const heading = root.children[1] as HTMLElement;
+    const table = root.children[2] as HTMLTableElement;
+    const colgroup = table.children[0] as HTMLElement;
+    const theadRow = table.rows[0];
     const tbody = table.tBodies[0];
 
     // ── Pre-create weeknumber cells once (NOT in effects) ─────────────────
@@ -145,8 +145,8 @@ export class CalendarMonth extends SignalElement<{
           const dayIndex = (c + firstDayOfWeek) % 7;
           dayRef.setUTCDate(dayIndex + 1);
           th.part.value = `th day day-${dayIndex}`;
-          th.querySelector<HTMLElement>(".vh")!.textContent = fmtLong.format(dayRef);
-          th.querySelector<HTMLElement>("[aria-hidden]")!.textContent = fmtVis.format(dayRef);
+          th.children[0].textContent = fmtLong.format(dayRef);
+          th.children[1].textContent = fmtVis.format(dayRef);
         }
 
         // ── Tbody rows ────────────────────────────────────────────────────
@@ -168,7 +168,7 @@ export class CalendarMonth extends SignalElement<{
 
           const dayOffset = weekNumbersShown && !!week ? 1 : 0;
           for (let c = 0; c < 7; c++) {
-            const btn = row.cells[c + dayOffset].querySelector<HTMLButtonElement>("button")!;
+            const btn = row.cells[c + dayOffset].children[0] as HTMLButtonElement;
             const date = week?.[c];
             const isInMonth = date && yearMonth.year === date.year && yearMonth.month === date.month;
 
@@ -230,7 +230,7 @@ export class CalendarMonth extends SignalElement<{
 
   override focus(options?: CalendarFocusOptions) {
     this.shadowRoot!
-      .querySelector<HTMLButtonElement>("button[tabindex='0']")
+      .querySelector<HTMLButtonElement>("[tabindex='0']")
       ?.focus(options);
   }
 }

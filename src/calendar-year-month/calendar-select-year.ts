@@ -2,8 +2,6 @@ import { SignalElement, fire } from "../signal-element.js";
 import { CalendarCtx } from "../calendar-month/CalendarMonthContext.js";
 import { SELECT_STYLES, SELECT_TEMPLATE } from "./calendar-year-month-base.js";
 
-const MAX_POOL = 400;
-
 export class CalendarSelectYear extends SignalElement<{
   maxYears: { type: typeof Number; value: number };
 }> {
@@ -15,7 +13,7 @@ export class CalendarSelectYear extends SignalElement<{
 
   setup() {
     const root = this.shadowRoot!;
-    const select = root.querySelector<HTMLSelectElement>("select")!;
+    const select = root.children[2] as HTMLSelectElement;
     const labelSlot = root.querySelector<HTMLSlotElement>("slot")!;
 
     // Set default label text in slot
@@ -23,7 +21,7 @@ export class CalendarSelectYear extends SignalElement<{
 
     // Pre-create option pool — only once in setup, never in effects
     const pool: HTMLOptionElement[] = [];
-    for (let i = 0; i < MAX_POOL; i++) {
+    for (let i = 0; i < 400; i++) {
       const opt = document.createElement("option");
       opt.part.add("option");
       pool.push(opt);
@@ -53,7 +51,7 @@ export class CalendarSelectYear extends SignalElement<{
 
         const minYear = Math.max(defaultMin, ctx.min?.year ?? -Infinity);
         const maxYear = Math.min(defaultMax, ctx.max?.year ?? Infinity);
-        const count = Math.min(maxYear - minYear + 1, MAX_POOL);
+        const count = Math.min(maxYear - minYear + 1, 400);
 
         for (let i = 0; i < count; i++) {
           pool[i].value = pool[i].textContent = ""+(minYear + i);

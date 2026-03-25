@@ -76,10 +76,9 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   onFocusDay?: (date: PlainDate) => void
 ): () => void {
   const root = self.shadowRoot!;
-  const hiddenHeading = root.querySelector<HTMLElement>("#h")!;
-  const visibleHeading = root.querySelector<HTMLElement>('[part="heading"] [aria-hidden]')!;
-  const prevBtn = root.querySelector<HTMLButtonElement>("[part~='previous']")!;
-  const nextBtn = root.querySelector<HTMLButtonElement>("[part~='next']")!;
+  const hiddenHeading = root.children[1] as HTMLElement;
+  const visibleHeading = root.querySelector<HTMLElement>("[aria-hidden]")!;
+  const [prevBtn, nextBtn] = root.querySelectorAll<HTMLButtonElement>("button");
 
   const clampToSelf = (d: PlainDate) =>
     clamp(d, parseDateProp(self.$.min.value as string), parseDateProp(self.$.max.value as string));
@@ -96,8 +95,6 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   Object.defineProperty(self, "focusedDate", {
     get: () => focusedDate.value.toString(),
     set: (v: string) => { (self.$.focusedDate as unknown as { value: string }).value = v; },
-    enumerable: true,
-    configurable: true,
   });
 
   const getStep = () =>
