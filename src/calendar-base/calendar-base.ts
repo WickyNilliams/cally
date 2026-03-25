@@ -108,7 +108,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   const updatePage = (by: number) => {
     const months = self.$.months.value as number;
     const pageBy = self.$.pageBy.value as Pagination;
-    const newPage = createPage(page.value.start.add({ months: by }), months, pageBy);
+    const newPage = createPage(page.value.start.add(by), months, pageBy);
     const fd = focusedDate.value;
     const diff = diffInMonths(newPage.start, fd.toPlainYearMonth());
     let newFd = fd;

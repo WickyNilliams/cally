@@ -45,7 +45,7 @@ export function endOfWeek(
   date: PlainDate,
   firstDayOfWeek: DaysOfWeek = 0
 ): PlainDate {
-  return startOfWeek(date, firstDayOfWeek).add({ days: 6 });
+  return startOfWeek(date, firstDayOfWeek).add("d", 6);
 }
 
 export function endOfMonth(date: { year: number; month: number }): PlainDate {
@@ -65,7 +65,6 @@ export function clamp(
   return date;
 }
 
-const oneDay = { days: 1 };
 
 type Week = [
   PlainDate,
@@ -96,7 +95,7 @@ export function getViewOfMonth(
     // chunk into weeks
     for (let i = 0; i < 7; i++) {
       week.push(start);
-      start = start.add(oneDay);
+      start = start.add("d", 1);
     }
 
     weeks.push(week as Week);

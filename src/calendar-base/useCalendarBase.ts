@@ -20,6 +20,6 @@ export function createPage(
   }
   return {
     start,
-    end: start.add({ months: months - 1 }),
+    end: start.add(months - 1),
   };
 }

@@ -1,6 +1,5 @@
 import { endOfMonth, clamp, toDate } from "./date.js";
 
-type Duration = { months: number } | { years: number } | { days: number };
 type CompareResult = -1 | 0 | 1;
 
 const padZero = (value: number, length: number) =>
@@ -16,30 +15,20 @@ export class PlainDate {
   // this is an incomplete implementation that only handles arithmetic on a single unit at a time.
   // i didn't want to get into more complex arithmetic since it get tricky fast
   // this is enough to serve my needs and will still be a drop-in replacement when actual Temporal API lands
-  add(duration: Duration): PlainDate {
+  add(key: string, n: number): PlainDate {
     const date = toDate(this);
-
-    if ("days" in duration) {
-      date.setUTCDate(this.day + duration.days);
+    if (key === "d") {
+      date.setUTCDate(this.day + n);
       return PlainDate.from(date);
     }
-
-    // let min: PlainDate;
     let { year, month } = this;
-
-    // ensures date arithmetic is constrained
-    // e.g. add 1 month to 31st March -> 30th April
-    if ("months" in duration) {
-      month = this.month + duration.months;
+    if (key === "m") {
+      month = this.month + n;
       date.setUTCMonth(month - 1);
-    }
-    // ensures date arithmetic is constrained
-    // e.g. add 1 year to 29th Feb -> 28th Feb
-    else {
-      year = this.year + duration.years;
+    } else {
+      year = this.year + n;
       date.setUTCFullYear(year);
     }
-
     const min = PlainDate.from(toDate({ year, month, day: 1 }));
     return clamp(PlainDate.from(date), min, endOfMonth(min));
   }
@@ -66,19 +55,15 @@ export class PlainDate {
   }
 }
 
-type YearMonthDuration = { months?: number; years?: number };
-
 export class PlainYearMonth {
   constructor(
     public readonly year: number,
     public readonly month: number
   ) {}
 
-  add(duration: YearMonthDuration) {
+  add(n: number) {
     const date = toDate(this);
-    const months = (duration.months ?? 0) + (duration.years ?? 0) * 12;
-    date.setUTCMonth(date.getUTCMonth() + months);
-
+    date.setUTCMonth(date.getUTCMonth() + n);
     return new PlainYearMonth(date.getUTCFullYear(), date.getUTCMonth() + 1);
   }
 
