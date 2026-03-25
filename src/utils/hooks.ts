@@ -10,7 +10,7 @@ export function parseDateRangeProp(value: string): [PlainDate, PlainDate] | [] {
 }
 
 export function parseDateMultiProp(value: string): PlainDate[] {
-  return value.trim().split(/\s+/).map(parseDateProp).filter(d => d) as PlainDate[];
+  return value.split(/\s+/).map(parseDateProp).filter(d => d) as PlainDate[];
 }
 
 type DateFormatOptions = Pick<
