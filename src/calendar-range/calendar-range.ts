@@ -74,7 +74,7 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
     return () => {
       registerEffects();
       // Reset hovered when tentative is cleared
-      this.createEffect(() => {
+      this.fx(() => {
         void (this.$ as any).tentative.value;
         hovered.value = undefined;
       });

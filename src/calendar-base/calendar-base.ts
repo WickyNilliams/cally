@@ -147,7 +147,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
 
   const registerEffects = () => {
     // Keep context signal in sync and update headings/prev/next
-    self.createEffect(() => {
+    self.fx(() => {
       const ctx = buildCtxValue(focusedDate.value, page.value);
       ctxSignal.value = ctx;
       const format = makeDateFormatter(formatOptions, ctx.locale);
@@ -161,7 +161,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     });
 
     // Sync focusedDate from prop and clamp to min/max
-    self.createEffect(() => {
+    self.fx(() => {
       const propFd = parseDateProp(self.$.focusedDate.value as string);
       const min = parseDateProp(self.$.min.value as string);
       const max = parseDateProp(self.$.max.value as string);
@@ -169,7 +169,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     });
 
     // Sync page when focusedDate moves outside the current page
-    self.createEffect(() => {
+    self.fx(() => {
       const fd = focusedDate.value;
       const months = self.$.months.value as number;
       const snap = page.peek();

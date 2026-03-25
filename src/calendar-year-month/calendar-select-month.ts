@@ -45,7 +45,7 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
         fire(this, "focusday", newDate);
       });
 
-      this.createEffect(() => {
+      this.fx(() => {
         const ctx = ctxSig.value;
         const fmt = makeDateFormatter(
           { month: (this.$.formatMonth.value as string) as "long" | "short" },

@@ -120,7 +120,7 @@ export class CalendarMonth extends SignalElement<{
         }
       });
 
-      this.createEffect(() => {
+      this.fx(() => {
         const ctx = ctxSig.value;
         const { min, max, today, focusedDate, firstDayOfWeek, locale, formatWeekday,
                 isDateDisallowed, getDayParts, showOutsideDays } = ctx;

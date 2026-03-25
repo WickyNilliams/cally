@@ -111,7 +111,7 @@ export class SignalElement<
   }
 
   /** Register a reactive effect that runs immediately and re-runs on signal changes */
-  createEffect(fn: () => void): void {
+  fx(fn: () => void): void {
     this.#cleanups.push(effect(fn));
   }
 

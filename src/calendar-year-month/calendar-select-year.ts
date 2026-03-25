@@ -41,7 +41,7 @@ export class CalendarSelectYear extends SignalElement<typeof yearProps> {
         fire(this, "focusday", newDate);
       });
 
-      this.createEffect(() => {
+      this.fx(() => {
         const ctx = ctxSig.value;
         const maxYears = this.$.maxYears.value as number;
         const focusedYearMonth = ctx.focusedDate.tym();
