@@ -8,7 +8,7 @@ import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 
 export const BASE_STYLES = `${reset}${vh}:host{display:block;width:fit-content}[part=container]{display:grid;gap:1em}[part=header]{display:flex;align-items:center}[part=heading]{font-weight:700;font-size:1.25em;margin-inline:auto}[part~=button]{display:grid;place-items:center}[part~=button][part~=disabled]{cursor:default;opacity:.5}`;
 
-export const BASE_TEMPLATE = `<div class=vh id=h aria-live=polite></div><div role=group aria-labelledby=h part=container><div part=header><button part="button previous"><slot name=previous>Previous</slot></button><slot part=heading name=heading><div id=a aria-hidden=true></div></slot><button part="button next"><slot name=next>Next</slot></button></div><slot part=months></slot></div>`;
+export const BASE_TEMPLATE = `<div class=vh id=h aria-live=polite aria-atomic=true></div><div role=group aria-labelledby=h part=container><div part=header><button part="button previous"><slot name=previous>Previous</slot></button><slot part=heading name=heading><div id=a aria-hidden=true></div></slot><button part="button next"><slot name=next>Next</slot></button></div><slot part=months></slot></div>`;
 
 // Shared property definitions (mirrors the old `props` export shape for reference)
 export const sharedProps = {
