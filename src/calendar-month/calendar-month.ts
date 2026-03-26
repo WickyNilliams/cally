@@ -17,7 +17,7 @@ import { PlainDate } from "../utils/temporal.js";
 /** Build static template — NO weeknumber cells here; those are created once in setup() */
 function buildTemplate(): string {
   const th = `<th scope=col><span class=vh></span><span aria-hidden=true></span></th>`;
-  const td = `<td part=td><button class=num type=button tabindex=-1></button></td>`;
+  const td = `<td part=td><button type=button tabindex=-1></button></td>`;
   const tr = `<tr part="tr week">${td.repeat(7)}</tr>`;
   let cols = "";
   for (let i = 1; i <= 7; i++) cols += `<col part=col-${i}>`;
@@ -31,7 +31,7 @@ export class CalendarMonth extends SignalElement<{
     offset: { type: Number },
   };
 
-  static styles = `${reset}${vh}:host{--color-accent:black;--color-text-on-accent:white;display:flex;flex-direction:column;gap:.25rem;text-align:center;width:fit-content}table{border-collapse:collapse;font-size:.875rem}th{width:2.25rem;height:2.25rem}td{padding:0}.num{font-variant-numeric:tabular-nums}button{color:inherit;font-size:inherit;background:#0000;border:0;height:2.25rem;width:2.25rem}button:hover:where(:not(:disabled,[aria-disabled])){background:#0000000d}button:is([aria-pressed=true],:focus-visible){background:var(--color-accent);color:var(--color-text-on-accent)}button:focus-visible{outline:1px solid var(--color-text-on-accent);outline-offset:-2px}button:disabled,:host::part(outside),:host::part(disallowed){cursor:default;opacity:.5}`;
+  static styles = `${reset}${vh}:host{--color-accent:black;--color-text-on-accent:white;display:grid;gap:.25rem;text-align:center;width:fit-content}table{border-collapse:collapse;font-size:.875rem}th,button{height:2.25rem;width:2.25rem;font-variant:tabular-nums}td{padding:0}button{color:inherit;font-size:inherit;background:#0000;border:0}button:hover:where(:not(:disabled,[aria-disabled])){background:#0000000d}button:is([aria-pressed=true],:focus-visible){background:var(--color-accent);color:var(--color-text-on-accent)}button:focus-visible{outline:1px solid var(--color-text-on-accent);outline-offset:-2px}button:disabled,:host::part(outside),:host::part(disallowed){cursor:default;opacity:.5}`;
   static template = buildTemplate();
 
   setup() {
@@ -55,7 +55,6 @@ export class CalendarMonth extends SignalElement<{
     const wnBodyThs: HTMLTableCellElement[] = [];
     for (let r = 0; r < 6; r++) {
       const th = document.createElement("th");
-      th.className = "num";
       th.part.value = "th weeknumber";
       th.scope = "row";
       wnBodyThs.push(th);
