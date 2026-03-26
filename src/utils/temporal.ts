@@ -65,10 +65,10 @@ export class PlainYearMonth {
   }
 
   equals(date: PlainDate | PlainYearMonth) {
-    return !PlainYearMonth.compare(this, date);
+    return this.year === date.year && this.month === date.month;
   }
 
-  toPlainDate({day}: {day: number}): PlainDate {
+  toPlainDate({day}: {day: number} = {day: 1}): PlainDate {
     return new PlainDate(this.year, this.month, day);
   }
 

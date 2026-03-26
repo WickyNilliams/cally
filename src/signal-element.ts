@@ -61,12 +61,8 @@ export class SignalElement<
 
       // Define property getter/setter on the element
       Object.defineProperty(this, key, {
-        get() {
-          return signals[key].value;
-        },
-        set(v: unknown) {
-          signals[key].value = coerce(v, config.type);
-        },
+        get: () => signals[key].value,
+        set: (v: unknown) => { signals[key].value = coerce(v, config.type); },
         enumerable: true,
         configurable: true,
       });
