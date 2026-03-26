@@ -86,12 +86,12 @@ export class CalendarMonth extends SignalElement<{
         const ltr = (e.target as HTMLElement).matches(":dir(ltr)");
         let date: PlainDate;
         switch (e.key) {
-          case "ArrowRight": date = focusedDate.add("d", ltr ? 1 : -1); break;
-          case "ArrowLeft":  date = focusedDate.add("d", ltr ? -1 : 1); break;
-          case "ArrowDown":  date = focusedDate.add("d", 7); break;
-          case "ArrowUp":    date = focusedDate.add("d", -7); break;
-          case "PageUp":     date = focusedDate.add(e.shiftKey ? "y" : "m", -1); break;
-          case "PageDown":   date = focusedDate.add(e.shiftKey ? "y" : "m", 1); break;
+          case "ArrowRight": date = focusedDate.add({ days: ltr ? 1 : -1 }); break;
+          case "ArrowLeft":  date = focusedDate.add({ days: ltr ? -1 : 1 }); break;
+          case "ArrowDown":  date = focusedDate.add({ days: 7 }); break;
+          case "ArrowUp":    date = focusedDate.add({ days: -7 }); break;
+          case "PageUp":     date = focusedDate.add(e.shiftKey ? { years: -1 } : { months: -1 }); break;
+          case "PageDown":   date = focusedDate.add(e.shiftKey ? { years: 1 } : { months: 1 }); break;
           case "Home":       date = startOfWeek(focusedDate, firstDayOfWeek); break;
           case "End":        date = endOfWeek(focusedDate, firstDayOfWeek); break;
           default: return;
@@ -118,7 +118,7 @@ export class CalendarMonth extends SignalElement<{
         const offset = this.$.offset.value as number;
 
         const todaysDate = today ?? getToday();
-        const yearMonth = ctx.page.start.add(offset);
+        const yearMonth = ctx.page.start.add({ months: offset });
         const weeks = getViewOfMonth(yearMonth, firstDayOfWeek);
 
         // ── Heading ───────────────────────────────────────────────────────

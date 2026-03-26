@@ -35,7 +35,7 @@ export class CalendarSelectYear extends SignalElement<{
         const ctx = ctxSig.value;
         const value = +select.value;
         const diff = value - ctx.focusedDate.toPlainYearMonth().year;
-        const newDate = ctx.focusedDate.add("y", diff);
+        const newDate = ctx.focusedDate.add({ years: diff });
         fire(this, "focusday", newDate);
       });
 

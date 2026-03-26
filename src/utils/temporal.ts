@@ -1,5 +1,6 @@
 import { endOfMonth, clamp, toDate } from "./date.js";
 
+type Duration = { months: number } | { years: number } | { days: number };
 type CompareResult = -1 | 0 | 1;
 
 export class PlainDate {
@@ -12,18 +13,18 @@ export class PlainDate {
   // this is an incomplete implementation that only handles arithmetic on a single unit at a time.
   // i didn't want to get into more complex arithmetic since it get tricky fast
   // this is enough to serve my needs and will still be a drop-in replacement when actual Temporal API lands
-  add(key: string, n: number): PlainDate {
+  add(duration: Duration): PlainDate {
     const date = toDate(this);
-    if (key === "d") {
-      date.setUTCDate(this.day + n);
+    if ("days" in duration) {
+      date.setUTCDate(this.day + duration.days);
       return PlainDate.from(date);
     }
     let { year, month } = this;
-    if (key === "m") {
-      month = this.month + n;
+    if ("months" in duration) {
+      month = this.month + duration.months;
       date.setUTCMonth(month - 1);
     } else {
-      year = this.year + n;
+      year = this.year + duration.years;
       date.setUTCFullYear(year);
     }
     const min = PlainDate.from(toDate({ year, month, day: 1 }));
@@ -39,7 +40,11 @@ export class PlainDate {
   }
 
   equals(date: PlainDate): boolean {
-    return ""+this === ""+date;
+    return PlainDate.compare(this, date) === 0;
+  }
+
+  static compare(a: PlainDate, b: PlainDate): CompareResult {
+    return Math.sign(a.year - b.year || a.month - b.month || a.day - b.day) as CompareResult;
   }
 
   static from(value: string | Date): PlainDate {
@@ -52,15 +57,18 @@ export class PlainDate {
   }
 }
 
+type YearMonthDuration = { months?: number; years?: number };
+
 export class PlainYearMonth {
   constructor(
     public readonly year: number,
     public readonly month: number
   ) {}
 
-  add(n: number) {
+  add(duration: YearMonthDuration) {
     const date = toDate(this);
-    date.setUTCMonth(date.getUTCMonth() + n);
+    const months = (duration.months ?? 0) + (duration.years ?? 0) * 12;
+    date.setUTCMonth(date.getUTCMonth() + months);
     return new PlainYearMonth(date.getUTCFullYear(), date.getUTCMonth() + 1);
   }
 
@@ -68,14 +76,14 @@ export class PlainYearMonth {
     return this.year === date.year && this.month === date.month;
   }
 
-  toPlainDate({day}: {day: number} = {day: 1}): PlainDate {
-    return new PlainDate(this.year, this.month, day);
+  toPlainDate() {
+    return new PlainDate(this.year, this.month, 1);
   }
 
   static compare(
     a: PlainYearMonth | { year: number; month: number },
     b: PlainYearMonth | { year: number; month: number }
   ): CompareResult {
-    return (a.year - b.year || a.month - b.month) as CompareResult;
+    return Math.sign(a.year - b.year || a.month - b.month) as CompareResult;
   }
 }

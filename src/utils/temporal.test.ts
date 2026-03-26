@@ -32,37 +32,37 @@ describe("PlainDate", () => {
   describe("add()", () => {
     it("adds days", () => {
       const date = new PlainDate(2020, 1, 1);
-      const newDate = date.add("d", 1);
+      const newDate = date.add({ days: 1 });
       expect(newDate.toString()).toBe("2020-01-02");
     });
 
     it("adds months", () => {
       const date = new PlainDate(2020, 1, 1);
-      const newDate = date.add("m", 1);
+      const newDate = date.add({ months: 1 });
       expect(newDate.toString()).toBe("2020-02-01");
     });
 
     it("adds years", () => {
       const date = new PlainDate(2020, 1, 1);
-      const newDate = date.add("y", 1);
+      const newDate = date.add({ years: 1 });
       expect(newDate.toString()).toBe("2021-01-01");
     });
 
     it("constrains month", () => {
       const date = new PlainDate(2020, 1, 31);
-      const newDate = date.add("m", 1);
+      const newDate = date.add({ months: 1 });
       expect(newDate.toString()).toBe("2020-02-29");
     });
 
     it("constrains month negative", () => {
       const date = new PlainDate(2020, 3, 31);
-      const newDate = date.add("m", -1);
+      const newDate = date.add({ months: -1 });
       expect(newDate.toString()).toBe("2020-02-29");
     });
 
     it("constrains month when adding years", () => {
       const date = new PlainDate(2020, 2, 29);
-      const newDate = date.add("y", 1);
+      const newDate = date.add({ years: 1 });
       expect(newDate.toString()).toBe("2021-02-28");
     });
   });
@@ -97,14 +97,14 @@ describe("PlainYearMonth", () => {
   describe("add()", () => {
     it("adds months", () => {
       const yearMonth = new PlainYearMonth(2020, 1);
-      const newYearMonth = yearMonth.add(1);
+      const newYearMonth = yearMonth.add({ months: 1 });
       expect(newYearMonth.year).toBe(2020);
       expect(newYearMonth.month).toBe(2);
     });
 
     it("adds years", () => {
       const yearMonth = new PlainYearMonth(2020, 1);
-      const newYearMonth = yearMonth.add(12);
+      const newYearMonth = yearMonth.add({ years: 1 });
       expect(newYearMonth.year).toBe(2021);
       expect(newYearMonth.month).toBe(1);
     });
