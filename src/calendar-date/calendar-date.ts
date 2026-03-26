@@ -27,7 +27,7 @@ export class CalendarDate extends CalendarBaseElement {
     this.addEventListener("selectday", (e) => {
       const date = (e as CustomEvent<PlainDate>).detail;
       e.stopPropagation();
-      this.$.value.value = date.toString();
+      this.$.value.value = ""+date;
       this.dispatchEvent(new Event("change", { bubbles: true }));
     });
 

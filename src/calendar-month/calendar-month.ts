@@ -40,7 +40,6 @@ export class CalendarMonth extends SignalElement<{
     const table = root.children[2] as HTMLTableElement;
     const colgroup = table.children[0] as HTMLElement;
     const theadRow = table.rows[0];
-    const tbody = table.tBodies[0];
 
     // ── Pre-create weeknumber cells once (NOT in effects) ─────────────────
     // Created in setup, inserted/removed by effect when showWeekNumbers changes
@@ -151,7 +150,7 @@ export class CalendarMonth extends SignalElement<{
         // ── Tbody rows ────────────────────────────────────────────────────
         const dayFormatter = makeDateFormatter({ month: "long", day: "numeric" }, locale);
         for (let r = 0; r < 6; r++) {
-          const row = tbody.rows[r];
+          const row = table.rows[r + 1];
           const week = weeks[r];
 
           row.hidden = !week;
@@ -191,14 +190,13 @@ export class CalendarMonth extends SignalElement<{
             const isDisabled = clamp(date, min, max) !== date;
 
             let isSelected: boolean | undefined;
-            let rangeParts = "";
-            if (ctx.type === "range") {
+            let rS: boolean | undefined, rE: boolean | undefined;
+            const isRange = ctx.type === "range";
+            if (isRange) {
               const [start, end] = ctx.value;
-              const isRangeStart = start && ""+start === ""+date;
-              const isRangeEnd = end && ""+end === ""+date;
+              rS = !!(start && ""+start === ""+date);
+              rE = !!(end && ""+end === ""+date);
               isSelected = !!(start && end && clamp(date, start, end) === date);
-              // prettier-ignore
-              rangeParts = `${isRangeStart ? "range-start" : ""} ${isRangeEnd ? "range-end" : ""} ${isSelected && !isRangeStart && !isRangeEnd ? "range-inner" : ""}`;
             } else if (ctx.type === "multi") {
               isSelected = ctx.value.some((d) => ""+d === ""+date);
             } else {
@@ -206,13 +204,16 @@ export class CalendarMonth extends SignalElement<{
             }
 
             // prettier-ignore
-            const part = `button day day-${asDate.getUTCDay()} ${
-              isInMonth ? (isSelected ? "selected" : "") : "outside"
-            } ${isDisallowed ? "disallowed" : ""} ${isToday ? "today" : ""} ${
-              getDayParts?.(asDate) ?? ""
-            } ${rangeParts}`.replace(/\s+/g, " ").trim();
-
-            btn.part.value = part;
+            btn.part.value = [
+              `button day day-${asDate.getUTCDay()}`,
+              isInMonth ? isSelected && "selected" : "outside",
+              isDisallowed && "disallowed",
+              isToday && "today",
+              getDayParts?.(asDate),
+              rS && "range-start",
+              rE && "range-end",
+              isRange && isSelected && !rS && !rE && "range-inner",
+            ].filter(Boolean).join(" ");
             btn.ariaLabel = dayFormatter.format(asDate);
             btn.tabIndex = isInMonth && isFocused ? 0 : -1;
             btn.disabled = isDisabled;
@@ -220,7 +221,7 @@ export class CalendarMonth extends SignalElement<{
             btn.ariaPressed = ""+!!(isInMonth && isSelected);
             btn.ariaCurrent = isToday ? "date" : null;
             btn.textContent = ""+date.day;
-            btn.dataset.date = date.toString();
+            btn.dataset.date = ""+date;
           }
         }
       });

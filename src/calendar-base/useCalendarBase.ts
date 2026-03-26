@@ -6,7 +6,7 @@ export interface CalendarFocusOptions extends FocusOptions {
   target?: "day" | "next" | "previous";
 }
 
-export function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
+export function diffInMonths(a: { year: number; month: number }, b: { year: number; month: number }): number {
   return (b.year - a.year) * 12 + b.month - a.month;
 }
 

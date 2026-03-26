@@ -6,9 +6,9 @@ import { parseDateProp, makeDateFormatter } from "../utils/hooks.js";
 import { clamp, endOfMonth, getToday, toDate, type DaysOfWeek } from "../utils/date.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 
-export const BASE_STYLES = `${reset}${vh}:host{display:block;width:fit-content}[part=container]{display:grid;gap:1em}[part=header]{display:flex;align-items:center}[part=heading]{font-weight:bold;font-size:1.25em;margin-inline:auto}[part~=button]{display:grid;place-items:center}[part~=button][part~=disabled]{cursor:default;opacity:.5}`;
+export const BASE_STYLES = `${reset}${vh}:host{display:block;width:fit-content}[part=container]{display:grid;gap:1em}[part=header]{display:flex;align-items:center}[part=heading]{font-weight:700;font-size:1.25em;margin-inline:auto}[part~=button]{display:grid;place-items:center}[part~=button][part~=disabled]{cursor:default;opacity:.5}`;
 
-export const BASE_TEMPLATE = `<div class=vh id=h aria-live=polite aria-atomic=true></div><div role=group aria-labelledby=h part=container><div part=header><button part="button previous"><slot name=previous>Previous</slot></button><slot part=heading name=heading><div id=a aria-hidden=true></div></slot><button part="button next"><slot name=next>Next</slot></button></div><slot part=months></slot></div>`;
+export const BASE_TEMPLATE = `<div class=vh id=h aria-live=polite></div><div role=group aria-labelledby=h part=container><div part=header><button part="button previous"><slot name=previous>Previous</slot></button><slot part=heading name=heading><div id=a aria-hidden=true></div></slot><button part="button next"><slot name=next>Next</slot></button></div><slot part=months></slot></div>`;
 
 // Shared property definitions (mirrors the old `props` export shape for reference)
 export const sharedProps = {
@@ -93,7 +93,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   );
 
   Object.defineProperty(self, "focusedDate", {
-    get: () => focusedDate.value.toString(),
+    get: () => ""+focusedDate.value,
     set: (v: string) => { (self.$.focusedDate as unknown as { value: string }).value = v; },
   });
 
@@ -105,7 +105,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     const pageBy = self.$.pageBy.value as Pagination;
     const newPage = createPage(page.value.start.add({ months: by }), months, pageBy);
     const fd = focusedDate.value;
-    const diff = diffInMonths(newPage.start, fd.toPlainYearMonth());
+    const diff = diffInMonths(newPage.start, fd);
     let newFd = fd;
     if (diff < 0 || diff >= months) {
       const targetMonth = newPage.start;
@@ -120,7 +120,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   };
 
   const containsDate = (d: PlainDate) => {
-    const diff = diffInMonths(page.value.start, d.toPlainYearMonth());
+    const diff = diffInMonths(page.value.start, d);
     return diff >= 0 && diff < (self.$.months.value as number);
   };
 
@@ -165,7 +165,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
       const fd = focusedDate.value;
       const months = self.$.months.value as number;
       const snap = page.peek();
-      const diff = diffInMonths(snap.start, fd.toPlainYearMonth());
+      const diff = diffInMonths(snap.start, fd);
       if (diff >= 0 && diff < months) return;
       updatePage(diff === -1 ? -getStep() : diff === months ? getStep() : Math.floor(diff / months) * months);
     });

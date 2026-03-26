@@ -36,7 +36,7 @@ export class CalendarSelectMonth extends SignalElement<{
       select.addEventListener("change", () => {
         const ctx = ctxSig.value;
         const value = +select.value;
-        const diff = value - ctx.focusedDate.toPlainYearMonth().month;
+        const diff = value - ctx.focusedDate.month;
         const newDate = ctx.focusedDate.add({ months: diff });
         fire(this, "focusday", newDate);
       });
@@ -48,13 +48,12 @@ export class CalendarSelectMonth extends SignalElement<{
           ctx.locale
         );
 
-        const focusedYearMonth = ctx.focusedDate.toPlainYearMonth();
         const day = new Date(Date.UTC(2000, 0, 1));
 
         for (let i = 0; i < 12; i++) {
           const monthNum = i + 1;
           day.setUTCMonth(i);
-          const ym = new PlainYearMonth(focusedYearMonth.year, monthNum);
+          const ym = new PlainYearMonth(ctx.focusedDate.year, monthNum);
           const isDisabled =
             (ctx.min != null && diffInMonths(ym, ctx.min) > 0) ||
             (ctx.max != null && diffInMonths(ym, ctx.max) < 0);
@@ -63,7 +62,7 @@ export class CalendarSelectMonth extends SignalElement<{
           pool[i].disabled = isDisabled;
         }
 
-        select.value = ""+focusedYearMonth.month;
+        select.value = ""+ctx.focusedDate.month;
       });
     };
   }

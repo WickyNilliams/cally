@@ -1,7 +1,6 @@
 import { endOfMonth, clamp, toDate } from "./date.js";
 
 type Duration = { months: number } | { years: number } | { days: number };
-type CompareResult = -1 | 0 | 1;
 
 export class PlainDate {
   constructor(
@@ -39,14 +38,6 @@ export class PlainDate {
     return new PlainYearMonth(this.year, this.month);
   }
 
-  equals(date: PlainDate): boolean {
-    return PlainDate.compare(this, date) === 0;
-  }
-
-  static compare(a: PlainDate, b: PlainDate): CompareResult {
-    return Math.sign(a.year - b.year || a.month - b.month || a.day - b.day) as CompareResult;
-  }
-
   static from(value: string | Date): PlainDate {
     if (typeof value === "string") {
       if (!/^\d{4}-\d\d-\d\d$/.test(value)) throw new TypeError(value);
@@ -72,18 +63,4 @@ export class PlainYearMonth {
     return new PlainYearMonth(date.getUTCFullYear(), date.getUTCMonth() + 1);
   }
 
-  equals(date: PlainDate | PlainYearMonth) {
-    return this.year === date.year && this.month === date.month;
-  }
-
-  toPlainDate() {
-    return new PlainDate(this.year, this.month, 1);
-  }
-
-  static compare(
-    a: PlainYearMonth | { year: number; month: number },
-    b: PlainYearMonth | { year: number; month: number }
-  ): CompareResult {
-    return Math.sign(a.year - b.year || a.month - b.month) as CompareResult;
-  }
 }

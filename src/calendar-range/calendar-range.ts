@@ -48,7 +48,7 @@ export class CalendarRange extends CalendarBaseElement<typeof sharedProps & {
       e.stopPropagation();
       const tentative = getTentative();
       if (!tentative) {
-        this.$.tentative.value = date.toString();
+        this.$.tentative.value = ""+date;
         hovered.value = undefined;
         fire(this, "rangestart", toDate(date));
       } else {
