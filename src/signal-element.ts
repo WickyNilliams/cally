@@ -78,8 +78,7 @@ export class SignalElement<
 
   attributeChangedCallback(name: string, _old: string | null, next: string | null) {
     const key = toCamel(name);
-    const ctor = this.constructor as typeof SignalElement;
-    (this.$ as Record<string, Signal<unknown>>)[key].value = coerce(next ?? "", ctor.properties[key].type);
+    (this.$ as Record<string, Signal<unknown>>)[key].value = coerce(next ?? "", (this.constructor as typeof SignalElement).properties[key].type);
   }
 
   connectedCallback() {
