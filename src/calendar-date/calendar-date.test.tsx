@@ -31,6 +31,7 @@ async function nextFrame() {
 type TestProps = {
   onchange: (e: Event) => void;
   onfocusday: (e: CustomEvent<Date>) => void;
+  onrangechange: (e: CustomEvent<{ start: Date; end: Date }>) => void;
   value: string;
   min: string;
   max: string;
@@ -637,6 +638,97 @@ describe("CalendarDate", () => {
       expect(spy.count).toBe(1);
       const target = spy.last[0].target as InstanceType<typeof CalendarDate>;
       expect(target.value).toBe("2021-12-31");
+    });
+
+    describe("rangechange", () => {
+      type RangeChangeSpy = (
+        e: CustomEvent<{ start: Date; end: Date }>
+      ) => void;
+
+      it("fires when clicking the next button", async () => {
+        const spy = createSpy<RangeChangeSpy>();
+        const calendar = await mount(
+          <Fixture value="2022-01-01" onrangechange={spy} />
+        );
+
+        await getNextPageButton(calendar).click();
+
+        expect(spy.count).toBe(1);
+        expect(spy.last[0].detail).toEqual({
+          start: new Date("2022-02-01"),
+          end: new Date("2022-02-28"),
+        });
+      });
+
+      it("fires when clicking the previous button", async () => {
+        const spy = createSpy<RangeChangeSpy>();
+        const calendar = await mount(
+          <Fixture value="2022-03-15" onrangechange={spy} />
+        );
+
+        await getPrevPageButton(calendar).click();
+
+        expect(spy.count).toBe(1);
+        expect(spy.last[0].detail).toEqual({
+          start: new Date("2022-02-01"),
+          end: new Date("2022-02-28"),
+        });
+      });
+
+      it("fires when keyboard navigation crosses the page boundary", async () => {
+        const spy = createSpy<RangeChangeSpy>();
+        await mount(<Fixture value="2022-01-31" onrangechange={spy} />);
+
+        // tab into grid, then arrow right to advance from Jan 31 -> Feb 1
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{ArrowRight}");
+
+        expect(spy.count).toBe(1);
+        expect(spy.last[0].detail).toEqual({
+          start: new Date("2022-02-01"),
+          end: new Date("2022-02-28"),
+        });
+      });
+
+      it("does not fire when navigation stays within the visible page", async () => {
+        const spy = createSpy<RangeChangeSpy>();
+        await mount(<Fixture value="2022-01-10" onrangechange={spy} />);
+
+        // tab into grid, then arrow right within January
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{Tab}");
+        await userEvent.keyboard("{ArrowRight}");
+
+        expect(spy.called).toBe(false);
+      });
+
+      it("does not fire on initial render", async () => {
+        const spy = createSpy<RangeChangeSpy>();
+        await mount(<Fixture value="2022-01-01" onrangechange={spy} />);
+
+        expect(spy.called).toBe(false);
+      });
+
+      it("reports the full range across multiple visible months", async () => {
+        const spy = createSpy<RangeChangeSpy>();
+        const calendar = await mount(
+          <Fixture value="2022-01-01" months={2} onrangechange={spy}>
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
+
+        await getNextPageButton(calendar).click();
+
+        expect(spy.count).toBe(1);
+        expect(spy.last[0].detail).toEqual({
+          start: new Date("2022-03-01"),
+          end: new Date("2022-04-30"),
+        });
+      });
     });
   });
 
