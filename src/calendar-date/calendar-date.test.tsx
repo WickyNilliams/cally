@@ -729,6 +729,29 @@ describe("CalendarDate", () => {
           end: new Date("2022-04-30"),
         });
       });
+
+      it("advances by a single month when pageBy is 'single'", async () => {
+        const spy = createSpy<PageChangeSpy>();
+        const calendar = await mount(
+          <Fixture
+            value="2022-01-01"
+            months={2}
+            pageBy="single"
+            onpagechange={spy}
+          >
+            <CalendarMonth />
+            <CalendarMonth offset={1} />
+          </Fixture>
+        );
+
+        await getNextPageButton(calendar).click();
+
+        expect(spy.count).toBe(1);
+        expect(spy.last[0].detail).toEqual({
+          start: new Date("2022-02-01"),
+          end: new Date("2022-03-31"),
+        });
+      });
     });
   });
 
