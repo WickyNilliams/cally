@@ -5,7 +5,7 @@ import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import {
   useCalendarBase,
   type CalendarFocusOptions,
-  type RangeChangeDetail,
+  type PageChangeDetail,
 } from "../calendar-base/useCalendarBase.js";
 
 export const CalendarDate = c(
@@ -14,7 +14,7 @@ export const CalendarDate = c(
   ): Host<{
     onChange: Event;
     onFocusDay: CustomEvent<Date>;
-    onRangeChange: CustomEvent<RangeChangeDetail>;
+    onPageChange: CustomEvent<PageChangeDetail>;
     focus: (options?: CalendarFocusOptions) => void;
   }> => {
     const [value, setValue] = useDateProp("value");
