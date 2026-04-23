@@ -1,5 +1,12 @@
 import { signal, batch } from "../signal-element.js";
-import { BASE_STYLES, createBaseTemplate, sharedProps, setupCalendarBase, buildSharedCtx, CalendarBaseElement } from "../calendar-base/calendar-base.js";
+import {
+  BASE_STYLES,
+  createBaseTemplate,
+  sharedProps,
+  setupCalendarBase,
+  buildSharedCtx,
+  CalendarBaseElement,
+} from "../calendar-base/calendar-base.js";
 import { parseDateProp, parseDateRangeProp } from "../utils/hooks.js";
 import { getToday, toDate } from "../utils/date.js";
 import { PlainDate } from "../utils/temporal.js";
@@ -25,7 +32,8 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
       getToday();
 
     const hovered = signal<PlainDate | undefined>(undefined);
-    const getTentative = () => parseDateProp((this.$ as any).tentative.value as string);
+    const getTentative = () =>
+      parseDateProp((this.$ as any).tentative.value as string);
 
     const { registerEffects } = setupCalendarBase(
       this,
@@ -43,7 +51,7 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
       },
       (date) => {
         if (getTentative()) hovered.value = date;
-      }
+      },
     );
 
     this.addEventListener("selectday", (e) => {
@@ -53,7 +61,12 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
       if (!tentative) {
         (this.$ as any).tentative.value = date.toString();
         hovered.value = undefined;
-        this.dispatchEvent(new CustomEvent("rangestart", { bubbles: true, detail: toDate(date) }));
+        this.dispatchEvent(
+          new CustomEvent("rangestart", {
+            bubbles: true,
+            detail: toDate(date),
+          }),
+        );
       } else {
         const [start, end] = sort(tentative, date);
         batch(() => {
@@ -61,7 +74,9 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
           (this.$ as any).tentative.value = "";
           hovered.value = undefined;
         });
-        this.dispatchEvent(new CustomEvent("rangeend", { bubbles: true, detail: toDate(date) }));
+        this.dispatchEvent(
+          new CustomEvent("rangeend", { bubbles: true, detail: toDate(date) }),
+        );
         this.dispatchEvent(new Event("change", { bubbles: true }));
       }
     });
@@ -80,7 +95,6 @@ export class CalendarRange extends CalendarBaseElement<typeof rangeProps> {
       });
     };
   }
-
 }
 
 customElements.define("calendar-range", CalendarRange);

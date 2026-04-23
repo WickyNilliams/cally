@@ -1,10 +1,25 @@
 import { reset, vh } from "../utils/styles.js";
 import { signal, batch, type Signal } from "../signal-element.js";
 import { SignalElement } from "../signal-element.js";
-import { CalendarCtx, type CalendarContextValue, type CalendarContextBase } from "../calendar-month/CalendarMonthContext.js";
-import { createPage, diffInMonths, type Pagination, type CalendarFocusOptions } from "./useCalendarBase.js";
+import {
+  CalendarCtx,
+  type CalendarContextValue,
+  type CalendarContextBase,
+} from "../calendar-month/CalendarMonthContext.js";
+import {
+  createPage,
+  diffInMonths,
+  type Pagination,
+  type CalendarFocusOptions,
+} from "./useCalendarBase.js";
 import { parseDateProp, makeDateFormatter } from "../utils/hooks.js";
-import { clamp, endOfMonth, getToday, toDate, type DaysOfWeek } from "../utils/date.js";
+import {
+  clamp,
+  endOfMonth,
+  getToday,
+  toDate,
+  type DaysOfWeek,
+} from "../utils/date.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 
 export const BASE_STYLES = `
@@ -95,16 +110,20 @@ type PageType = { start: PlainYearMonth; end: PlainYearMonth };
 export function buildSharedCtx<P extends typeof sharedProps>(
   self: SignalElement<P>,
   focusedDate: PlainDate,
-  page: PageType
+  page: PageType,
 ): CalendarContextBase {
   return {
     min: parseDateProp(self.$.min.value as string),
     max: parseDateProp(self.$.max.value as string),
     today: parseDateProp(self.$.today.value as string),
     firstDayOfWeek: self.$.firstDayOfWeek.value as DaysOfWeek,
-    isDateDisallowed: self.$.isDateDisallowed.value as ((d: Date) => boolean) | undefined,
+    isDateDisallowed: self.$.isDateDisallowed.value as
+      | ((d: Date) => boolean)
+      | undefined,
     getDayParts: self.$.getDayParts.value as ((d: Date) => string) | undefined,
-    formatWeekday: ((self.$.formatWeekday.value as string) || "narrow") as "narrow" | "short",
+    formatWeekday: ((self.$.formatWeekday.value as string) || "narrow") as
+      | "narrow"
+      | "short",
     showOutsideDays: self.$.showOutsideDays.value as boolean,
     showWeekNumbers: self.$.showWeekNumbers.value as boolean,
     locale: (self.$.locale.value as string) || undefined,
@@ -132,7 +151,7 @@ export function setupCalendarBase<P extends typeof sharedProps>(
   self: SignalElement<P>,
   initFd: PlainDate,
   buildCtxValue: (fd: PlainDate, page: PageType) => CalendarContextValue,
-  onFocusDay?: (date: PlainDate) => void
+  onFocusDay?: (date: PlainDate) => void,
 ): {
   focusedDate: Signal<PlainDate>;
   page: Signal<PageType>;
@@ -141,35 +160,49 @@ export function setupCalendarBase<P extends typeof sharedProps>(
 } {
   const root = self.shadowRoot!;
   const hiddenHeading = root.querySelector<HTMLElement>("#h")!;
-  const visibleHeading = root.querySelector<HTMLElement>('[part="heading"] [aria-hidden]')!;
+  const visibleHeading = root.querySelector<HTMLElement>(
+    '[part="heading"] [aria-hidden]',
+  )!;
   const prevBtn = root.querySelector<HTMLButtonElement>("[part~='previous']")!;
   const nextBtn = root.querySelector<HTMLButtonElement>("[part~='next']")!;
 
   const focusedDate = signal<PlainDate>(
-    clamp(initFd, parseDateProp(self.$.min.value as string), parseDateProp(self.$.max.value as string))
+    clamp(
+      initFd,
+      parseDateProp(self.$.min.value as string),
+      parseDateProp(self.$.max.value as string),
+    ),
   );
   const page = signal<PageType>(
     createPage(
       focusedDate.value.toPlainYearMonth(),
       (self.$.months.value as number) || 1,
-      (self.$.pageBy.value as Pagination) || "months"
-    )
+      (self.$.pageBy.value as Pagination) || "months",
+    ),
   );
 
   Object.defineProperty(self, "focusedDate", {
     get: () => focusedDate.value.toString(),
-    set: (v: string) => { self.$.focusedDate.value = v; },
+    set: (v: string) => {
+      self.$.focusedDate.value = v;
+    },
     enumerable: true,
     configurable: true,
   });
 
   const getStep = () =>
-    (self.$.pageBy.value as Pagination) === "single" ? 1 : (self.$.months.value as number);
+    (self.$.pageBy.value as Pagination) === "single"
+      ? 1
+      : (self.$.months.value as number);
 
   const updatePage = (by: number) => {
     const months = self.$.months.value as number;
     const pageBy = self.$.pageBy.value as Pagination;
-    const newPage = createPage(page.value.start.add({ months: by }), months, pageBy);
+    const newPage = createPage(
+      page.value.start.add({ months: by }),
+      months,
+      pageBy,
+    );
     const fd = focusedDate.value;
     const diff = diffInMonths(newPage.start, fd.toPlainYearMonth());
     let newFd = fd;
@@ -179,13 +212,19 @@ export function setupCalendarBase<P extends typeof sharedProps>(
       const day = Math.min(fd.day, maxDay);
       const min = parseDateProp(self.$.min.value as string);
       const max = parseDateProp(self.$.max.value as string);
-      newFd = clamp(new PlainDate(targetMonth.year, targetMonth.month, day), min, max);
+      newFd = clamp(
+        new PlainDate(targetMonth.year, targetMonth.month, day),
+        min,
+        max,
+      );
     }
     batch(() => {
       page.value = newPage;
       focusedDate.value = newFd;
     });
-    self.dispatchEvent(new CustomEvent("focusday", { bubbles: true, detail: toDate(newFd) }));
+    self.dispatchEvent(
+      new CustomEvent("focusday", { bubbles: true, detail: toDate(newFd) }),
+    );
   };
 
   const containsDate = (d: PlainDate) => {
@@ -205,7 +244,9 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     e.stopPropagation();
     focusedDate.value = detail;
     onFocusDay?.(detail);
-    self.dispatchEvent(new CustomEvent("focusday", { bubbles: true, detail: toDate(detail) }));
+    self.dispatchEvent(
+      new CustomEvent("focusday", { bubbles: true, detail: toDate(detail) }),
+    );
     setTimeout(() => (self as unknown as { focus(): void }).focus());
   });
 
@@ -218,7 +259,12 @@ export function setupCalendarBase<P extends typeof sharedProps>(
     // Sync focusedDate from prop when it changes
     self.createEffect(() => {
       const fd = parseDateProp(self.$.focusedDate.value as string);
-      if (fd) focusedDate.value = clamp(fd, parseDateProp(self.$.min.value as string), parseDateProp(self.$.max.value as string));
+      if (fd)
+        focusedDate.value = clamp(
+          fd,
+          parseDateProp(self.$.min.value as string),
+          parseDateProp(self.$.max.value as string),
+        );
     });
 
     // Clamp focused date to min/max
@@ -266,9 +312,13 @@ export class CalendarBaseElement<
   override focus(options?: CalendarFocusOptions) {
     const target = options?.target ?? "day";
     if (target === "day") {
-      this.querySelectorAll<HTMLElement>("calendar-month").forEach((m) => m.focus(options));
+      this.querySelectorAll<HTMLElement>("calendar-month").forEach((m) =>
+        m.focus(options),
+      );
     } else {
-      this.shadowRoot!.querySelector<HTMLButtonElement>(`[part~='${target}']`)!.focus(options);
+      this.shadowRoot!.querySelector<HTMLButtonElement>(
+        `[part~='${target}']`,
+      )!.focus(options);
     }
   }
 }

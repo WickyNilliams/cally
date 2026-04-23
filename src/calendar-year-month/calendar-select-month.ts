@@ -40,7 +40,7 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
       const diff = value - ctx.focusedDate.toPlainYearMonth().month;
       const newDate = ctx.focusedDate.add({ months: diff });
       this.dispatchEvent(
-        new CustomEvent("focusday", { bubbles: true, detail: newDate })
+        new CustomEvent("focusday", { bubbles: true, detail: newDate }),
       );
     });
 
@@ -51,8 +51,8 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
       this.createEffect(() => {
         const ctx = ctxSig.value;
         const fmt = makeDateFormatter(
-          { month: (this.$.formatMonth.value as string) as "long" | "short" },
-          ctx.locale
+          { month: this.$.formatMonth.value as string as "long" | "short" },
+          ctx.locale,
         );
 
         const focusedYearMonth = ctx.focusedDate.toPlainYearMonth();
@@ -73,7 +73,8 @@ export class CalendarSelectMonth extends SignalElement<typeof monthProps> {
             months: monthNum - focusedYearMonth.month,
           });
           const isDisabled =
-            (ctx.min != null && PlainYearMonth.compare(yearMonth, ctx.min) < 0) ||
+            (ctx.min != null &&
+              PlainYearMonth.compare(yearMonth, ctx.min) < 0) ||
             (ctx.max != null && PlainYearMonth.compare(yearMonth, ctx.max) > 0);
 
           pool[i].value = String(monthNum);

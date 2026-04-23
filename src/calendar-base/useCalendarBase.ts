@@ -13,7 +13,7 @@ export function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
 export function createPage(
   start: PlainYearMonth,
   months: number,
-  pageBy: Pagination = "months"
+  pageBy: Pagination = "months",
 ) {
   if (months === 12 && pageBy !== "single") {
     start = new PlainYearMonth(start.year, 1);
