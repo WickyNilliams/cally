@@ -26,7 +26,7 @@ import { toDate, getToday } from "../utils/date.js";
 
 async function nextFrame() {
   return new Promise((resolve) =>
-    requestAnimationFrame(() => resolve(undefined))
+    requestAnimationFrame(() => resolve(undefined)),
   );
 }
 
@@ -42,7 +42,8 @@ interface DateTestProps extends TestPropsBase, CalendarDateContext {}
 interface RangeTestProps extends TestPropsBase, CalendarRangeContext {}
 interface MultiTestProps extends TestPropsBase, CalendarMultiContext {}
 
-const isWeekend = (date: Date) => date.getUTCDay() === 0 || date.getUTCDay() === 6;
+const isWeekend = (date: Date) =>
+  date.getUTCDay() === 0 || date.getUTCDay() === 6;
 
 function getWeekNumbers(month: MonthInstance) {
   const grid = getGrid(month);
@@ -104,7 +105,7 @@ describe("CalendarMonth", () => {
             type="range"
             value={[]}
             focusedDate={PlainDate.from("2024-01-01")}
-          />
+          />,
         );
 
         const selected = getSelectedDays(month);
@@ -117,7 +118,7 @@ describe("CalendarMonth", () => {
             focusedDate={PlainDate.from("2020-01-01")}
             type="range"
             value={[PlainDate.from("2020-01-01"), PlainDate.from("2020-01-03")]}
-          />
+          />,
         );
 
         const selected = getSelectedDays(month);
@@ -146,7 +147,7 @@ describe("CalendarMonth", () => {
     describe("single date", () => {
       it("handles an empty value", async () => {
         const month = await mount(
-          <Fixture focusedDate={PlainDate.from("2024-01-01")} />
+          <Fixture focusedDate={PlainDate.from("2024-01-01")} />,
         );
 
         const selected = getSelectedDays(month);
@@ -158,7 +159,7 @@ describe("CalendarMonth", () => {
           <Fixture
             focusedDate={PlainDate.from("2020-01-01")}
             value={PlainDate.from("2020-01-01")}
-          />
+          />,
         );
 
         const selected = getSelectedDays(month);
@@ -177,7 +178,7 @@ describe("CalendarMonth", () => {
             type="multi"
             value={[]}
             focusedDate={PlainDate.from("2024-01-01")}
-          />
+          />,
         );
 
         const selected = getSelectedDays(month);
@@ -194,7 +195,7 @@ describe("CalendarMonth", () => {
               PlainDate.from("2020-01-02"),
               PlainDate.from("2020-01-03"),
             ]}
-          />
+          />,
         );
 
         const selected = getSelectedDays(month);
@@ -240,14 +241,14 @@ describe("CalendarMonth", () => {
 
       it("uses a roving tab index", async () => {
         const month = await mount(
-          <Fixture focusedDate={PlainDate.from("2020-01-01")} />
+          <Fixture focusedDate={PlainDate.from("2020-01-01")} />,
         );
         const grid = getGrid(month);
         const buttons = [...grid.querySelectorAll("button")];
 
         // all buttons have a tabindex
         expect(buttons.every((button) => button.hasAttribute("tabindex"))).toBe(
-          true
+          true,
         );
 
         // only one button has tabindex 0
@@ -268,7 +269,10 @@ describe("CalendarMonth", () => {
     it("can select a date", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       const calendar = await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-01")} onselectday={spy} />
+        <Fixture
+          focusedDate={PlainDate.from("2020-04-01")}
+          onselectday={spy}
+        />,
       );
 
       await clickDay(calendar, "19 April");
@@ -284,7 +288,7 @@ describe("CalendarMonth", () => {
           focusedDate={PlainDate.from("2020-01-03")}
           onselectday={spy}
           isDateDisallowed={isWeekend}
-        />
+        />,
       );
 
       const day = getDayButton(calendar, "4 January")!;
@@ -302,7 +306,7 @@ describe("CalendarMonth", () => {
     it("can select a date", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -319,7 +323,7 @@ describe("CalendarMonth", () => {
           focusedDate={PlainDate.from("2020-01-04")}
           onselectday={spy}
           isDateDisallowed={isWeekend}
-        />
+        />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -331,7 +335,7 @@ describe("CalendarMonth", () => {
     it("can move focus to previous day", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -344,7 +348,7 @@ describe("CalendarMonth", () => {
     it("can move focus to next day ", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -357,7 +361,7 @@ describe("CalendarMonth", () => {
     it("can move focus to previous week", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -370,7 +374,7 @@ describe("CalendarMonth", () => {
     it("can move focus to next week", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -383,7 +387,7 @@ describe("CalendarMonth", () => {
     it("can move focus to start of week", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-16")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-16")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -396,7 +400,7 @@ describe("CalendarMonth", () => {
     it("can move focus to end of week", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-16")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-16")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -409,7 +413,7 @@ describe("CalendarMonth", () => {
     it("can move focus to previous month", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -422,7 +426,7 @@ describe("CalendarMonth", () => {
     it("can move focus to next month", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -435,7 +439,7 @@ describe("CalendarMonth", () => {
     it("can move focus to previous year", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -448,7 +452,7 @@ describe("CalendarMonth", () => {
     it("can move focus to next year", async () => {
       const spy = createSpy<(e: CustomEvent<PlainDate>) => void>();
       await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />
+        <Fixture focusedDate={PlainDate.from("2020-04-19")} onfocusday={spy} />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -467,7 +471,7 @@ describe("CalendarMonth", () => {
           focusedDate={PlainDate.from("2020-01-03")}
           onfocusday={spy}
           isDateDisallowed={isWeekend}
-        />
+        />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -486,7 +490,7 @@ describe("CalendarMonth", () => {
           max={PlainDate.from(focused)}
           focusedDate={PlainDate.from(focused)}
           onfocusday={spy}
-        />
+        />,
       );
 
       await userEvent.keyboard("{Tab}");
@@ -505,7 +509,7 @@ describe("CalendarMonth", () => {
             focusedDate={PlainDate.from("2020-04-19")}
             onfocusday={spy}
             dir="rtl"
-          />
+          />,
         );
 
         await userEvent.keyboard("{Tab}");
@@ -522,7 +526,7 @@ describe("CalendarMonth", () => {
             focusedDate={PlainDate.from("2020-04-19")}
             onfocusday={spy}
             dir="rtl"
-          />
+          />,
         );
 
         await userEvent.keyboard("{Tab}");
@@ -542,7 +546,7 @@ describe("CalendarMonth", () => {
           focusedDate={PlainDate.from("2020-01-15")}
           min={PlainDate.from("2020-01-02")}
           onselectday={spy}
-        />
+        />,
       );
 
       // try clicking a day outside the range
@@ -563,7 +567,7 @@ describe("CalendarMonth", () => {
           focusedDate={PlainDate.from("2020-01-15")}
           max={PlainDate.from("2020-01-30")}
           onselectday={spy}
-        />
+        />,
       );
 
       // try clicking a day outside the range
@@ -585,7 +589,7 @@ describe("CalendarMonth", () => {
           min={PlainDate.from("2020-01-02")}
           max={PlainDate.from("2020-01-30")}
           onselectday={spy}
-        />
+        />,
       );
 
       // try clicking a day less than min
@@ -609,7 +613,7 @@ describe("CalendarMonth", () => {
         <Fixture
           focusedDate={PlainDate.from("2020-01-01")}
           today={PlainDate.from("2020-01-02")}
-        />
+        />,
       );
 
       const todayButton = getTodayButton(month);
@@ -621,7 +625,7 @@ describe("CalendarMonth", () => {
 
   it("can show outside days", async () => {
     const month = await mount(
-      <Fixture focusedDate={PlainDate.from("2020-04-01")} showOutsideDays />
+      <Fixture focusedDate={PlainDate.from("2020-04-01")} showOutsideDays />,
     );
 
     const outsideMarch = getDayButton(month, "30 March");
@@ -634,12 +638,12 @@ describe("CalendarMonth", () => {
   describe("localization", async () => {
     it("localizes days and months", async () => {
       const month = await mount(
-        <Fixture focusedDate={PlainDate.from("2020-01-15")} locale="fr-FR" />
+        <Fixture focusedDate={PlainDate.from("2020-01-15")} locale="fr-FR" />,
       );
       const grid = getGrid(month);
 
       const accessibleHeadings = grid.querySelectorAll(
-        "th span:not([aria-hidden])"
+        "th span:not([aria-hidden])",
       );
       await expect
         .element(page.elementLocator(accessibleHeadings[0]!))
@@ -664,7 +668,7 @@ describe("CalendarMonth", () => {
         .toHaveTextContent("dimanche");
 
       const visualHeadings = grid.querySelectorAll(
-        "th span[aria-hidden='true']"
+        "th span[aria-hidden='true']",
       );
       await expect
         .element(page.elementLocator(visualHeadings[0]!))
@@ -688,8 +692,7 @@ describe("CalendarMonth", () => {
         .element(page.elementLocator(visualHeadings[6]!))
         .toHaveTextContent("D");
 
-      const title = getMonthHeading(month);
-      await expect.poll(title).toContain("janvier");
+      expect(getMonthHeading(month)).toEqual("janvier");
 
       const button = getDayButton(month, "15 janvier");
       expect(button).toBeTruthy();
@@ -700,12 +703,12 @@ describe("CalendarMonth", () => {
         <Fixture
           focusedDate={PlainDate.from("2020-01-15")}
           formatWeekday="short"
-        />
+        />,
       );
       const grid = getGrid(month);
 
       const accessibleHeadings = grid.querySelectorAll(
-        "th span:not([aria-hidden])"
+        "th span:not([aria-hidden])",
       );
       await expect
         .element(page.elementLocator(accessibleHeadings[0]!))
@@ -730,7 +733,7 @@ describe("CalendarMonth", () => {
         .toHaveTextContent("Sunday");
 
       const visualHeadings = grid.querySelectorAll(
-        "th span[aria-hidden='true']"
+        "th span[aria-hidden='true']",
       );
       await expect
         .element(page.elementLocator(visualHeadings[0]!))
@@ -764,7 +767,7 @@ describe("CalendarMonth", () => {
         <Fixture
           focusedDate={PlainDate.from("2020-01-15")}
           firstDayOfWeek={firstDayOfWeek}
-        />
+        />,
       );
       const grid = getGrid(month);
 
@@ -789,7 +792,7 @@ describe("CalendarMonth", () => {
   describe("week numbers", () => {
     it("supports week numbering", async () => {
       const month = await mount(
-        <Fixture focusedDate={PlainDate.from("2020-04-01")} showWeekNumbers />
+        <Fixture focusedDate={PlainDate.from("2020-04-01")} showWeekNumbers />,
       );
 
       const weekNumbers = getWeekNumbers(month);
@@ -824,7 +827,7 @@ describe("CalendarMonth", () => {
           focusedDate={PlainDate.from("2027-01-01")}
           showWeekNumbers
           firstDayOfWeek={1}
-        />
+        />,
       );
 
       const weekNumbers = getWeekNumbers(month);
@@ -851,7 +854,7 @@ describe("CalendarMonth", () => {
           focusedDate={PlainDate.from("2020-01-01")}
           showWeekNumbers
           firstDayOfWeek={1}
-        />
+        />,
       );
 
       const weekNumbers = getWeekNumbers(month);

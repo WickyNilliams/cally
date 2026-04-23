@@ -1,4 +1,4 @@
-import { userEvent, page } from "vitest/browser";
+import { userEvent, page, type Locator } from "vitest/browser";
 import { fixture } from "atomico/test-dom";
 import type { VNodeAny } from "atomico/types/vnode";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
@@ -7,7 +7,7 @@ import type { CalendarRange } from "../calendar-range/calendar-range.js";
 
 async function nextFrame() {
   return new Promise((resolve) =>
-    requestAnimationFrame(() => resolve(undefined))
+    requestAnimationFrame(() => resolve(undefined)),
   );
 }
 
@@ -71,24 +71,22 @@ export function getGrid(month: MonthInstance): HTMLTableElement {
   return month.shadowRoot!.querySelector(`[part="table"]`)!;
 }
 
-function getHeadingText(heading: HTMLElement): () => string {
-  return () => heading.shadowRoot?.textContent ?? heading.textContent ?? "";
-}
-
 export function getCalendarVisibleHeading(calendar: CalendarInstance) {
-  const slot = calendar.shadowRoot!.querySelector(`[part=heading]`);
-  const heading = slot?.querySelector<HTMLElement>(`[aria-hidden]`);
+  const heading = calendar
+    .shadowRoot!.querySelector(`slot[part="heading"]`)
+    ?.querySelector(`[aria-hidden="true"]`);
 
   if (!heading) {
-    throw new Error("Could not find visible heading for calendar");
+    throw new Error("No visible heading found for calendar");
   }
 
-  return getHeadingText(heading);
+  return heading?.shadowRoot?.textContent;
 }
 
 export function getCalendarHeading(calendar: CalendarInstance) {
-  const group = calendar.shadowRoot!.querySelector(`[role="group"]`)!;
+  const calendarLocator = page.elementLocator(calendar);
 
+  const group = calendarLocator.getByRole("group").element()!;
   const labelledById = group.getAttribute("aria-labelledby");
   if (!labelledById) {
     throw new Error("No aria-labelledby attribute found on group");
@@ -99,7 +97,7 @@ export function getCalendarHeading(calendar: CalendarInstance) {
     throw new Error("No heading found for calendar");
   }
 
-  return getHeadingText(heading);
+  return heading.shadowRoot?.textContent;
 }
 
 export function getMonthHeading(month: MonthInstance) {
@@ -115,12 +113,12 @@ export function getMonthHeading(month: MonthInstance) {
     throw new Error("No heading found for month");
   }
 
-  return getHeadingText(heading);
+  return heading.shadowRoot!.textContent;
 }
 
 export function getPrevPageButton(calendar: CalendarInstance) {
   const button = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
-    `button[part~="previous"]`
+    `button[part~="previous"]`,
   )!;
   return page.elementLocator(button);
 }
@@ -128,14 +126,14 @@ export function getPrevPageButton(calendar: CalendarInstance) {
 export function getNextPageButton(calendar: CalendarInstance) {
   const button =
     calendar.shadowRoot!.querySelector<HTMLButtonElement>(
-      `button[part~="next"]`
+      `button[part~="next"]`,
     )!;
   return page.elementLocator(button);
 }
 
 export function getTodayButton(month: MonthInstance) {
   const button = month.shadowRoot!.querySelector<HTMLButtonElement>(
-    `button[part~="today"]`
+    `button[part~="today"]`,
   )!;
   return page.elementLocator(button);
 }
@@ -143,7 +141,7 @@ export function getTodayButton(month: MonthInstance) {
 export function getSelectedDays(month: MonthInstance) {
   return [
     ...month.shadowRoot!.querySelectorAll<HTMLButtonElement>(
-      `button[aria-pressed="true"]`
+      `button[aria-pressed="true"]`,
     ),
   ];
 }
@@ -156,14 +154,14 @@ export function getDayButton(month: MonthInstance, dateLabel: string) {
   }
 
   return grid.querySelector<HTMLButtonElement>(
-    `button[aria-label="${dateLabel}"]`
+    `button[aria-label="${dateLabel}"]`,
   )!;
 }
 
 export async function clickDay(
   month: MonthInstance,
   dateLabel: string,
-  options?: { force?: boolean }
+  options?: { force?: boolean },
 ) {
   const button = getDayButton(month, dateLabel);
 

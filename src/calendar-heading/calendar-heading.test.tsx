@@ -1,6 +1,11 @@
 import { describe, it, expect } from "vitest";
 import type { VNodeAny } from "atomico/types/vnode";
-import { mount, getMonth, type CalendarInstance, type MonthInstance } from "../utils/test.js";
+import {
+  mount,
+  getMonth,
+  type CalendarInstance,
+  type MonthInstance,
+} from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { CalendarDate } from "../calendar-date/calendar-date.js";
 import { CalendarHeading } from "./calendar-heading.js";
@@ -22,7 +27,7 @@ function getSlottedHeadingText(root: CalendarInstance | MonthInstance) {
     throw new Error("Could not find slotted calendar-heading");
   }
 
-  return () => heading.shadowRoot?.textContent ?? heading.textContent ?? "";
+  return heading.shadowRoot?.textContent;
 }
 
 describe("CalendarHeading", () => {
@@ -31,17 +36,18 @@ describe("CalendarHeading", () => {
       <Fixture value="2024-03-15">
         <CalendarHeading slot="heading" month="short" year="2-digit" />
         <CalendarMonth />
-      </Fixture>
+      </Fixture>,
     );
 
     const headingText = getSlottedHeadingText(calendar);
-    const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC",
+    const formatter = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "UTC",
       month: "short",
       year: "2-digit",
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 3)));
 
-    await expect.poll(headingText).toBe(expected);
+    expect(headingText).toBe(expected);
   });
 
   it("only includes options that are set", async () => {
@@ -49,14 +55,17 @@ describe("CalendarHeading", () => {
       <Fixture value="2024-09-01">
         <CalendarHeading slot="heading" month="long" />
         <CalendarMonth />
-      </Fixture>
+      </Fixture>,
     );
 
     const headingText = getSlottedHeadingText(calendar);
-    const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", month: "long" });
+    const formatter = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "UTC",
+      month: "long",
+    });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 9)));
 
-    await expect.poll(headingText).toBe(expected);
+    expect(headingText).toBe(expected);
   });
 
   it("formats a range when showing multiple months", async () => {
@@ -65,18 +74,19 @@ describe("CalendarHeading", () => {
         <CalendarHeading slot="heading" month="long" year="numeric" />
         <CalendarMonth />
         <CalendarMonth offset={1} />
-      </Fixture>
+      </Fixture>,
     );
 
     const headingText = getSlottedHeadingText(calendar);
     const start = toDate(new PlainYearMonth(2023, 12));
     const end = toDate(new PlainYearMonth(2024, 1));
-    const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC",
+    const formatter = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "UTC",
       month: "long",
       year: "numeric",
     });
 
-    await expect.poll(headingText).toBe(formatter.formatRange(start, end));
+    expect(headingText).toBe(formatter.formatRange(start, end));
   });
 
   it("can customise the month heading via slot", async () => {
@@ -85,19 +95,20 @@ describe("CalendarHeading", () => {
         <CalendarMonth>
           <CalendarHeading slot="heading" month="short" year="numeric" />
         </CalendarMonth>
-      </Fixture>
+      </Fixture>,
     );
 
     const month = getMonth(calendar);
     const headingText = getSlottedHeadingText(month);
 
-    const formatter = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC",
+    const formatter = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "UTC",
       month: "short",
       year: "numeric",
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 7)));
 
-    await expect.poll(headingText).toBe(expected);
+    expect(headingText).toBe(expected);
   });
 
   it("respects the locale", async () => {
@@ -105,16 +116,17 @@ describe("CalendarHeading", () => {
       <Fixture value="2024-03-15" locale="de-DE">
         <CalendarHeading slot="heading" month="long" year="numeric" />
         <CalendarMonth />
-      </Fixture>
+      </Fixture>,
     );
 
     const headingText = getSlottedHeadingText(calendar);
-    const formatter = new Intl.DateTimeFormat("de-DE", { timeZone: "UTC",
+    const formatter = new Intl.DateTimeFormat("de-DE", {
+      timeZone: "UTC",
       month: "long",
       year: "numeric",
     });
     const expected = formatter.format(toDate(new PlainYearMonth(2024, 3)));
 
-    await expect.poll(headingText).toBe(expected);
+    expect(headingText).toBe(expected);
   });
 });
