@@ -44,7 +44,7 @@ describe("CalendarMulti", () => {
     it("can select a multiple days", async () => {
       const spy = createSpy<(e: Event) => void>();
       const calendar = await mount(
-        <Fixture value="2020-01-01 2020-01-03" onchange={spy} />
+        <Fixture value="2020-01-01 2020-01-03" onchange={spy} />,
       );
 
       const month = getMonth(calendar);
@@ -62,7 +62,7 @@ describe("CalendarMulti", () => {
       await clickDay(month, "22 April");
       expect(spy.count).toBe(2);
       expect(calendar.value).toBe(
-        "2020-01-01 2020-01-03 2020-04-19 2020-04-22"
+        "2020-01-01 2020-01-03 2020-04-19 2020-04-22",
       );
 
       // deselect
@@ -99,9 +99,7 @@ describe("CalendarMulti", () => {
       await userEvent.keyboard("{Enter}");
 
       expect(spy.count).toBe(1);
-      expect(spy.last[0].target.value).toBe(
-        "2020-01-01 2020-01-03 2020-04-19"
-      );
+      expect(spy.last[0].target.value).toBe("2020-01-01 2020-01-03 2020-04-19");
 
       // select 22nd of month
       await userEvent.keyboard("{ArrowRight}");
@@ -111,15 +109,13 @@ describe("CalendarMulti", () => {
 
       expect(spy.count).toBe(2);
       expect(spy.last[0].target.value).toBe(
-        "2020-01-01 2020-01-03 2020-04-19 2020-04-22"
+        "2020-01-01 2020-01-03 2020-04-19 2020-04-22",
       );
 
       // deselect 22nd of month
       await userEvent.keyboard("{Enter}");
       expect(spy.count).toBe(3);
-      expect(spy.last[0].target.value).toBe(
-        "2020-01-01 2020-01-03 2020-04-19"
-      );
+      expect(spy.last[0].target.value).toBe("2020-01-01 2020-01-03 2020-04-19");
     });
   });
 
@@ -127,7 +123,7 @@ describe("CalendarMulti", () => {
     it("raises a change event", async () => {
       const spy = createSpy<(e: Event) => void>();
       const calendar = await mount(
-        <Fixture value="2022-01-01 2022-01-03" onchange={spy} />
+        <Fixture value="2022-01-01 2022-01-03" onchange={spy} />,
       );
 
       const month = getMonth(calendar);
@@ -140,7 +136,7 @@ describe("CalendarMulti", () => {
       await clickDay(month, "30 December");
       expect(spy.count).toBe(2);
       expect(calendar.value).toBe(
-        "2022-01-01 2022-01-03 2021-12-31 2021-12-30"
+        "2022-01-01 2022-01-03 2021-12-31 2021-12-30",
       );
     });
   });
@@ -151,7 +147,9 @@ describe("CalendarMulti", () => {
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "5 January");
-      await expect.element(page.elementLocator(day)).toHaveAttribute("tabindex", "0");
+      await expect
+        .element(page.elementLocator(day))
+        .toHaveAttribute("tabindex", "0");
     });
   });
 
@@ -166,16 +164,20 @@ describe("CalendarMulti", () => {
               </div>
             </div>
           </div>
-        </Fixture>
+        </Fixture>,
       );
 
       const month = getMonth(calendar);
       const fifth = getDayButton(month, "5 January");
       const tenth = getDayButton(month, "10 January");
 
-      await expect.element(getMonthHeading(month)).toHaveTextContent("January");
-      await expect.element(page.elementLocator(fifth)).toHaveAttribute("aria-pressed", "true");
-      await expect.element(page.elementLocator(tenth)).toHaveAttribute("aria-pressed", "true");
+      expect(getMonthHeading(month)).toEqual("January");
+      await expect
+        .element(page.elementLocator(fifth))
+        .toHaveAttribute("aria-pressed", "true");
+      await expect
+        .element(page.elementLocator(tenth))
+        .toHaveAttribute("aria-pressed", "true");
     });
   });
 });

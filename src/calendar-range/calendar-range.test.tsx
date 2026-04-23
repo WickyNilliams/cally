@@ -49,7 +49,7 @@ describe("CalendarRange", () => {
     it("can select a range: start -> end", async () => {
       const spy = createSpy();
       const calendar = await mount(
-        <Fixture value="2020-01-01/2020-01-01" onchange={spy} />
+        <Fixture value="2020-01-01/2020-01-01" onchange={spy} />,
       );
       const month = getMonth(calendar);
 
@@ -70,7 +70,7 @@ describe("CalendarRange", () => {
     it("can select a range: end -> start", async () => {
       const spy = createSpy();
       const calendar = await mount(
-        <Fixture value="2020-01-01/2020-01-01" onchange={spy} />
+        <Fixture value="2020-01-01/2020-01-01" onchange={spy} />,
       );
       const month = getMonth(calendar);
       const nextMonth = getNextPageButton(calendar);
@@ -161,7 +161,7 @@ describe("CalendarRange", () => {
     it("raises a focusday event", async () => {
       const spy = createSpy<(e: CustomEvent<Date>) => void>();
       const calendar = await mount(
-        <Fixture value="2022-01-01/2022-01-01" onfocusday={spy} />
+        <Fixture value="2022-01-01/2022-01-01" onfocusday={spy} />,
       );
 
       // click next button
@@ -174,7 +174,7 @@ describe("CalendarRange", () => {
     it("raises a change event", async () => {
       const spy = createSpy<(e: Event) => void>();
       const calendar = await mount(
-        <Fixture value="2022-01-01/2022-01-01" onchange={spy} />
+        <Fixture value="2022-01-01/2022-01-01" onchange={spy} />,
       );
 
       const month = getMonth(calendar);
@@ -197,7 +197,7 @@ describe("CalendarRange", () => {
           value="2022-01-01/2022-01-01"
           onrangestart={startSpy}
           onrangeend={endSpy}
-        />
+        />,
       );
 
       const month = getMonth(calendar);
@@ -221,14 +221,16 @@ describe("CalendarRange", () => {
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "5 January");
-      await expect.element(page.elementLocator(day)).toHaveAttribute("tabindex", "0");
+      await expect
+        .element(page.elementLocator(day))
+        .toHaveAttribute("tabindex", "0");
     });
   });
 
   describe("tentative date", () => {
     it("can be set", async () => {
       const calendar = await mount(
-        <Fixture focusedDate="2024-04-01" tentative="2024-04-19" />
+        <Fixture focusedDate="2024-04-01" tentative="2024-04-19" />,
       );
       const month = getMonth(calendar);
 
@@ -240,7 +242,7 @@ describe("CalendarRange", () => {
 
     it("can be cleared", async () => {
       const calendar = await mount<InstanceType<typeof CalendarRange>>(
-        <Fixture focusedDate="2024-04-01" />
+        <Fixture focusedDate="2024-04-01" />,
       );
       const month = getMonth(calendar);
 
@@ -274,7 +276,7 @@ describe("CalendarRange", () => {
               </div>
             </div>
           </div>
-        </Fixture>
+        </Fixture>,
       );
 
       const month = getMonth(calendar);
@@ -282,10 +284,16 @@ describe("CalendarRange", () => {
       const sixth = getDayButton(month, "6 January");
       const seventh = getDayButton(month, "7 January");
 
-      await expect.element(getMonthHeading(month)).toHaveTextContent("January");
-      await expect.element(page.elementLocator(fifth)).toHaveAttribute("aria-pressed", "true");
-      await expect.element(page.elementLocator(sixth)).toHaveAttribute("aria-pressed", "true");
-      await expect.element(page.elementLocator(seventh)).toHaveAttribute("aria-pressed", "true");
+      expect(getMonthHeading(month)).toEqual("January");
+      await expect
+        .element(page.elementLocator(fifth))
+        .toHaveAttribute("aria-pressed", "true");
+      await expect
+        .element(page.elementLocator(sixth))
+        .toHaveAttribute("aria-pressed", "true");
+      await expect
+        .element(page.elementLocator(seventh))
+        .toHaveAttribute("aria-pressed", "true");
     });
   });
 });

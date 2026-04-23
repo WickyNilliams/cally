@@ -5,14 +5,13 @@ import {
   type CalendarMultiContext,
   type CalendarRangeContext,
 } from "../calendar-month/CalendarMonthContext.js";
+import { CalendarHeading } from "../calendar-heading/calendar-heading.js";
 import { reset, vh } from "../utils/styles.js";
-import { toDate, type DaysOfWeek } from "../utils/date.js";
+import { type DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { Pagination } from "./useCalendarBase.js";
 
 interface CalendarBaseProps {
-  format: Intl.DateTimeFormat;
-  formatVerbose: Intl.DateTimeFormat;
   pageBy: Pagination;
   previous?: () => void;
   next?: () => void;
@@ -44,9 +43,6 @@ function Button(props: {
 export function CalendarBase(
   props: CalendarDateProps | CalendarRangeProps | CalendarMultiProps
 ) {
-  const start = toDate(props.page.start);
-  const end = toDate(props.page.end);
-
   return (
     <CalendarContext
       value={props}
@@ -55,9 +51,14 @@ export function CalendarBase(
       onhoverday={props.onHover}
     >
       <div role="group" aria-labelledby="h" part="container">
-        <div id="h" class="vh" aria-live="polite" aria-atomic="true">
-          {props.formatVerbose.formatRange(start, end)}
-        </div>
+        <CalendarHeading
+          month="long"
+          year="numeric"
+          id="h"
+          class="vh"
+          aria-live="polite"
+          aria-atomic="true"
+        />
 
         <div part="header">
           <Button name="previous" onclick={props.previous}>
@@ -65,7 +66,7 @@ export function CalendarBase(
           </Button>
 
           <slot part="heading" name="heading">
-            <div aria-hidden="true">{props.format.formatRange(start, end)}</div>
+            <CalendarHeading year="numeric" aria-hidden="true" />
           </slot>
 
           <Button name="next" onclick={props.next}>

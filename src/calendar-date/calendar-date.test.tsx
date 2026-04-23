@@ -23,7 +23,9 @@ import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { getToday, toDate } from "../utils/date.js";
 
 async function nextFrame() {
-  return new Promise((resolve) => requestAnimationFrame(() => resolve(undefined)));
+  return new Promise((resolve) =>
+    requestAnimationFrame(() => resolve(undefined)),
+  );
 }
 
 type TestProps = {
@@ -59,12 +61,16 @@ describe("CalendarDate", () => {
     describe("controls", () => {
       it("has a label for next page button", async () => {
         const calendar = await mount(<Fixture />);
-        await expect.element(getNextPageButton(calendar)).toHaveTextContent("Next");
+        await expect
+          .element(getNextPageButton(calendar))
+          .toHaveTextContent("Next");
       });
 
       it("has a label for previous page button", async () => {
         const calendar = await mount(<Fixture />);
-        await expect.element(getPrevPageButton(calendar)).toHaveTextContent("Previous");
+        await expect
+          .element(getPrevPageButton(calendar))
+          .toHaveTextContent("Previous");
       });
     });
 
@@ -81,7 +87,7 @@ describe("CalendarDate", () => {
       });
 
       const heading = getCalendarHeading(calendar);
-      await expect.element(heading).toHaveTextContent(formatter.format(yearMonth));
+      expect(heading).toEqual(formatter.format(yearMonth));
     });
 
     it("correctly labels a range of months", async () => {
@@ -89,7 +95,7 @@ describe("CalendarDate", () => {
         <Fixture months={2} value="2023-12-01">
           <CalendarMonth />
           <CalendarMonth offset={1} />
-        </Fixture>
+        </Fixture>,
       );
 
       const start = new PlainYearMonth(2023, 12);
@@ -100,15 +106,9 @@ describe("CalendarDate", () => {
         timeZone: "UTC",
       });
 
-      // Use poll() instead of toHaveTextContent() because the formatter output
-      // contains unicode characters (en-dash "–") that toHaveTextContent() normalizes
-      // differently, causing false negatives. poll() does direct string comparison.
-      await expect.poll(() => {
-        const group = calendar.shadowRoot!.querySelector(`[role="group"]`)!;
-        const labelledById = group.getAttribute("aria-labelledby")!;
-        const heading = calendar.shadowRoot!.getElementById(labelledById)!;
-        return heading.textContent;
-      }).toBe(formatter.formatRange(toDate(start), toDate(end)));
+      expect(getCalendarHeading(calendar)).toEqual(
+        formatter.formatRange(toDate(start), toDate(end)),
+      );
     });
   });
 
@@ -116,7 +116,7 @@ describe("CalendarDate", () => {
     it("can select a date in the future", async () => {
       const spy = createSpy();
       const calendar = await mount(
-        <Fixture value="2020-01-01" onchange={spy} />
+        <Fixture value="2020-01-01" onchange={spy} />,
       );
       const month = getMonth(calendar);
       const nextMonth = getNextPageButton(calendar);
@@ -133,7 +133,7 @@ describe("CalendarDate", () => {
     it("can select a date in the past", async () => {
       const spy = createSpy();
       const calendar = await mount(
-        <Fixture value="2020-01-01" onchange={spy} />
+        <Fixture value="2020-01-01" onchange={spy} />,
       );
       const month = getMonth(calendar);
 
@@ -205,7 +205,7 @@ describe("CalendarDate", () => {
     it("supports navigating to disabled dates", async () => {
       const spy = createSpy();
       const calendar = await mount(
-        <Fixture value="2020-01-01" onchange={spy} />
+        <Fixture value="2020-01-01" onchange={spy} />,
       );
 
       // disable weekends
@@ -258,7 +258,7 @@ describe("CalendarDate", () => {
           <Fixture value="2020-01-01" months={2}>
             <CalendarMonth />
             <CalendarMonth offset={1} />
-          </Fixture>
+          </Fixture>,
         );
         const [first, second] = getMonths(calendar) as [
           MonthInstance,
@@ -266,8 +266,8 @@ describe("CalendarDate", () => {
         ];
 
         await getNextPageButton(calendar).click();
-        await expect.element(getMonthHeading(first!)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second!)).toHaveTextContent("April");
+        expect(getMonthHeading(first!)).toEqual("March");
+        expect(getMonthHeading(second!)).toEqual("April");
       });
 
       it("updates page as user navigates dates", async () => {
@@ -275,7 +275,7 @@ describe("CalendarDate", () => {
           <Fixture value="2020-01-01" months={2}>
             <CalendarMonth />
             <CalendarMonth offset={1} />
-          </Fixture>
+          </Fixture>,
         );
         const [first, second] = getMonths(calendar) as [
           MonthInstance,
@@ -289,53 +289,53 @@ describe("CalendarDate", () => {
 
         // move to feb, within page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
 
         // move to march, out of page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
 
         // move to april, should be on same page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
 
         // move to march, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
 
         // move to feb, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
 
         // move to jan, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
 
         // move to dec, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
+        expect(getMonthHeading(first)).toEqual("November");
+        expect(getMonthHeading(second)).toEqual("December");
 
         // sanity check
         expect(calendar.focusedDate).toBe("2019-12-01");
 
         // move one year ahead
         await sendShiftPress("PageDown");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2020");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2020");
+        expect(getMonthHeading(first)).toEqual("November");
+        expect(getMonthHeading(second)).toEqual("December");
 
         // move one year back
         await sendShiftPress("PageUp");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2019");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2019");
+        expect(getMonthHeading(first)).toEqual("November");
+        expect(getMonthHeading(second)).toEqual("December");
       });
 
       it("pages by number of months", async () => {
@@ -343,7 +343,7 @@ describe("CalendarDate", () => {
           <Fixture value="2020-01-01" months={2}>
             <CalendarMonth />
             <CalendarMonth offset={1} />
-          </Fixture>
+          </Fixture>,
         );
 
         const next = getNextPageButton(calendar);
@@ -354,24 +354,24 @@ describe("CalendarDate", () => {
         ];
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("May");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("June");
+        expect(getMonthHeading(first)).toEqual("May");
+        expect(getMonthHeading(second)).toEqual("June");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
+        expect(getMonthHeading(first)).toEqual("November");
+        expect(getMonthHeading(second)).toEqual("December");
       });
 
       it("handles focused date prop changing", async () => {
@@ -379,7 +379,7 @@ describe("CalendarDate", () => {
           <Fixture value="2020-01-01" months={2}>
             <CalendarMonth />
             <CalendarMonth offset={1} />
-          </Fixture>
+          </Fixture>,
         );
         const [first, second] = getMonths(calendar) as [
           MonthInstance,
@@ -389,30 +389,30 @@ describe("CalendarDate", () => {
         // one year ahead
         calendar.focusedDate = "2021-01-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2021");
 
         // one month outside of page
         calendar.focusedDate = "2021-03-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2021");
 
         // a few months ahead
         calendar.focusedDate = "2021-05-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("May");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("June");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        expect(getMonthHeading(first)).toEqual("May");
+        expect(getMonthHeading(second)).toEqual("June");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2021");
 
         // a few months back
         calendar.focusedDate = "2020-12-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("November");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("December");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2020");
+        expect(getMonthHeading(first)).toEqual("November");
+        expect(getMonthHeading(second)).toEqual("December");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2020");
       });
     });
 
@@ -422,7 +422,7 @@ describe("CalendarDate", () => {
           <Fixture value="2020-01-01" months={2} pageBy="single">
             <CalendarMonth />
             <CalendarMonth offset={1} />
-          </Fixture>
+          </Fixture>,
         );
 
         const [first, second] = getMonths(calendar) as [
@@ -437,55 +437,55 @@ describe("CalendarDate", () => {
 
         // move to feb, within page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
 
         // move to march, out of page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
+        expect(getMonthHeading(first)).toEqual("February");
+        expect(getMonthHeading(second)).toEqual("March");
 
         // move to april, should be on same page
         await userEvent.keyboard("{PageDown}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
 
         // move to march, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
 
         // move to feb, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
+        expect(getMonthHeading(first)).toEqual("February");
+        expect(getMonthHeading(second)).toEqual("March");
 
         // move to jan, within page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
 
         // move to dec, out of page
         await userEvent.keyboard("{PageUp}");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
+        expect(getMonthHeading(first)).toEqual("December");
+        expect(getMonthHeading(second)).toEqual("January");
 
         // sanity check
         expect(calendar.focusedDate).toBe("2019-12-01");
 
         // move one year ahead
         await sendShiftPress("PageDown");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2020/);
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2021/);
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
+        expect(getCalendarVisibleHeading(calendar)).toMatch(/2020/);
+        expect(getCalendarVisibleHeading(calendar)).toMatch(/2021/);
+        expect(getMonthHeading(first)).toEqual("December");
+        expect(getMonthHeading(second)).toEqual("January");
 
         // move one year back
         await sendShiftPress("PageUp");
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2019/);
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2020/);
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
+        expect(getMonthHeading(first)).toEqual("December");
+        expect(getCalendarVisibleHeading(calendar)).toMatch(/2019/);
+        expect(getCalendarVisibleHeading(calendar)).toMatch(/2020/);
+        expect(getMonthHeading(second)).toEqual("January");
       });
 
       it("pages by single month", async () => {
@@ -493,7 +493,7 @@ describe("CalendarDate", () => {
           <Fixture value="2020-01-01" months={2} pageBy="single">
             <CalendarMonth />
             <CalendarMonth offset={1} />
-          </Fixture>
+          </Fixture>,
         );
         const [first, second] = getMonths(calendar) as [
           MonthInstance,
@@ -504,24 +504,24 @@ describe("CalendarDate", () => {
         const prev = getPrevPageButton(calendar);
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
+        expect(getMonthHeading(first)).toEqual("February");
+        expect(getMonthHeading(second)).toEqual("March");
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("March");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("March");
+        expect(getMonthHeading(second)).toEqual("April");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
+        expect(getMonthHeading(first)).toEqual("February");
+        expect(getMonthHeading(second)).toEqual("March");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
+        expect(getMonthHeading(first)).toEqual("December");
+        expect(getMonthHeading(second)).toEqual("January");
       });
 
       it("pages by single month with 12 months", async () => {
@@ -539,7 +539,7 @@ describe("CalendarDate", () => {
             <CalendarMonth offset={9} />
             <CalendarMonth offset={10} />
             <CalendarMonth offset={11} />
-          </Fixture>
+          </Fixture>,
         );
         const months = getMonths(calendar);
         const first = months[0] as MonthInstance;
@@ -547,23 +547,23 @@ describe("CalendarDate", () => {
 
         // with page-by="single", 12 months starting from June
         // should show Jun-May, not snap to Jan-Dec
-        await expect.element(getMonthHeading(first)).toHaveTextContent("June");
-        await expect.element(getMonthHeading(last)).toHaveTextContent("May");
+        expect(getMonthHeading(first)).toEqual("June");
+        expect(getMonthHeading(last)).toEqual("May");
 
         const next = getNextPageButton(calendar);
         const prev = getPrevPageButton(calendar);
 
         await next.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("July");
-        await expect.element(getMonthHeading(last)).toHaveTextContent("June");
+        expect(getMonthHeading(first)).toEqual("July");
+        expect(getMonthHeading(last)).toEqual("June");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("June");
-        await expect.element(getMonthHeading(last)).toHaveTextContent("May");
+        expect(getMonthHeading(first)).toEqual("June");
+        expect(getMonthHeading(last)).toEqual("May");
 
         await prev.click();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("May");
-        await expect.element(getMonthHeading(last)).toHaveTextContent("April");
+        expect(getMonthHeading(first)).toEqual("May");
+        expect(getMonthHeading(last)).toEqual("April");
       });
 
       it("handles focused date prop changing", async () => {
@@ -571,7 +571,7 @@ describe("CalendarDate", () => {
           <Fixture value="2020-01-01" months={2} pageBy="single">
             <CalendarMonth />
             <CalendarMonth offset={1} />
-          </Fixture>
+          </Fixture>,
         );
         const [first, second] = getMonths(calendar) as [
           MonthInstance,
@@ -581,31 +581,31 @@ describe("CalendarDate", () => {
         // one year ahead
         calendar.focusedDate = "2021-01-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("January");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("February");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        expect(getMonthHeading(first)).toEqual("January");
+        expect(getMonthHeading(second)).toEqual("February");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2021");
 
         // one month outside of page
         calendar.focusedDate = "2021-03-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("February");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("March");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        expect(getMonthHeading(first)).toEqual("February");
+        expect(getMonthHeading(second)).toEqual("March");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2021");
 
         // a few months ahead
         calendar.focusedDate = "2021-05-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("April");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("May");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent("2021");
+        expect(getMonthHeading(first)).toEqual("April");
+        expect(getMonthHeading(second)).toEqual("May");
+        expect(getCalendarVisibleHeading(calendar)).toEqual("2021");
 
         // a few months back
         calendar.focusedDate = "2020-12-01";
         await nextFrame();
-        await expect.element(getMonthHeading(first)).toHaveTextContent("December");
-        await expect.element(getMonthHeading(second)).toHaveTextContent("January");
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2020/);
-        await expect.element(getCalendarVisibleHeading(calendar)).toHaveTextContent(/2021/);
+        expect(getMonthHeading(first)).toEqual("December");
+        expect(getMonthHeading(second)).toEqual("January");
+        expect(getCalendarVisibleHeading(calendar)).toMatch(/2020/);
+        expect(getCalendarVisibleHeading(calendar)).toMatch(/2021/);
       });
     });
   });
@@ -614,7 +614,7 @@ describe("CalendarDate", () => {
     it("raises a focusday event", async () => {
       const spy = createSpy<(e: CustomEvent<Date>) => void>();
       const calendar = await mount(
-        <Fixture value="2022-01-01" onfocusday={spy} />
+        <Fixture value="2022-01-01" onfocusday={spy} />,
       );
 
       // click next button
@@ -627,7 +627,7 @@ describe("CalendarDate", () => {
     it("raises a change event", async () => {
       const spy = createSpy<(e: Event) => void>();
       const calendar = await mount(
-        <Fixture value="2022-01-01" onchange={spy} />
+        <Fixture value="2022-01-01" onchange={spy} />,
       );
       const month = getMonth(calendar);
 
@@ -645,7 +645,7 @@ describe("CalendarDate", () => {
       const calendar = await mount(
         <Fixture value="2020-01-01">
           <CalendarMonth />
-        </Fixture>
+        </Fixture>,
       );
 
       // tab to next page, click
@@ -653,9 +653,10 @@ describe("CalendarDate", () => {
       await userEvent.keyboard("{Tab}");
       await userEvent.keyboard("{Enter}");
 
-      const nextButton = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
-        `button[part~="next"]`
-      )!;
+      const nextButton =
+        calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+          `button[part~="next"]`,
+        )!;
       expect(nextButton).toBeActiveElement();
     });
 
@@ -664,7 +665,7 @@ describe("CalendarDate", () => {
       const calendar = await mount(
         <Fixture value="2020-01-01" onchange={spy} showOutsideDays>
           <CalendarMonth />
-        </Fixture>
+        </Fixture>,
       );
       const month = getMonth(calendar);
 
@@ -684,20 +685,24 @@ describe("CalendarDate", () => {
   describe("min/max support", () => {
     it("disables prev month button if same month and year as min", async () => {
       const calendar = await mount(
-        <Fixture value="2020-04-19" min="2020-04-01" />
+        <Fixture value="2020-04-19" min="2020-04-01" />,
       );
 
       const prevMonthButton = getPrevPageButton(calendar);
-      await expect.element(prevMonthButton).toHaveAttribute("aria-disabled", "true");
+      await expect
+        .element(prevMonthButton)
+        .toHaveAttribute("aria-disabled", "true");
     });
 
     it("disables next month button if same month and year as max", async () => {
       const calendar = await mount(
-        <Fixture value="2020-04-19" max="2020-04-30" />
+        <Fixture value="2020-04-19" max="2020-04-30" />,
       );
 
       const nextMonthButton = getNextPageButton(calendar);
-      await expect.element(nextMonthButton).toHaveAttribute("aria-disabled", "true");
+      await expect
+        .element(nextMonthButton)
+        .toHaveAttribute("aria-disabled", "true");
     });
   });
 
@@ -707,12 +712,12 @@ describe("CalendarDate", () => {
         <Fixture value="2020-01-01" months={2}>
           <CalendarMonth />
           <CalendarMonth offset={1} />
-        </Fixture>
+        </Fixture>,
       );
 
       const [first, second] = getMonths(calendar);
-      await expect.element(getMonthHeading(first!)).toHaveTextContent("January");
-      await expect.element(getMonthHeading(second!)).toHaveTextContent("February");
+      expect(getMonthHeading(first!)).toEqual("January");
+      expect(getMonthHeading(second!)).toEqual("February");
     });
 
     it("respects `months` when paginating", async () => {
@@ -720,18 +725,18 @@ describe("CalendarDate", () => {
         <Fixture value="2020-01-01" months={2}>
           <CalendarMonth />
           <CalendarMonth offset={1} />
-        </Fixture>
+        </Fixture>,
       );
 
       const [first, second] = getMonths(calendar);
 
       await getNextPageButton(calendar).click();
-      await expect.element(getMonthHeading(first!)).toHaveTextContent("March");
-      await expect.element(getMonthHeading(second!)).toHaveTextContent("April");
+      expect(getMonthHeading(first!)).toEqual("March");
+      expect(getMonthHeading(second!)).toEqual("April");
 
       await getPrevPageButton(calendar).click();
-      await expect.element(getMonthHeading(first!)).toHaveTextContent("January");
-      await expect.element(getMonthHeading(second!)).toHaveTextContent("February");
+      expect(getMonthHeading(first!)).toEqual("January");
+      expect(getMonthHeading(second!)).toEqual("February");
     });
   });
 
@@ -739,7 +744,9 @@ describe("CalendarDate", () => {
     it("defaults to `value` if not set", async () => {
       const calendar = await mount(<Fixture value="2020-01-01" />);
       const day = getDayButton(getMonth(calendar), "1 January");
-      await expect.element(page.elementLocator(day)).toHaveAttribute("tabindex", "0");
+      await expect
+        .element(page.elementLocator(day))
+        .toHaveAttribute("tabindex", "0");
     });
 
     it("defaults to today if no value set", async () => {
@@ -747,9 +754,11 @@ describe("CalendarDate", () => {
       const todaysDate = toDate(getToday());
       const month = getMonth(calendar);
 
-      const heading = getMonthHeading(month);
-      await expect.element(heading).toHaveTextContent(
-        todaysDate.toLocaleDateString("en-GB", { month: "long", timeZone: "UTC" })
+      expect(getMonthHeading(month)).toEqual(
+        todaysDate.toLocaleDateString("en-GB", {
+          month: "long",
+          timeZone: "UTC",
+        }),
       );
 
       const button = getDayButton(
@@ -758,37 +767,45 @@ describe("CalendarDate", () => {
           month: "long",
           day: "numeric",
           timeZone: "UTC",
-        })
+        }),
       );
-      await expect.element(page.elementLocator(button)).toHaveAttribute("tabindex", "0");
+      await expect
+        .element(page.elementLocator(button))
+        .toHaveAttribute("tabindex", "0");
     });
 
     it("can be changed via props", async () => {
       const calendar = await mount(
-        <Fixture value="2020-01-01" focusedDate="2020-02-15" />
+        <Fixture value="2020-01-01" focusedDate="2020-02-15" />,
       );
       const month = getMonth(calendar);
 
       const day = getDayButton(month, "15 February");
-      await expect.element(page.elementLocator(day)).toHaveAttribute("tabindex", "0");
+      await expect
+        .element(page.elementLocator(day))
+        .toHaveAttribute("tabindex", "0");
 
       calendar.focusedDate = "2020-04-15";
       await nextFrame();
 
       const newDay = getDayButton(month, "15 April");
-      await expect.element(page.elementLocator(newDay)).toHaveAttribute("tabindex", "0");
+      await expect
+        .element(page.elementLocator(newDay))
+        .toHaveAttribute("tabindex", "0");
     });
 
     it("updates as user navigates", async () => {
       const calendar = await mount(
-        <Fixture value="2020-01-01" focusedDate="2020-02-15" />
+        <Fixture value="2020-01-01" focusedDate="2020-02-15" />,
       );
       const month = getMonth(calendar);
 
       await getPrevPageButton(calendar).click();
 
       const day = getDayButton(month, "15 January");
-      await expect.element(page.elementLocator(day)).toHaveAttribute("tabindex", "0");
+      await expect
+        .element(page.elementLocator(day))
+        .toHaveAttribute("tabindex", "0");
       expect(calendar.focusedDate).toBe("2020-01-15");
     });
   });
@@ -796,43 +813,43 @@ describe("CalendarDate", () => {
   describe("localization", () => {
     it("localizes heading", async () => {
       const calendar = await mount(
-        <Fixture value="2020-01-01" locale="de-DE" />
+        <Fixture value="2020-01-01" locale="de-DE" />,
       );
 
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Januar 2020");
+      expect(getCalendarHeading(calendar)).toEqual("Januar 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Februar 2020");
+      expect(getCalendarHeading(calendar)).toEqual("Februar 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("März 2020");
+      expect(getCalendarHeading(calendar)).toEqual("März 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("April 2020");
+      expect(getCalendarHeading(calendar)).toEqual("April 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Mai 2020");
+      expect(getCalendarHeading(calendar)).toEqual("Mai 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Juni 2020");
+      expect(getCalendarHeading(calendar)).toEqual("Juni 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Juli 2020");
+      expect(getCalendarHeading(calendar)).toEqual("Juli 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("August 2020");
+      expect(getCalendarHeading(calendar)).toEqual("August 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("September 2020");
+      expect(getCalendarHeading(calendar)).toEqual("September 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Oktober 2020");
+      expect(getCalendarHeading(calendar)).toEqual("Oktober 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("November 2020");
+      expect(getCalendarHeading(calendar)).toEqual("November 2020");
 
       await getNextPageButton(calendar).click();
-      await expect.element(getCalendarHeading(calendar)).toHaveTextContent("Dezember 2020");
+      expect(getCalendarHeading(calendar)).toEqual("Dezember 2020");
     });
   });
 
@@ -847,14 +864,16 @@ describe("CalendarDate", () => {
               </div>
             </div>
           </div>
-        </Fixture>
+        </Fixture>,
       );
 
       const month = getMonth(calendar);
       const firstJan = getDayButton(month, "1 January");
 
-      await expect.element(getMonthHeading(month)).toHaveTextContent("January");
-      await expect.element(page.elementLocator(firstJan)).toHaveAttribute("aria-pressed", "true");
+      expect(getMonthHeading(month)).toEqual("January");
+      await expect
+        .element(page.elementLocator(firstJan))
+        .toHaveAttribute("aria-pressed", "true");
     });
   });
 
@@ -863,11 +882,12 @@ describe("CalendarDate", () => {
       const calendar = await mount(<Fixture value="2020-01-01" />);
       const day = getDayButton(getMonth(calendar), "1 January");
       const prevButton = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
-        `button[part~="previous"]`
+        `button[part~="previous"]`,
       )!;
-      const nextButton = calendar.shadowRoot!.querySelector<HTMLButtonElement>(
-        `button[part~="next"]`
-      )!;
+      const nextButton =
+        calendar.shadowRoot!.querySelector<HTMLButtonElement>(
+          `button[part~="next"]`,
+        )!;
 
       calendar.focus({ target: "previous" });
       expect(prevButton).toBeActiveElement(calendar.shadowRoot!);

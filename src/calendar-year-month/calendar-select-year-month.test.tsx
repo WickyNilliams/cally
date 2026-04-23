@@ -69,12 +69,12 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const monthSelect = getMonthSelect(calendar);
 
     expect(monthSelect.value).toBe("12");
-    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2025");
+    expect(getCalendarHeading(calendar)).toEqual("December 2025");
 
     await userEvent.selectOptions(monthSelect, "11");
 
     expect(monthSelect.value).toBe("11");
-    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("November 2025");
+    expect(getCalendarHeading(calendar)).toEqual("November 2025");
   });
 
   it("can change the year", async () => {
@@ -82,17 +82,17 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     const yearSelect = getYearSelect(calendar);
 
     expect(yearSelect.value).toBe("2025");
-    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2025");
+    expect(getCalendarHeading(calendar)).toEqual("December 2025");
 
     await userEvent.selectOptions(yearSelect, "2026");
 
     expect(yearSelect.value).toBe("2026");
-    await expect.element(getCalendarHeading(calendar)).toHaveTextContent("December 2026");
+    expect(getCalendarHeading(calendar)).toEqual("December 2026");
   });
 
   it("handles min and max dates", async () => {
     const calendar = await mount(
-      <Fixture value="2025-06-01" min="2024-06-01" max="2026-02-01" />
+      <Fixture value="2025-06-01" min="2024-06-01" max="2026-02-01" />,
     );
 
     const monthSelect = getMonthSelect(calendar);
@@ -109,7 +109,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
       [...monthSelect.options].map((o) => ({
         label: o.label,
         disabled: o.disabled,
-      }))
+      })),
     ).toEqual([
       { label: "January", disabled: false },
       { label: "February", disabled: false },
@@ -133,7 +133,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
       [...monthSelect.options].map((o) => ({
         label: o.label,
         disabled: o.disabled,
-      }))
+      })),
     ).toEqual([
       { label: "January", disabled: true },
       { label: "February", disabled: true },
@@ -154,7 +154,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
     // Bug reported in #113: when min="2026-01-02", January should not be disabled
     // because days 2-31 are valid, but the old logic disabled it
     const calendar = await mount(
-      <Fixture value="2026-01-15" min="2026-01-02" max="2026-03-15" />
+      <Fixture value="2026-01-15" min="2026-01-02" max="2026-03-15" />,
     );
 
     const monthSelect = getMonthSelect(calendar);
@@ -165,12 +165,12 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
       [...monthSelect.options].map((o) => ({
         label: o.label,
         disabled: o.disabled,
-      }))
+      })),
     ).toEqual([
-      { label: "January", disabled: false },  // Should be enabled (days 2-31 valid)
+      { label: "January", disabled: false }, // Should be enabled (days 2-31 valid)
       { label: "February", disabled: false },
-      { label: "March", disabled: false },    // Should be enabled (days 1-15 valid)
-      { label: "April", disabled: true },     // Should be disabled (all days after max)
+      { label: "March", disabled: false }, // Should be enabled (days 1-15 valid)
+      { label: "April", disabled: true }, // Should be disabled (all days after max)
       { label: "May", disabled: true },
       { label: "June", disabled: true },
       { label: "July", disabled: true },
@@ -184,7 +184,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
 
   it("can render month names in long format", async () => {
     const calendar = await mount(
-      <Fixture value="2025-12-15" formatMonth="long" />
+      <Fixture value="2025-12-15" formatMonth="long" />,
     );
 
     const monthSelect = getMonthSelect(calendar);
@@ -206,7 +206,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
 
   it("can render month names in short format", async () => {
     const calendar = await mount(
-      <Fixture value="2025-12-15" formatMonth="short" />
+      <Fixture value="2025-12-15" formatMonth="short" />,
     );
 
     const monthSelect = getMonthSelect(calendar);
@@ -227,9 +227,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
   });
 
   it("respects maxYears prop", async () => {
-    const calendar = await mount(
-      <Fixture value="2025-12-15" maxYears={6} />
-    );
+    const calendar = await mount(<Fixture value="2025-12-15" maxYears={6} />);
 
     const yearSelect = getYearSelect(calendar);
     expect([...yearSelect.options].map((o) => o.label)).toEqual([
@@ -243,9 +241,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
   });
 
   it("centers years around current year when no min/max", async () => {
-    const calendar = await mount(
-      <Fixture value="2025-12-15" maxYears={10} />
-    );
+    const calendar = await mount(<Fixture value="2025-12-15" maxYears={10} />);
 
     const yearSelect = getYearSelect(calendar);
     expect([...yearSelect.options].map((o) => o.label)).toEqual([
@@ -264,7 +260,12 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
 
   it("respects min/max range when smaller than maxYears", async () => {
     const calendar = await mount(
-      <Fixture value="2025-06-01" min="2024-01-01" max="2026-12-31" maxYears={20} />
+      <Fixture
+        value="2025-06-01"
+        min="2024-01-01"
+        max="2026-12-31"
+        maxYears={20}
+      />,
     );
 
     const yearSelect = getYearSelect(calendar);
@@ -277,7 +278,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
 
   it("constrains centered range when min is set", async () => {
     const calendar = await mount(
-      <Fixture value="2025-01-01" min="2023-01-01" maxYears={10} />
+      <Fixture value="2025-01-01" min="2023-01-01" maxYears={10} />,
     );
 
     const yearSelect = getYearSelect(calendar);
@@ -295,7 +296,7 @@ describe("CalendarSelectMonth / CalendarSelectYear", () => {
 
   it("constrains centered range when max is set", async () => {
     const calendar = await mount(
-      <Fixture value="2025-12-31" max="2027-12-31" maxYears={10} />
+      <Fixture value="2025-12-31" max="2027-12-31" maxYears={10} />,
     );
 
     const yearSelect = getYearSelect(calendar);
