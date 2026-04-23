@@ -1,8 +1,20 @@
-import { useState, useEvent, useHost, useEffect, useMemo, useProvider } from "atomico";
+import {
+  useState,
+  useEvent,
+  useHost,
+  useEffect,
+  useMemo,
+  useProvider,
+} from "atomico";
 import { CalendarHeadingContext } from "../calendar-heading/CalendarHeadingContext.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
-import { useDateProp } from "../utils/hooks.js";
-import { clamp, toDate, getToday } from "../utils/date.js";
+import { useDateProp, useDateFormatter } from "../utils/hooks.js";
+import { clamp, endOfMonth, toDate, getToday } from "../utils/date.js";
+
+export interface PageChangeDetail {
+  start: Date;
+  end: Date;
+}
 
 export type Pagination = "single" | "months";
 
@@ -21,7 +33,7 @@ function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
 const createPage = (
   start: PlainYearMonth,
   months: number,
-  pageBy: Pagination = "months"
+  pageBy: Pagination = "months",
 ) => {
   if (months === 12 && pageBy !== "single") {
     start = new PlainYearMonth(start.year, 1);
@@ -55,11 +67,18 @@ function usePagination({
 }: UsePaginationOptions) {
   const step = pageBy === "single" ? 1 : months;
   const [page, setPage] = useState(() =>
-    createPage(focusedDate.toPlainYearMonth(), months, pageBy)
+    createPage(focusedDate.toPlainYearMonth(), months, pageBy),
   );
+  const dispatchPageChange = useEvent<PageChangeDetail>("pagechange");
 
-  const updatePageBy = (by: number) =>
-    setPage(createPage(page.start.add({ months: by }), months, pageBy));
+  const updatePageBy = (by: number) => {
+    const next = createPage(page.start.add({ months: by }), months, pageBy);
+    setPage(next);
+    dispatchPageChange({
+      start: toDate(next.start),
+      end: toDate(endOfMonth(next.end)),
+    });
+  };
 
   const contains = (date: PlainDate) => {
     const diff = diffInMonths(page.start, date.toPlainYearMonth());
@@ -117,7 +136,7 @@ export function useCalendarBase({
 
   const focusedDate = useMemo(
     () => clamp(focusedDateProp ?? today ?? getToday(), min, max),
-    [focusedDateProp, today, min, max]
+    [focusedDateProp, today, min, max],
   );
 
   function goto(date: PlainDate) {

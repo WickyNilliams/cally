@@ -190,6 +190,15 @@ import Link from "../../components/Link.astro";
       </td>
       <td><code>CustomEvent&lt;Date&gt;</code></td>
     </tr>
+    <tr>
+      <td><code>pagechange</code></td>
+      <td>Emitted when the visible months change</td>
+      <td>
+        <code>
+          CustomEvent&lt;{"{"} start: Date; end: Date {"}"}&gt;
+        </code>
+      </td>
+    </tr>
   </Table>
 
   <Heading level={2}>Methods</Heading>

@@ -5,6 +5,7 @@ import { CalendarBase, styles, props } from "../calendar-base/calendar-base.js";
 import {
   useCalendarBase,
   type CalendarFocusOptions,
+  type PageChangeDetail,
 } from "../calendar-base/useCalendarBase.js";
 import { toDate } from "../utils/date.js";
 
@@ -18,6 +19,7 @@ export const CalendarRange = c(
     onChange: Event;
     onRangeStart: CustomEvent<Date>;
     onRangeEnd: CustomEvent<Date>;
+    onPageChange: CustomEvent<PageChangeDetail>;
     onFocusDay: CustomEvent<Date>;
     focus: (options?: CalendarFocusOptions) => void;
   }> => {
