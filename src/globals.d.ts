@@ -5,5 +5,9 @@ declare global {
     "calendar-month": InstanceType<typeof CalendarMonth>;
     "calendar-date": InstanceType<typeof CalendarDate>;
     "calendar-range": InstanceType<typeof CalendarRange>;
+    "calendar-multi": InstanceType<typeof CalendarMulti>;
+    "calendar-select-month": InstanceType<typeof CalendarSelectMonth>;
+    "calendar-select-year": InstanceType<typeof CalendarSelectYear>;
+    "calendar-heading": InstanceType<typeof CalendarHeading>;
   }
 }
