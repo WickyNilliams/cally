@@ -8,5 +8,6 @@ declare global {
     "calendar-multi": InstanceType<typeof CalendarMulti>;
     "calendar-select-month": InstanceType<typeof CalendarSelectMonth>;
     "calendar-select-year": InstanceType<typeof CalendarSelectYear>;
+    "calendar-heading": InstanceType<typeof CalendarHeading>;
   }
 }
