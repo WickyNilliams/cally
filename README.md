@@ -34,9 +34,9 @@ import "cally";
 ### Using the components
 
 ```html
-<calendar-range months="2">
+<calendar-range :months="2">
   <calendar-month></calendar-month>
-  <calendar-month offset="1"></calendar-month>
+  <calendar-month :offset="1"></calendar-month>
 </calendar-range>
 ```
 
