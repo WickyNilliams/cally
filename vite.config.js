@@ -21,23 +21,21 @@ export default defineConfig({
     minify: false,
   },
   plugins: [
-    // collapse whitespace inside css`` tagged template literals, which
-    // esbuild won't touch. our sheets contain no backticks, ${}, or strings
+    // minify css`` tagged template literals with esbuild's css minifier,
+    // which the js minifier won't touch. our sheets contain no backticks or ${}
     {
       name: "minify-css-literals",
       apply: "build",
-      transform(code, id) {
+      async transform(code, id) {
         if (!id.includes("/src/") || !code.includes("css`")) return;
-        return {
-          code: code.replace(/css`([^`$]*)`/g, (_, text) => {
-            const min = text
-              .replace(/\s+/g, " ")
-              .replace(/\s*([{}:;,])\s*/g, "$1")
-              .trim();
-            return `css\`${min}\``;
-          }),
-          map: null,
-        };
+
+        const literals = [...code.matchAll(/css`([^`$]*)`/g)];
+        for (const [outer, text] of literals) {
+          const result = await transform(text, { loader: "css", minify: true });
+          code = code.replace(outer, `css\`${result.code.trim()}\``);
+        }
+
+        return { code, map: null };
       },
     },
 

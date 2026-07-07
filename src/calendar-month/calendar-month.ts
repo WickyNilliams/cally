@@ -139,8 +139,8 @@ export class CalendarMonth extends BaseElement {
       }
 
       button:disabled,
-      :host::part(outside),
-      :host::part(disallowed) {
+      [part~="outside"],
+      [part~="disallowed"] {
         cursor: default;
         opacity: 0.5;
       }

@@ -119,30 +119,30 @@ export abstract class CalendarBase extends BaseElement {
         inline-size: fit-content;
       }
 
-      :host::part(container) {
+      [part~="container"] {
         display: flex;
         flex-direction: column;
         gap: 1em;
       }
 
-      :host::part(header) {
+      [part~="header"] {
         display: flex;
         align-items: center;
         justify-content: space-between;
       }
 
-      :host::part(heading) {
+      [part~="heading"] {
         font-weight: bold;
         font-size: 1.25em;
       }
 
-      :host::part(button) {
+      [part~="button"] {
         display: flex;
         align-items: center;
         justify-content: center;
       }
 
-      :host::part(button disabled) {
+      [part~="disabled"] {
         cursor: default;
         opacity: 0.5;
       }
