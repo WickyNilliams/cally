@@ -16,6 +16,10 @@
       "import": "./dist/cally.js"
     }
   },
+  "imports": {
+    "#test-jsx/jsx-runtime": "./src/test-utils/jsx-runtime.ts",
+    "#test-jsx/jsx-dev-runtime": "./src/test-utils/jsx-dev-runtime.ts"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/WickyNilliams/cally"
@@ -32,13 +36,8 @@
     "astro:build": "astro check --root ./docs && astro build --root ./docs",
     "astro:preview": "astro preview --root ./docs"
   },
-  "dependencies": {
-    "atomico": "^1.79.2"
-  },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@atomico/tsconfig": "^1.1.2",
-    "@atomico/vite": "^2.21.1",
     "@vitest/browser": "^4.0.16",
     "@vitest/browser-playwright": "^4.0.16",
     "@vitest/ui": "^4.0.16",

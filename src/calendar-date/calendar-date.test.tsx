@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
-import type { VNodeAny } from "atomico/types/vnode";
+import type { VNodeAny } from "../utils/test.js";
 import {
   clickDay,
   createSpy,
@@ -17,7 +17,7 @@ import {
   getCalendarVisibleHeading,
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
-import type { Pagination } from "../calendar-base/useCalendarBase.js";
+import type { Pagination } from "../calendar-base/calendar-base.js";
 import { CalendarDate } from "./calendar-date.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { getToday, toDate } from "../utils/date.js";

@@ -1,5 +1,4 @@
 /// <reference types="vitest" />
-import atomico from "@atomico/vite";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { appendFile, readFile } from "fs/promises";
@@ -18,13 +17,28 @@ export default defineConfig({
     minify: true,
   },
   plugins: [
-    ...atomico({
-      cssLiterals: { postcss: true, minify: true },
-    }),
+    // collapse whitespace inside css`` tagged template literals, which
+    // esbuild won't touch. our sheets contain no backticks, ${}, or strings
+    {
+      name: "minify-css-literals",
+      apply: "build",
+      transform(code, id) {
+        if (!id.includes("/src/") || !code.includes("css`")) return;
+        return {
+          code: code.replace(/css`([^`$]*)`/g, (_, text) => {
+            const min = text
+              .replace(/\s+/g, " ")
+              .replace(/\s*([{}:;,])\s*/g, "$1")
+              .trim();
+            return `css\`${min}\``;
+          }),
+          map: null,
+        };
+      },
+    },
 
     dts({
       rollupTypes: true,
-      bundledPackages: ["atomico"],
       tsconfigPath: "./tsconfig.build.json",
 
       // workaround to include the global types
@@ -34,9 +48,6 @@ export default defineConfig({
       },
     }),
   ],
-  optimizeDeps: {
-    include: ["atomico/jsx-dev-runtime"],
-  },
   test: {
     setupFiles: ["./vitest.setup.ts"],
     browser: {

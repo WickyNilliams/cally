@@ -1,9 +1,16 @@
 import { userEvent, page, type Locator } from "vitest/browser";
-import { fixture } from "atomico/test-dom";
-import type { VNodeAny } from "atomico/types/vnode";
+import { Signal } from "../core/signals.js";
+import { provideContext } from "../core/context.js";
+import {
+  CalendarContext,
+  type CalendarContextValue,
+} from "../calendar-month/CalendarMonthContext.js";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
+
+/** what test JSX produces: real DOM nodes */
+export type VNodeAny = Element;
 
 async function nextFrame() {
   return new Promise((resolve) =>
@@ -52,6 +59,43 @@ export type MonthInstance = InstanceType<typeof CalendarMonth>;
 export type CalendarInstance =
   | InstanceType<typeof CalendarDate>
   | InstanceType<typeof CalendarRange>;
+
+/**
+ * A context provider element for testing `calendar-month` in isolation,
+ * standing in for calendar-date/range/multi.
+ */
+export class CalendarContextProvider extends HTMLElement {
+  static tag = "test-calendar-ctx";
+
+  #value = new Signal(undefined as unknown as CalendarContextValue);
+
+  constructor() {
+    super();
+    provideContext(this, CalendarContext, () => this.#value.get());
+  }
+
+  get value(): CalendarContextValue {
+    return this.#value.peek();
+  }
+
+  set value(value: CalendarContextValue) {
+    this.#value.set(value);
+  }
+}
+
+customElements.define(CalendarContextProvider.tag, CalendarContextProvider);
+
+let container: HTMLElement | undefined;
+
+/** render a node into the test DOM, replacing whatever was mounted before */
+export function fixture<T extends Element>(node: VNodeAny): T {
+  if (!container) {
+    container = document.createElement("div");
+    document.body.append(container);
+  }
+  container.replaceChildren(node);
+  return node as unknown as T;
+}
 
 export async function mount<T extends CalendarInstance>(node: VNodeAny) {
   const calendar = fixture<T>(node);

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { VNodeAny } from "atomico/types/vnode";
+import type { VNodeAny } from "../utils/test.js";
 import {
   mount,
   getMonth,

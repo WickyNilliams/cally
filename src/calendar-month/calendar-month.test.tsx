@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
-import type { VNodeAny } from "atomico/types/vnode";
+import type { VNodeAny } from "../utils/test.js";
 import {
   clickDay,
   createSpy,
@@ -11,16 +11,16 @@ import {
   getSelectedDays,
   sendShiftPress,
   getTodayButton,
+  fixture,
+  CalendarContextProvider,
   type MonthInstance,
 } from "../utils/test.js";
 import {
-  CalendarContext,
   type CalendarDateContext,
   type CalendarMultiContext,
   type CalendarRangeContext,
 } from "./CalendarMonthContext.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
-import { fixture } from "atomico/test-dom";
 import { PlainDate } from "../utils/temporal.js";
 import { toDate, getToday } from "../utils/date.js";
 
@@ -30,7 +30,7 @@ async function nextFrame() {
   );
 }
 
-type MonthContextInstance = InstanceType<typeof CalendarContext>;
+type MonthContextInstance = InstanceType<typeof CalendarContextProvider>;
 
 interface TestPropsBase {
   onselectday?: (e: CustomEvent<PlainDate>) => void;
@@ -60,7 +60,7 @@ function Fixture({
   ...props
 }: Partial<DateTestProps | RangeTestProps | MultiTestProps>): VNodeAny {
   return (
-    <CalendarContext
+    <CalendarContextProvider
       onselectday={onselectday}
       onfocusday={onfocusday}
       dir={dir}
@@ -73,13 +73,12 @@ function Fixture({
         },
         focusedDate,
         formatWeekday,
-        // @ts-expect-error - not sure why this is a problem
         type,
         ...props,
       }}
     >
       <CalendarMonth />
-    </CalendarContext>
+    </CalendarContextProvider>
   );
 }
 

@@ -1,18 +1,18 @@
 {
-  "extends": "@atomico/tsconfig/base.json",
   "include": ["src/**/*.ts", "src/**/*.tsx", "./vitest.d.ts"],
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    // despite these being in the atomico base config, i need
-    // them here for some reason to avoid tests failing
-    // with "Cannot find module 'react'"
     "declaration": true,
     "emitDeclarationOnly": true,
+    // JSX is only used in tests, with a tiny DOM-producing runtime
     "jsx": "react-jsx",
-    "jsxImportSource": "atomico",
+    "jsxImportSource": "#test-jsx",
     "moduleResolution": "bundler"
   }
 }

@@ -1,4 +1,4 @@
-import { css } from "atomico";
+import { css } from "../core/element.js";
 
 export const reset = css`
   *,

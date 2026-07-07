@@ -1,4 +1,4 @@
-import { createContext } from "atomico";
+import { createContext } from "../core/context.js";
 import type { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { getToday, type DaysOfWeek } from "../utils/date.js";
 
@@ -45,5 +45,3 @@ export const CalendarContext = createContext<CalendarContextValue>({
   focusedDate: t,
   page: { start: t.toPlainYearMonth(), end: t.toPlainYearMonth() },
 } as CalendarContextValue);
-
-customElements.define("calendar-ctx", CalendarContext);

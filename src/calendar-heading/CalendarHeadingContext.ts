@@ -1,4 +1,4 @@
-import { createContext } from "atomico";
+import { createContext } from "../core/context.js";
 import { PlainYearMonth } from "../utils/temporal.js";
 
 export interface HeadingRangeContext {
@@ -21,5 +21,3 @@ export const CalendarHeadingContext = createContext<HeadingContextValue>({
   type: "date",
   value: new PlainYearMonth(now.getUTCFullYear(), now.getUTCMonth() + 1),
 });
-
-customElements.define("calendar-heading-ctx", CalendarHeadingContext);
