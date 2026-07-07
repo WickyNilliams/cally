@@ -11,9 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Internals rewritten as vanilla web components, dropping the dependency on
   Atomico. Components now render static DOM from templates and update it
-  imperatively, driven by a tiny built-in signals implementation. Bundle size
-  is reduced by roughly a third. Public APIs — attributes/properties, events,
-  slots, CSS parts, and CSS custom properties — are unchanged.
+  imperatively, driven by a tiny built-in signals implementation. Public
+  APIs — attributes/properties, events, slots, CSS parts, and CSS custom
+  properties — are unchanged.
+- The published bundle is now fully minified (previously whitespace was
+  preserved). Together with the rewrite, the bundle shrinks from 39.4 kB to
+  19.6 kB (12.5 kB to 7 kB gzipped).
 
 ## `0.9.2`
 

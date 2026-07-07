@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
+import { transform } from "esbuild";
 import { appendFile, readFile } from "fs/promises";
 import { playwright } from "@vitest/browser-playwright";
 
@@ -14,7 +15,10 @@ export default defineConfig({
       formats: ["es"],
       fileName,
     },
-    minify: true,
+    // vite's lib mode intentionally skips esbuild's whitespace/syntax
+    // compression for ES output, leaving ~30% on the table, so minification
+    // is handled by the minify-lib plugin below instead
+    minify: false,
   },
   plugins: [
     // collapse whitespace inside css`` tagged template literals, which
@@ -34,6 +38,19 @@ export default defineConfig({
           }),
           map: null,
         };
+      },
+    },
+
+    {
+      name: "minify-lib",
+      apply: "build",
+      enforce: "post",
+      async renderChunk(code) {
+        const result = await transform(code, {
+          minify: true,
+          target: "esnext",
+        });
+        return { code: result.code, map: null };
       },
     },
 
