@@ -65,7 +65,7 @@ export type CalendarInstance =
  * standing in for calendar-date/range/multi.
  */
 export class CalendarContextProvider extends HTMLElement {
-  static tag = "test-calendar-ctx";
+  static tag_ = "test-calendar-ctx";
 
   #value = new Signal(undefined as unknown as CalendarContextValue);
 
@@ -75,7 +75,7 @@ export class CalendarContextProvider extends HTMLElement {
   }
 
   get value(): CalendarContextValue {
-    return this.#value.peek();
+    return this.#value.peek_();
   }
 
   set value(value: CalendarContextValue) {
@@ -83,7 +83,7 @@ export class CalendarContextProvider extends HTMLElement {
   }
 }
 
-customElements.define(CalendarContextProvider.tag, CalendarContextProvider);
+customElements.define(CalendarContextProvider.tag_, CalendarContextProvider);
 
 let container: HTMLElement | undefined;
 

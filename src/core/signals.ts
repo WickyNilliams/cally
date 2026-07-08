@@ -37,7 +37,7 @@ class Effect {
     this.run();
   }
 
-  track(subscribers: Subscribers) {
+  track_(subscribers: Subscribers) {
     subscribers.add(this);
     this.#deps.push(subscribers);
   }
@@ -60,7 +60,7 @@ class Effect {
     this.#deps = [];
   }
 
-  dispose = () => {
+  dispose_ = () => {
     this.#cleanup();
     queue.delete(this);
     this.fn = () => {};
@@ -73,7 +73,7 @@ export class Signal<T> {
   constructor(private v: T) {}
 
   get(): T {
-    active?.track(this.#subscribers);
+    active?.track_(this.#subscribers);
     return this.v;
   }
 
@@ -83,14 +83,14 @@ export class Signal<T> {
     schedule(this.#subscribers);
   }
 
-  peek(): T {
+  peek_(): T {
     return this.v;
   }
 }
 
 /** Runs `fn` now, and again whenever a signal it read changes. Returns a dispose function */
 export function effect(fn: () => void): () => void {
-  return new Effect(fn).dispose;
+  return new Effect(fn).dispose_;
 }
 
 /** Read signals without subscribing the current effect to them */

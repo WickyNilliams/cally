@@ -6,23 +6,23 @@ import type { PlainDate } from "../utils/temporal.js";
 export class CalendarMulti extends CalendarBase {
   protected readonly type = "multi";
 
-  protected parsedValue() {
-    return parseDateMulti(this.getProp("value"));
+  protected parsedValue_() {
+    return parseDateMulti(this.getProp_("value"));
   }
 
-  protected focusFallback() {
-    return this.parsedValue()[0];
+  protected focusFallback_() {
+    return this.parsedValue_()[0];
   }
 
-  protected onSelectDay(e: CustomEvent<PlainDate>) {
-    const value = this.parsedValue();
+  protected onSelectDay_(e: CustomEvent<PlainDate>) {
+    const value = this.parsedValue_();
     const newValues = [...value];
 
     const idx = value.findIndex((date) => date.equals(e.detail));
     idx < 0 ? newValues.push(e.detail) : newValues.splice(idx, 1);
 
     this.value = newValues.join(" ");
-    this.emit("change");
+    this.emit_("change");
   }
 }
 

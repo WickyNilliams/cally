@@ -3,6 +3,7 @@ import {
   BaseElement,
   css,
   define,
+  num,
   setAttr,
   template,
 } from "../core/element.js";
@@ -42,22 +43,22 @@ const monthTemplate = template(
   `<calendar-heading month="long" id="h" class="vh"></calendar-heading>` +
     `<slot name="heading" part="heading"><calendar-heading month="long" aria-hidden="true"></calendar-heading></slot>` +
     `<table aria-labelledby="h" part="table">` +
-    `<colgroup><col part="col-weeknumber"><col part="col-1"><col part="col-2"><col part="col-3"><col part="col-4"><col part="col-5"><col part="col-6"><col part="col-7"></colgroup>` +
+    `<colgroup><col part="col-weeknumber">${Array.from({ length: 7 }, (_, i) => `<col part="col-${i + 1}">`).join("")}</colgroup>` +
     `<thead><tr part="tr head"><th part="th weeknumber"><slot name="weeknumber"><span class="vh">Week</span><span aria-hidden="true">#</span></slot></th>${dayHeader.repeat(7)}</tr></thead>` +
     `<tbody>${weekRow.repeat(6)}</tbody>` +
     `</table>`,
 );
 
 interface Cell {
-  td: HTMLTableCellElement;
-  button: HTMLButtonElement;
-  date: PlainDate;
+  td_: HTMLTableCellElement;
+  button_: HTMLButtonElement;
+  date_: PlainDate;
 }
 
 interface Row {
-  tr: HTMLTableRowElement;
-  weekNumber: HTMLTableCellElement;
-  cells: Cell[];
+  tr_: HTMLTableRowElement;
+  weekNumber_: HTMLTableCellElement;
+  cells_: Cell[];
 }
 
 /** attach or detach a node from a fixed position in the static DOM */
@@ -78,11 +79,11 @@ export interface CalendarMonth {
 }
 
 export class CalendarMonth extends BaseElement {
-  static props = {
-    offset: { type: Number, default: 0 },
+  static props_ = {
+    offset: num(0),
   };
 
-  static styles = [
+  static styles_ = [
     reset,
     vh,
     css`
@@ -147,7 +148,7 @@ export class CalendarMonth extends BaseElement {
     `,
   ];
 
-  static template = monthTemplate;
+  static template_ = monthTemplate;
 
   #context: () => CalendarContextValue;
   #table: HTMLTableElement;
@@ -174,16 +175,16 @@ export class CalendarMonth extends BaseElement {
 
     this.#rows = [...this.#tbody.rows].map((tr) => {
       const row: Row = {
-        tr,
-        weekNumber: tr.cells[0]!,
-        cells: [...tr.cells].slice(1).map((td) => ({
-          td: td,
-          button: td.querySelector("button")!,
-          date: undefined as unknown as PlainDate,
+        tr_: tr,
+        weekNumber_: tr.cells[0]!,
+        cells_: [...tr.cells].slice(1).map((td) => ({
+          td_: td,
+          button_: td.querySelector("button")!,
+          date_: undefined as unknown as PlainDate,
         })),
       };
-      for (const cell of row.cells) {
-        this.#cellByButton.set(cell.button, cell);
+      for (const cell of row.cells_) {
+        this.#cellByButton.set(cell.button_, cell);
       }
       return row;
     });
@@ -198,12 +199,12 @@ export class CalendarMonth extends BaseElement {
       const ctx = this.#context();
       return {
         type: "date" as const,
-        value: ctx.page.start.add({ months: this.getProp<number>("offset") }),
+        value: ctx.page.start.add({ months: this.getProp_<number>("offset") }),
         locale: ctx.locale,
       };
     });
 
-    this.onConnect(() => effect(() => this.#render()));
+    this.onConnect_(() => effect(() => this.#render()));
   }
 
   focus() {
@@ -219,9 +220,9 @@ export class CalendarMonth extends BaseElement {
       : undefined;
   }
 
-  #focusDay(date: PlainDate) {
+  #focusDay_(date: PlainDate) {
     const { min, max } = this.#context();
-    this.emit("focusday", clamp(date, min, max), dispatchOptions);
+    this.emit_("focusday", clamp(date, min, max), dispatchOptions);
   }
 
   #onClick = (e: Event) => {
@@ -229,10 +230,10 @@ export class CalendarMonth extends BaseElement {
     if (!cell) return;
 
     const ctx = this.#context();
-    if (!ctx.isDateDisallowed?.(toDate(cell.date))) {
-      this.emit("selectday", cell.date, dispatchOptions);
+    if (!ctx.isDateDisallowed?.(toDate(cell.date_))) {
+      this.emit_("selectday", cell.date_, dispatchOptions);
     }
-    this.#focusDay(cell.date);
+    this.#focusDay_(cell.date_);
   };
 
   #onMouseOver = (e: Event) => {
@@ -240,10 +241,10 @@ export class CalendarMonth extends BaseElement {
     if (!cell) return;
 
     const ctx = this.#context();
-    const isDisallowed = ctx.isDateDisallowed?.(toDate(cell.date));
-    const isDisabled = !inRange(cell.date, ctx.min, ctx.max);
+    const isDisallowed = ctx.isDateDisallowed?.(toDate(cell.date_));
+    const isDisabled = !inRange(cell.date_, ctx.min, ctx.max);
     if (!isDisallowed && !isDisabled) {
-      this.emit("hoverday", cell.date, dispatchOptions);
+      this.emit_("hoverday", cell.date_, dispatchOptions);
     }
   };
 
@@ -251,44 +252,29 @@ export class CalendarMonth extends BaseElement {
     if (!this.#cellFor(e)) return;
 
     const { focusedDate, firstDayOfWeek } = this.#context();
-    let date: PlainDate;
+    const forward = isLTR(e) ? 1 : -1;
+    const byYear = e.shiftKey;
 
-    switch (e.key) {
-      case "ArrowRight":
-        date = focusedDate.add({ days: isLTR(e) ? 1 : -1 });
-        break;
-      case "ArrowLeft":
-        date = focusedDate.add({ days: isLTR(e) ? -1 : 1 });
-        break;
-      case "ArrowDown":
-        date = focusedDate.add({ days: 7 });
-        break;
-      case "ArrowUp":
-        date = focusedDate.add({ days: -7 });
-        break;
-      case "PageUp":
-        date = focusedDate.add(e.shiftKey ? { years: -1 } : { months: -1 });
-        break;
-      case "PageDown":
-        date = focusedDate.add(e.shiftKey ? { years: 1 } : { months: 1 });
-        break;
-      case "Home":
-        date = startOfWeek(focusedDate, firstDayOfWeek);
-        break;
-      case "End":
-        date = endOfWeek(focusedDate, firstDayOfWeek);
-        break;
-      default:
-        return;
-    }
+    const moves: Record<string, () => PlainDate> = {
+      ArrowRight: () => focusedDate.add({ days: forward }),
+      ArrowLeft: () => focusedDate.add({ days: -forward }),
+      ArrowDown: () => focusedDate.add({ days: 7 }),
+      ArrowUp: () => focusedDate.add({ days: -7 }),
+      PageUp: () => focusedDate.add(byYear ? { years: -1 } : { months: -1 }),
+      PageDown: () => focusedDate.add(byYear ? { years: 1 } : { months: 1 }),
+      Home: () => startOfWeek(focusedDate, firstDayOfWeek),
+      End: () => endOfWeek(focusedDate, firstDayOfWeek),
+    };
 
-    this.#focusDay(date);
+    const date = moves[e.key]?.();
+    if (!date) return;
+    this.#focusDay_(date);
     e.preventDefault();
   };
 
   #render() {
     const ctx = this.#context();
-    const offset = this.getProp<number>("offset");
+    const offset = this.getProp_<number>("offset");
 
     const {
       firstDayOfWeek,
@@ -334,19 +320,19 @@ export class CalendarMonth extends BaseElement {
 
     this.#rows.forEach((row, i) => {
       const week = weeks[i];
-      toggle(week, row.tr, (node) => this.#tbody.append(node));
+      toggle(week, row.tr_, (node) => this.#tbody.append(node));
       if (!week) return;
 
-      toggle(showWeekNumbers, row.weekNumber, (node) => row.tr.prepend(node));
+      toggle(showWeekNumbers, row.weekNumber_, (node) => row.tr_.prepend(node));
       if (showWeekNumbers) {
-        row.weekNumber.textContent = `${getWeekNumber(week[0])}`;
+        row.weekNumber_.textContent = `${getWeekNumber(week[0])}`;
       }
 
-      row.cells.forEach((cell, j) => {
+      row.cells_.forEach((cell, j) => {
         const date = week[j]!;
-        cell.date = date;
+        cell.date_ = date;
 
-        const { button, td } = cell;
+        const { button_: button, td_: td } = cell;
         const isInMonth = yearMonth.equals(date);
 
         // days outside of month are only shown if `showOutsideDays` is true

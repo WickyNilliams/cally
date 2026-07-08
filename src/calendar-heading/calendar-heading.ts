@@ -1,4 +1,4 @@
-import { BaseElement, define } from "../core/element.js";
+import { BaseElement, define, str } from "../core/element.js";
 import { effect } from "../core/signals.js";
 import { consumeContext } from "../core/context.js";
 import { CalendarHeadingContext } from "./CalendarHeadingContext.js";
@@ -13,16 +13,16 @@ export interface CalendarHeading {
 }
 
 export class CalendarHeading extends BaseElement {
-  static props = {
-    year: { type: String },
-    month: { type: String },
+  static props_ = {
+    year: str(),
+    month: str(),
   };
 
   constructor() {
     super();
     const context = consumeContext(this, CalendarHeadingContext);
 
-    this.onConnect(() =>
+    this.onConnect_(() =>
       effect(() => {
         const { year, month } = this;
         const ctx = context();

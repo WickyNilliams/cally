@@ -28,31 +28,31 @@ export const selectTemplate = (label: string) =>
   );
 
 export abstract class SelectBase extends BaseElement {
-  static styles = [reset, vh];
+  static styles_ = [reset, vh];
 
   #select: HTMLSelectElement;
-  protected context: () => CalendarContextValue;
+  protected context_: () => CalendarContextValue;
 
-  protected abstract getOptions(
+  protected abstract getOptions_(
     context: CalendarContextValue,
   ): MonthOption[] | YearOption[];
 
-  protected abstract onChange(value: number): void;
+  protected abstract onChange_(value: number): void;
 
   constructor() {
     super();
 
-    this.context = consumeContext(this, CalendarContext);
+    this.context_ = consumeContext(this, CalendarContext);
 
     this.#select = this.shadowRoot!.querySelector("select")!;
     this.#select.addEventListener("change", () => {
-      this.onChange(parseInt(this.#select.value));
+      this.onChange_(parseInt(this.#select.value));
     });
 
-    this.onConnect(() =>
+    this.onConnect_(() =>
       effect(() => {
         this.#select.replaceChildren(
-          ...this.getOptions(this.context()).map((option) => {
+          ...this.getOptions_(this.context_()).map((option) => {
             const el = document.createElement("option");
             el.setAttribute("part", "option");
             el.label = option.label;
@@ -66,7 +66,7 @@ export abstract class SelectBase extends BaseElement {
     );
   }
 
-  protected focusDay(date: PlainDate) {
-    this.emit("focusday", date, { bubbles: true });
+  protected focusDay_(date: PlainDate) {
+    this.emit_("focusday", date, { bubbles: true });
   }
 }

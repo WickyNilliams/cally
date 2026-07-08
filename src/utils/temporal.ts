@@ -12,7 +12,7 @@ export class PlainDate {
   constructor(
     public readonly year: number,
     public readonly month: number,
-    public readonly day: number
+    public readonly day: number,
   ) {}
 
   // this is an incomplete implementation that only handles arithmetic on a single unit at a time.
@@ -26,23 +26,15 @@ export class PlainDate {
       return PlainDate.from(date);
     }
 
-    // let min: PlainDate;
-    let { year, month } = this;
-
-    // ensures date arithmetic is constrained
+    // ensures date arithmetic is constrained to the target month/year
     // e.g. add 1 month to 31st March -> 30th April
-    if ("months" in duration) {
-      month = this.month + duration.months;
-      date.setUTCMonth(month - 1);
-    }
-    // ensures date arithmetic is constrained
-    // e.g. add 1 year to 29th Feb -> 28th Feb
-    else {
-      year = this.year + duration.years;
-      date.setUTCFullYear(year);
-    }
+    //      add 1 year to 29th Feb -> 28th Feb
+    const month =
+      this.month +
+      ("months" in duration ? duration.months : duration.years * 12);
+    date.setUTCMonth(month - 1);
 
-    const min = PlainDate.from(toDate({ year, month, day: 1 }));
+    const min = PlainDate.from(toDate({ year: this.year, month, day: 1 }));
     return clamp(PlainDate.from(date), min, endOfMonth(min));
   }
 
@@ -59,13 +51,9 @@ export class PlainDate {
   }
 
   static compare(a: PlainDate, b: PlainDate): CompareResult {
-    if (a.year < b.year) return -1;
-    if (a.year > b.year) return 1;
-    if (a.month < b.month) return -1;
-    if (a.month > b.month) return 1;
-    if (a.day < b.day) return -1;
-    if (a.day > b.day) return 1;
-    return 0;
+    return Math.sign(
+      a.year - b.year || a.month - b.month || a.day - b.day,
+    ) as CompareResult;
   }
 
   static from(value: string | Date): PlainDate {
@@ -77,17 +65,13 @@ export class PlainDate {
       }
 
       const [, year, month, day] = match;
-      return new PlainDate(
-        parseInt(year!, 10),
-        parseInt(month!, 10),
-        parseInt(day!, 10)
-      );
+      return new PlainDate(+year!, +month!, +day!);
     }
 
     return new PlainDate(
       value.getUTCFullYear(),
       value.getUTCMonth() + 1,
-      value.getUTCDate()
+      value.getUTCDate(),
     );
   }
 }
@@ -97,7 +81,7 @@ type YearMonthDuration = { months?: number; years?: number };
 export class PlainYearMonth {
   constructor(
     public readonly year: number,
-    public readonly month: number
+    public readonly month: number,
   ) {}
 
   add(duration: YearMonthDuration) {
@@ -118,12 +102,8 @@ export class PlainYearMonth {
 
   static compare(
     a: PlainYearMonth | { year: number; month: number },
-    b: PlainYearMonth | { year: number; month: number }
+    b: PlainYearMonth | { year: number; month: number },
   ): CompareResult {
-    if (a.year < b.year) return -1;
-    if (a.year > b.year) return 1;
-    if (a.month < b.month) return -1;
-    if (a.month > b.month) return 1;
-    return 0;
+    return Math.sign(a.year - b.year || a.month - b.month) as CompareResult;
   }
 }

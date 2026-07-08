@@ -12,16 +12,16 @@ import type { BaseElement } from "./element.js";
 const CONTEXT_EVENT = "cally::context";
 
 export interface Context<T> {
-  initial: T;
+  initial_: T;
 }
 
 interface ContextRequest<T> {
-  context: Context<T>;
-  subscribe: (get: () => T) => void;
+  context_: Context<T>;
+  subscribe_: (get: () => T) => void;
 }
 
 export function createContext<T>(initial: T): Context<T> {
-  return { initial };
+  return { initial_: initial };
 }
 
 /**
@@ -36,9 +36,9 @@ export function provideContext<T>(
 ) {
   host.addEventListener(CONTEXT_EVENT, (e) => {
     const request = (e as CustomEvent<ContextRequest<T>>).detail;
-    if (request.context !== context) return;
+    if (request.context_ !== context) return;
     e.stopPropagation();
-    request.subscribe(get);
+    request.subscribe_(get);
   });
 }
 
@@ -51,9 +51,9 @@ export function consumeContext<T>(
   host: BaseElement,
   context: Context<T>,
 ): () => T {
-  const value = new Signal(context.initial);
+  const value = new Signal(context.initial_);
 
-  host.onConnect(() => {
+  host.onConnect_(() => {
     let dispose: (() => void) | undefined;
 
     host.dispatchEvent(
@@ -61,8 +61,8 @@ export function consumeContext<T>(
         bubbles: true,
         composed: true,
         detail: {
-          context,
-          subscribe(get) {
+          context_: context,
+          subscribe_(get) {
             dispose = effect(() => value.set(get()));
           },
         },

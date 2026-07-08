@@ -47,6 +47,9 @@ export default defineConfig({
         const result = await transform(code, {
           minify: true,
           target: "esnext",
+          // internal cross-class members are named with a trailing
+          // underscore so they can be safely renamed here
+          mangleProps: /_$/,
         });
         return { code: result.code, map: null };
       },

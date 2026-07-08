@@ -1,4 +1,4 @@
-import { define } from "../core/element.js";
+import { define, str } from "../core/element.js";
 import { Signal, effect } from "../core/signals.js";
 import { CalendarBase } from "../calendar-base/calendar-base.js";
 import { parseDate, parseDateRange } from "../utils/parse.js";
@@ -13,9 +13,9 @@ export interface CalendarRange {
 }
 
 export class CalendarRange extends CalendarBase {
-  static props = {
-    ...CalendarBase.props,
-    tentative: { type: String, default: "" },
+  static props_ = {
+    ...CalendarBase.props_,
+    tentative: str(""),
   };
 
   protected readonly type = "range";
@@ -26,30 +26,30 @@ export class CalendarRange extends CalendarBase {
     super();
 
     // reset whenever tentative changes
-    this.onConnect(() =>
+    this.onConnect_(() =>
       effect(() => {
-        this.getProp("tentative");
+        this.getProp_("tentative");
         this.#hovered.set(undefined);
       }),
     );
   }
 
   #tentativeDate() {
-    return parseDate(this.getProp("tentative"));
+    return parseDate(this.getProp_("tentative"));
   }
 
-  protected parsedValue(): [PlainDate, PlainDate] | [] {
+  protected parsedValue_(): [PlainDate, PlainDate] | [] {
     const tentative = this.#tentativeDate();
     if (!tentative) {
-      return parseDateRange(this.getProp("value"));
+      return parseDateRange(this.getProp_("value"));
     }
 
     const hovered = this.#hovered.get();
     return sort(tentative, hovered ?? tentative);
   }
 
-  protected focusFallback() {
-    return parseDateRange(this.getProp("value"))[0];
+  protected focusFallback_() {
+    return parseDateRange(this.getProp_("value"))[0];
   }
 
   #handleHover(e: CustomEvent<PlainDate>) {
@@ -59,16 +59,16 @@ export class CalendarRange extends CalendarBase {
     }
   }
 
-  protected onFocusDay(e: CustomEvent<PlainDate>) {
-    super.onFocusDay(e);
+  protected onFocusDay_(e: CustomEvent<PlainDate>) {
+    super.onFocusDay_(e);
     this.#handleHover(e);
   }
 
-  protected onHoverDay(e: CustomEvent<PlainDate>) {
+  protected onHoverDay_(e: CustomEvent<PlainDate>) {
     this.#handleHover(e);
   }
 
-  protected onSelectDay(e: CustomEvent<PlainDate>) {
+  protected onSelectDay_(e: CustomEvent<PlainDate>) {
     const detail = e.detail;
     e.stopPropagation();
 
@@ -76,13 +76,13 @@ export class CalendarRange extends CalendarBase {
 
     if (!tentative) {
       this.tentative = detail.toString();
-      this.emit("rangestart", toDate(detail));
+      this.emit_("rangestart", toDate(detail));
     } else {
       const range = sort(tentative, detail);
       this.value = `${range[0]}/${range[1]}`;
       this.tentative = "";
-      this.emit("rangeend", toDate(detail));
-      this.emit("change");
+      this.emit_("rangeend", toDate(detail));
+      this.emit_("change");
     }
   }
 }

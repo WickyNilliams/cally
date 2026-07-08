@@ -1,4 +1,4 @@
-import { define } from "../core/element.js";
+import { define, num } from "../core/element.js";
 import {
   SelectBase,
   selectTemplate,
@@ -6,22 +6,18 @@ import {
 } from "./calendar-year-month-base.js";
 import type { CalendarContextValue } from "../calendar-month/CalendarMonthContext.js";
 
-function times<T>(n: number, fn: (i: number) => T) {
-  return Array.from({ length: n }, (_, i) => fn(i));
-}
-
 export interface CalendarSelectYear {
   maxYears: number;
 }
 
 export class CalendarSelectYear extends SelectBase {
-  static props = {
-    maxYears: { type: Number, default: 20 },
+  static props_ = {
+    maxYears: num(20),
   };
 
-  static template = selectTemplate("Year");
+  static template_ = selectTemplate("Year");
 
-  protected getOptions(context: CalendarContextValue): YearOption[] {
+  protected getOptions_(context: CalendarContextValue): YearOption[] {
     const { min, max, focusedDate } = context;
     const maxYears = this.maxYears;
 
@@ -34,7 +30,7 @@ export class CalendarSelectYear extends SelectBase {
     const minYear = Math.max(defaultMin, min?.year ?? -Infinity);
     const maxYear = Math.min(defaultMax, max?.year ?? Infinity);
 
-    return times(maxYear - minYear + 1, (i) => {
+    return Array.from({ length: maxYear - minYear + 1 }, (_, i) => {
       const year = minYear + i;
       return {
         label: `${year}`,
@@ -44,10 +40,10 @@ export class CalendarSelectYear extends SelectBase {
     });
   }
 
-  protected onChange(value: number) {
-    const { focusedDate } = this.context();
+  protected onChange_(value: number) {
+    const { focusedDate } = this.context_();
     const diff = value - focusedDate.toPlainYearMonth().year;
-    this.focusDay(focusedDate.add({ years: diff }));
+    this.focusDay_(focusedDate.add({ years: diff }));
   }
 }
 

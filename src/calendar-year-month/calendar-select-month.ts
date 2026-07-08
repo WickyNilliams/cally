@@ -1,4 +1,4 @@
-import { define } from "../core/element.js";
+import { define, str } from "../core/element.js";
 import {
   SelectBase,
   selectTemplate,
@@ -13,13 +13,13 @@ export interface CalendarSelectMonth {
 }
 
 export class CalendarSelectMonth extends SelectBase {
-  static props = {
-    formatMonth: { type: String, default: "long" },
+  static props_ = {
+    formatMonth: str("long"),
   };
 
-  static template = selectTemplate("Month");
+  static template_ = selectTemplate("Month");
 
-  protected getOptions(context: CalendarContextValue): MonthOption[] {
+  protected getOptions_(context: CalendarContextValue): MonthOption[] {
     const { min, max, focusedDate, locale } = context;
     const formatter = dateFormatter({ month: this.formatMonth }, locale);
 
@@ -28,8 +28,7 @@ export class CalendarSelectMonth extends SelectBase {
     day.setUTCDate(1);
 
     for (var i = 0; i < 12; i++) {
-      const index = (day.getUTCMonth() + 12) % 12;
-      monthNames[index] = formatter.format(day);
+      monthNames[day.getUTCMonth()] = formatter.format(day);
       day.setUTCMonth(day.getUTCMonth() + 1);
     }
 
@@ -54,10 +53,10 @@ export class CalendarSelectMonth extends SelectBase {
     });
   }
 
-  protected onChange(value: number) {
-    const { focusedDate } = this.context();
+  protected onChange_(value: number) {
+    const { focusedDate } = this.context_();
     const diff = value - focusedDate.toPlainYearMonth().month;
-    this.focusDay(focusedDate.add({ months: diff }));
+    this.focusDay_(focusedDate.add({ months: diff }));
   }
 }
 

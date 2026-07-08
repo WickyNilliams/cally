@@ -13,6 +13,17 @@ export interface PropDef {
 
 export type PropsDef = Record<string, PropDef>;
 
+export const str = (def?: string): PropDef => ({ type: String, default: def });
+export const num = (def?: number): PropDef => ({ type: Number, default: def });
+export const bool = (def?: boolean): PropDef => ({
+  type: Boolean,
+  default: def,
+});
+export const func = (def?: Function): PropDef => ({
+  type: Function,
+  default: def,
+});
+
 const kebabCase = (name: string) =>
   name.replace(/([A-Z])/g, "-$1").toLowerCase();
 
@@ -27,14 +38,14 @@ const parseAttribute = (type: PropType, value: string | null) => {
 type ConnectCallback = () => void | (() => void);
 
 export class BaseElement extends HTMLElement {
-  static props: PropsDef = {};
-  static styles: CSSStyleSheet[] = [];
-  static template?: HTMLTemplateElement;
+  static props_: PropsDef = {};
+  static styles_: CSSStyleSheet[] = [];
+  static template_?: HTMLTemplateElement;
   /** tag name, set by define() */
-  static tag: string;
+  static tag_: string;
   static observedAttributes: string[] = [];
   /** attribute name -> prop name, set by define() */
-  static attrs: Record<string, string> = {};
+  static attrs_: Record<string, string> = {};
 
   #props = new Map<string, Signal<unknown>>();
   #connectCallbacks: ConnectCallback[] = [];
@@ -45,25 +56,32 @@ export class BaseElement extends HTMLElement {
     super();
     const ctor = this.constructor as typeof BaseElement;
 
-    for (const [name, def] of Object.entries(ctor.props)) {
+    for (const [name, def] of Object.entries(ctor.props_)) {
       this.#props.set(name, new Signal(def.default));
     }
 
     const root = this.attachShadow({ mode: "open" });
-    root.adoptedStyleSheets = ctor.styles;
-    if (ctor.template) {
-      root.append(ctor.template.content.cloneNode(true));
+    root.adoptedStyleSheets = ctor.styles_;
+    if (ctor.template_) {
+      root.append(ctor.template_.content.cloneNode(true));
     }
   }
 
   /** read a prop's current value, subscribing the active effect */
-  getProp<T>(name: string): T {
+  getProp_<T>(name: string): T {
     return this.#props.get(name)!.get() as T;
   }
 
-  setProp(name: string, value: unknown) {
+  /** read every prop at once, subscribing the active effect to all of them */
+  propsSnapshot_(): Record<string, unknown> {
+    return Object.fromEntries(
+      [...this.#props].map(([name, signal]) => [name, signal.get()]),
+    );
+  }
+
+  setProp_(name: string, value: unknown) {
     const ctor = this.constructor as typeof BaseElement;
-    const def = ctor.props[name]!;
+    const def = ctor.props_[name]!;
 
     // mirror atomico: null/undefined resets to the default (booleans reset
     // to false), and empty string is only meaningful for string props
@@ -83,9 +101,9 @@ export class BaseElement extends HTMLElement {
   ) {
     if (old === value) return;
     const ctor = this.constructor as typeof BaseElement;
-    const prop = ctor.attrs[attr];
+    const prop = ctor.attrs_[attr];
     if (prop) {
-      this.setProp(prop, parseAttribute(ctor.props[prop]!.type, value));
+      this.setProp_(prop, parseAttribute(ctor.props_[prop]!.type, value));
     }
   }
 
@@ -94,15 +112,15 @@ export class BaseElement extends HTMLElement {
    * is run on disconnect. Effects created here are cleaned up on disconnect
    * and re-created on re-connect.
    */
-  onConnect(callback: ConnectCallback) {
+  onConnect_(callback: ConnectCallback) {
     this.#connectCallbacks.push(callback);
   }
 
   connectedCallback() {
     // capture properties set before the element was upgraded
     const ctor = this.constructor as typeof BaseElement;
-    for (const name of Object.keys(ctor.props)) {
-      if (Object.prototype.hasOwnProperty.call(this, name)) {
+    for (const name of Object.keys(ctor.props_)) {
+      if (Object.hasOwn(this, name)) {
         const value = (this as Record<string, any>)[name];
         delete (this as Record<string, any>)[name];
         (this as Record<string, any>)[name] = value;
@@ -135,7 +153,7 @@ export class BaseElement extends HTMLElement {
     return tick();
   }
 
-  emit<T>(type: string, detail?: T, options?: EventInit): boolean {
+  emit_<T>(type: string, detail?: T, options?: EventInit): boolean {
     // untracked so listeners reading signals don't subscribe a running effect
     return untracked(() =>
       this.dispatchEvent(new CustomEvent(type, { detail, ...options })),
@@ -149,7 +167,7 @@ export class BaseElement extends HTMLElement {
 export function define(tag: string, ctor: typeof BaseElement) {
   const attrs: Record<string, string> = {};
 
-  for (const [name, def] of Object.entries(ctor.props)) {
+  for (const [name, def] of Object.entries(ctor.props_)) {
     if (def.type !== Function) {
       attrs[kebabCase(name)] = name;
     }
@@ -157,16 +175,16 @@ export function define(tag: string, ctor: typeof BaseElement) {
     Object.defineProperty(ctor.prototype, name, {
       configurable: true,
       get(this: BaseElement) {
-        return this.getProp(name);
+        return this.getProp_(name);
       },
       set(this: BaseElement, value: unknown) {
-        this.setProp(name, value);
+        this.setProp_(name, value);
       },
     });
   }
 
-  ctor.tag = tag;
-  ctor.attrs = attrs;
+  ctor.tag_ = tag;
+  ctor.attrs_ = attrs;
   ctor.observedAttributes = Object.keys(attrs);
   customElements.define(tag, ctor as unknown as CustomElementConstructor);
 }

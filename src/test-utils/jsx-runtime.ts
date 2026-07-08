@@ -5,7 +5,7 @@
  */
 
 type FunctionComponent = (props: Record<string, unknown>) => Node;
-type ElementConstructor = { new (): HTMLElement; tag: string };
+type ElementConstructor = { new (): HTMLElement; tag_: string };
 type JsxType = string | FunctionComponent | ElementConstructor;
 
 function append(parent: Node, child: unknown) {
@@ -27,7 +27,7 @@ export function jsx(type: JsxType, props: Record<string, any> = {}): Node {
   }
 
   const el = document.createElement(
-    typeof type === "string" ? type : (type as ElementConstructor).tag,
+    typeof type === "string" ? type : (type as ElementConstructor).tag_,
   );
 
   for (const [key, value] of Object.entries(rest)) {

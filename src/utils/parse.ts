@@ -1,27 +1,20 @@
-import { PlainDate, type PlainYearMonth } from "./temporal.js";
+import { PlainDate } from "./temporal.js";
 import { type DaysOfWeek } from "./date.js";
 
-function safeFrom<T extends PlainDate | PlainYearMonth>(
-  Ctr: { from(value: string): T },
-  value: string | undefined,
-) {
+export function parseDate(value: string | undefined): PlainDate | undefined {
   if (value) {
     try {
-      return Ctr.from(value);
+      return PlainDate.from(value);
     } catch {}
   }
-}
-
-export function parseDate(value: string | undefined): PlainDate | undefined {
-  return safeFrom(PlainDate, value);
 }
 
 export function parseDateRange(
   value: string | undefined,
 ): [PlainDate, PlainDate] | [] {
   const [s, e] = (value ?? "").split("/");
-  const start = safeFrom(PlainDate, s);
-  const end = safeFrom(PlainDate, e);
+  const start = parseDate(s);
+  const end = parseDate(e);
   return start && end ? [start, end] : [];
 }
 
@@ -29,7 +22,7 @@ export function parseDateMulti(value: string | undefined): PlainDate[] {
   const result = [];
 
   for (const date of (value ?? "").trim().split(/\s+/)) {
-    const parsed = safeFrom(PlainDate, date);
+    const parsed = parseDate(date);
 
     if (parsed) {
       result.push(parsed);

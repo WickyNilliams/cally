@@ -1,9 +1,13 @@
 import "../calendar-heading/calendar-heading.js";
 import {
   BaseElement,
+  bool,
   css,
   define,
+  func,
+  num,
   setAttr,
+  str,
   template,
   type PropsDef,
 } from "../core/element.js";
@@ -42,18 +46,21 @@ interface Page {
   end: PlainYearMonth;
 }
 
-function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
+type YearMonthLike = { year: number; month: number };
+
+function diffInMonths(a: YearMonthLike, b: YearMonthLike): number {
   return (b.year - a.year) * 12 + b.month - a.month;
 }
 
 const createPage = (
-  start: PlainYearMonth,
+  from: YearMonthLike,
   months: number,
-  pageBy: Pagination = "months",
+  pageBy: Pagination,
 ): Page => {
-  if (months === 12 && pageBy !== "single") {
-    start = new PlainYearMonth(start.year, 1);
-  }
+  const start = new PlainYearMonth(
+    from.year,
+    months === 12 && pageBy !== "single" ? 1 : from.month,
+  );
   return {
     start,
     end: start.add({ months: months - 1 }),
@@ -93,24 +100,24 @@ export interface CalendarBase {
 }
 
 export abstract class CalendarBase extends BaseElement {
-  static props: PropsDef = {
-    value: { type: String, default: "" },
-    min: { type: String, default: "" },
-    max: { type: String, default: "" },
-    today: { type: String, default: "" },
-    isDateDisallowed: { type: Function, default: (date: Date) => false },
-    formatWeekday: { type: String, default: "narrow" },
-    getDayParts: { type: Function, default: (date: Date): string => "" },
-    firstDayOfWeek: { type: Number, default: 1 },
-    showOutsideDays: { type: Boolean, default: false },
-    locale: { type: String },
-    months: { type: Number, default: 1 },
-    focusedDate: { type: String },
-    pageBy: { type: String, default: "months" },
-    showWeekNumbers: { type: Boolean, default: false },
+  static props_: PropsDef = {
+    value: str(""),
+    min: str(""),
+    max: str(""),
+    today: str(""),
+    isDateDisallowed: func((date: Date) => false),
+    formatWeekday: str("narrow"),
+    getDayParts: func((date: Date): string => ""),
+    firstDayOfWeek: num(1),
+    showOutsideDays: bool(false),
+    locale: str(),
+    months: num(1),
+    focusedDate: str(),
+    pageBy: str("months"),
+    showWeekNumbers: bool(false),
   };
 
-  static styles = [
+  static styles_ = [
     reset,
     vh,
     css`
@@ -149,15 +156,15 @@ export abstract class CalendarBase extends BaseElement {
     `,
   ];
 
-  static template = baseTemplate;
+  static template_ = baseTemplate;
 
   /** the kind of calendar context this element provides to its months */
   protected abstract readonly type: CalendarContextValue["type"];
   /** parse the value prop into its context representation */
-  protected abstract parsedValue(): CalendarContextValue["value"];
+  protected abstract parsedValue_(): CalendarContextValue["value"];
   /** the date focus falls back to when the focusedDate prop is not set */
-  protected abstract focusFallback(): PlainDate | undefined;
-  protected abstract onSelectDay(e: CustomEvent<PlainDate>): void;
+  protected abstract focusFallback_(): PlainDate | undefined;
+  protected abstract onSelectDay_(e: CustomEvent<PlainDate>): void;
 
   #page?: Signal<Page>;
   #previousButton: HTMLButtonElement;
@@ -170,11 +177,7 @@ export abstract class CalendarBase extends BaseElement {
   #pageSignal(): Signal<Page> {
     return (this.#page ??= new Signal(
       untracked(() =>
-        createPage(
-          this.focusedDatePlain().toPlainYearMonth(),
-          this.months,
-          this.pageBy,
-        ),
+        createPage(this.focusedDatePlain_(), this.months, this.pageBy),
       ),
     ));
   }
@@ -184,21 +187,22 @@ export abstract class CalendarBase extends BaseElement {
 
     const root = this.shadowRoot!;
     const container = root.querySelector<HTMLElement>("[part='container']")!;
-    this.#previousButton = root.querySelector("button")!;
-    this.#nextButton = root.querySelectorAll("button")[1] as HTMLButtonElement;
+    [this.#previousButton, this.#nextButton] = root.querySelectorAll(
+      "button",
+    ) as unknown as [HTMLButtonElement, HTMLButtonElement];
 
     // internal events from months bubble through the flattened tree, so we
     // intercept them here, below the host, exactly like the old context
     // element did. this way `focusday` never escapes the host untouched,
     // while `selectday`/`hoverday` keep bubbling unless a subclass stops them
     container.addEventListener("focusday", (e) =>
-      this.onFocusDay(e as CustomEvent<PlainDate>),
+      this.onFocusDay_(e as CustomEvent<PlainDate>),
     );
     container.addEventListener("selectday", (e) =>
-      this.onSelectDay(e as CustomEvent<PlainDate>),
+      this.onSelectDay_(e as CustomEvent<PlainDate>),
     );
     container.addEventListener("hoverday", (e) =>
-      this.onHoverDay(e as CustomEvent<PlainDate>),
+      this.onHoverDay_(e as CustomEvent<PlainDate>),
     );
 
     this.#previousButton.addEventListener("click", () => {
@@ -216,30 +220,30 @@ export abstract class CalendarBase extends BaseElement {
     provideContext(this, CalendarHeadingContext, () => ({
       type: "range" as const,
       value: this.#pageSignal().get(),
-      locale: this.getProp<string | undefined>("locale"),
+      locale: this.getProp_<string | undefined>("locale"),
     }));
 
     // page change -> update focused date
-    this.onConnect(() =>
+    this.onConnect_(() =>
       effect(() => {
         const page = this.#pageSignal().get();
 
         untracked(() => {
-          const focusedDate = this.focusedDatePlain();
+          const focusedDate = this.focusedDatePlain_();
           if (this.#contains(focusedDate)) {
             return;
           }
 
-          const diff = diffInMonths(focusedDate.toPlainYearMonth(), page.start);
+          const diff = diffInMonths(focusedDate, page.start);
           this.#goto(focusedDate.add({ months: diff }));
         });
       }),
     );
 
     // focused date change -> update page
-    this.onConnect(() =>
+    this.onConnect_(() =>
       effect(() => {
-        const focusedDate = this.focusedDatePlain();
+        const focusedDate = this.focusedDatePlain_();
         const months = this.months;
         const step = this.#step();
 
@@ -249,8 +253,8 @@ export abstract class CalendarBase extends BaseElement {
           }
 
           const diff = diffInMonths(
-            this.#pageSignal().peek().start,
-            focusedDate.toPlainYearMonth(),
+            this.#pageSignal().peek_().start,
+            focusedDate,
           );
 
           // if we only move one month either way, move by step
@@ -267,7 +271,7 @@ export abstract class CalendarBase extends BaseElement {
     );
 
     // update previous/next button state
-    this.onConnect(() =>
+    this.onConnect_(() =>
       effect(() => {
         this.#renderButton(
           this.#previousButton,
@@ -279,42 +283,38 @@ export abstract class CalendarBase extends BaseElement {
     );
   }
 
-  protected minDate() {
-    return parseDate(this.getProp("min"));
+  protected minDate_() {
+    return parseDate(this.getProp_("min"));
   }
 
-  protected maxDate() {
-    return parseDate(this.getProp("max"));
+  protected maxDate_() {
+    return parseDate(this.getProp_("max"));
   }
 
   /** the effective focused date: prop -> value -> today, clamped to min/max */
-  protected focusedDatePlain(): PlainDate {
+  protected focusedDatePlain_(): PlainDate {
     const focused =
-      parseDate(this.getProp("focusedDate")) ?? this.focusFallback();
-    const today = parseDate(this.getProp("today"));
+      parseDate(this.getProp_("focusedDate")) ?? this.focusFallback_();
+    const today = parseDate(this.getProp_("today"));
     return clamp(
       focused ?? today ?? getToday(),
-      this.minDate(),
-      this.maxDate(),
+      this.minDate_(),
+      this.maxDate_(),
     );
   }
 
   #contextValue(): CalendarContextValue {
+    // all props pass through as-is (like the previous atomico implementation),
+    // with the date-valued ones overridden by their parsed form
     return {
+      ...this.propsSnapshot_(),
       type: this.type,
-      value: this.parsedValue(),
-      min: this.minDate(),
-      max: this.maxDate(),
-      today: parseDate(this.getProp("today")),
-      firstDayOfWeek: this.getProp("firstDayOfWeek"),
-      isDateDisallowed: this.getProp("isDateDisallowed"),
-      getDayParts: this.getProp("getDayParts"),
+      value: this.parsedValue_(),
+      min: this.minDate_(),
+      max: this.maxDate_(),
+      today: parseDate(this.getProp_("today")),
       page: this.#pageSignal().get(),
-      focusedDate: this.focusedDatePlain(),
-      showOutsideDays: this.getProp("showOutsideDays"),
-      showWeekNumbers: this.getProp("showWeekNumbers"),
-      locale: this.getProp("locale"),
-      formatWeekday: this.getProp("formatWeekday"),
+      focusedDate: this.focusedDatePlain_(),
     } as CalendarContextValue;
   }
 
@@ -323,20 +323,17 @@ export abstract class CalendarBase extends BaseElement {
   }
 
   #contains(date: PlainDate): boolean {
-    const diff = diffInMonths(
-      this.#pageSignal().get().start,
-      date.toPlainYearMonth(),
-    );
+    const diff = diffInMonths(this.#pageSignal().get().start, date);
     return diff >= 0 && diff < this.months;
   }
 
   #previousAllowed(): boolean {
-    const min = this.minDate();
+    const min = this.minDate_();
     return !min || !this.#contains(min);
   }
 
   #nextAllowed(): boolean {
-    const max = this.maxDate();
+    const max = this.maxDate_();
     return !max || !this.#contains(max);
   }
 
@@ -349,13 +346,13 @@ export abstract class CalendarBase extends BaseElement {
     const page = this.#pageSignal();
     const next = untracked(() =>
       createPage(
-        page.peek().start.add({ months: by }),
+        page.peek_().start.add({ months: by }),
         this.months,
         this.pageBy,
       ),
     );
     page.set(next);
-    this.emit<PageChangeDetail>("pagechange", {
+    this.emit_<PageChangeDetail>("pagechange", {
       start: toDate(next.start),
       end: toDate(endOfMonth(next.end)),
     });
@@ -363,16 +360,16 @@ export abstract class CalendarBase extends BaseElement {
 
   #goto(date: PlainDate) {
     this.focusedDate = date.toString();
-    this.emit("focusday", toDate(date));
+    this.emit_("focusday", toDate(date));
   }
 
-  protected onFocusDay(e: CustomEvent<PlainDate>) {
+  protected onFocusDay_(e: CustomEvent<PlainDate>) {
     e.stopPropagation();
     this.#goto(e.detail);
     setTimeout(() => this.focus());
   }
 
-  protected onHoverDay(e: CustomEvent<PlainDate>) {}
+  protected onHoverDay_(e: CustomEvent<PlainDate>) {}
 
   focus(options?: CalendarFocusOptions) {
     const target = options?.target ?? "day";

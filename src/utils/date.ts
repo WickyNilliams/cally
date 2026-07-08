@@ -24,18 +24,17 @@ export function getWeekNumber(plainDate: PlainDate) {
       ((date.getTime() - week1.getTime()) / DAY_MS -
         3 +
         ((week1.getUTCDay() + 6) % 7)) /
-        7
+        7,
     )
   );
 }
 
 export function startOfWeek(
   date: PlainDate,
-  firstDayOfWeek: DaysOfWeek = 0
+  firstDayOfWeek: DaysOfWeek = 0,
 ): PlainDate {
   const d = toDate(date);
-  const day = d.getUTCDay();
-  const diff = (day < firstDayOfWeek ? 7 : 0) + day - firstDayOfWeek;
+  const diff = (d.getUTCDay() - firstDayOfWeek + 7) % 7;
 
   d.setUTCDate(d.getUTCDate() - diff);
   return PlainDate.from(d);
@@ -43,7 +42,7 @@ export function startOfWeek(
 
 export function endOfWeek(
   date: PlainDate,
-  firstDayOfWeek: DaysOfWeek = 0
+  firstDayOfWeek: DaysOfWeek = 0,
 ): PlainDate {
   return startOfWeek(date, firstDayOfWeek).add({ days: 6 });
 }
@@ -58,7 +57,7 @@ export function endOfMonth(date: { year: number; month: number }): PlainDate {
 export function clamp(
   date: PlainDate,
   min?: PlainDate,
-  max?: PlainDate
+  max?: PlainDate,
 ): PlainDate {
   if (min && PlainDate.compare(date, min) < 0) return min;
   if (max && PlainDate.compare(date, max) > 0) return max;
@@ -82,7 +81,7 @@ type Week = [
  */
 export function getViewOfMonth(
   yearMonth: PlainYearMonth,
-  firstDayOfWeek: DaysOfWeek = 0
+  firstDayOfWeek: DaysOfWeek = 0,
 ): Week[] {
   let start = startOfWeek(yearMonth.toPlainDate(), firstDayOfWeek);
   const end = endOfWeek(endOfMonth(yearMonth), firstDayOfWeek);

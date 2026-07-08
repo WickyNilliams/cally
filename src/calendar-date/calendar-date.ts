@@ -6,17 +6,17 @@ import type { PlainDate } from "../utils/temporal.js";
 export class CalendarDate extends CalendarBase {
   protected readonly type = "date";
 
-  protected parsedValue() {
-    return parseDate(this.getProp("value"));
+  protected parsedValue_() {
+    return parseDate(this.getProp_("value"));
   }
 
-  protected focusFallback() {
-    return this.parsedValue();
+  protected focusFallback_() {
+    return this.parsedValue_();
   }
 
-  protected onSelectDay(e: CustomEvent<PlainDate>) {
+  protected onSelectDay_(e: CustomEvent<PlainDate>) {
     this.value = e.detail.toString();
-    this.emit("change");
+    this.emit_("change");
   }
 }
 
