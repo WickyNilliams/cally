@@ -1,9 +1,6 @@
-import { define, num } from "../core/element.js";
-import {
-  SelectBase,
-  selectTemplate,
-  type YearOption,
-} from "./calendar-year-month-base.js";
+import { define, num, template } from "../core/element.js";
+import { SelectBase, type YearOption } from "./calendar-year-month-base.js";
+import { selectHtml } from "./calendar-year-month.template.js";
 import type { CalendarContextValue } from "../calendar-month/CalendarMonthContext.js";
 
 export interface CalendarSelectYear {
@@ -15,7 +12,7 @@ export class CalendarSelectYear extends SelectBase {
     maxYears: num(20),
   };
 
-  static template_ = selectTemplate("Year");
+  static template_ = template(selectHtml.replace("$label", "Year"));
 
   protected getOptions_(context: CalendarContextValue): YearOption[] {
     const { min, max, focusedDate } = context;

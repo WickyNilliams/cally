@@ -1,5 +1,10 @@
 import "../calendar-heading/calendar-heading.js";
 import {
+  dayHeaderHtml,
+  monthHtml,
+  weekRowHtml,
+} from "./calendar-month.template.js";
+import {
   BaseElement,
   css,
   define,
@@ -34,19 +39,12 @@ const isLTR = (e: Event) => (e.target as HTMLElement).matches(":dir(ltr)");
 
 const dispatchOptions = { bubbles: true };
 
-const dayHeader = `<th part="th day" scope="col"><span class="vh"></span><span aria-hidden="true"></span></th>`;
-const weekRow = `<tr part="tr week"><th class="num" part="th weeknumber" scope="row"></th>${`<td part="td"><button class="num"></button></td>`.repeat(7)}</tr>`;
-
 // all 6 possible week rows are rendered up front; rows and week number
 // cells that aren't needed get detached from the DOM as the view changes
 const monthTemplate = template(
-  `<calendar-heading month="long" id="h" class="vh"></calendar-heading>` +
-    `<slot name="heading" part="heading"><calendar-heading month="long" aria-hidden="true"></calendar-heading></slot>` +
-    `<table aria-labelledby="h" part="table">` +
-    `<colgroup><col part="col-weeknumber">${Array.from({ length: 7 }, (_, i) => `<col part="col-${i + 1}">`).join("")}</colgroup>` +
-    `<thead><tr part="tr head"><th part="th weeknumber"><slot name="weeknumber"><span class="vh">Week</span><span aria-hidden="true">#</span></slot></th>${dayHeader.repeat(7)}</tr></thead>` +
-    `<tbody>${weekRow.repeat(6)}</tbody>` +
-    `</table>`,
+  monthHtml
+    .replace("$days", dayHeaderHtml.repeat(7))
+    .replace("$weeks", weekRowHtml.repeat(6)),
 );
 
 interface Cell {

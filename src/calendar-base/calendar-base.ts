@@ -1,4 +1,5 @@
 import "../calendar-heading/calendar-heading.js";
+import { baseHtml } from "./calendar-base.template.js";
 import {
   BaseElement,
   bool,
@@ -67,20 +68,7 @@ const createPage = (
   };
 };
 
-const button = (name: string) =>
-  `<button part="button ${name}"><slot name="${name}">${name[0]!.toUpperCase()}${name.slice(1)}</slot></button>`;
-
-const baseTemplate = template(
-  `<div role="group" aria-labelledby="h" part="container">` +
-    `<calendar-heading month="long" year="numeric" id="h" class="vh" aria-live="polite" aria-atomic="true"></calendar-heading>` +
-    `<div part="header">` +
-    button("previous") +
-    `<slot part="heading" name="heading"><calendar-heading year="numeric" aria-hidden="true"></calendar-heading></slot>` +
-    button("next") +
-    `</div>` +
-    `<slot part="months"></slot>` +
-    `</div>`,
-);
+const baseTemplate = template(baseHtml);
 
 export interface CalendarBase {
   value: string;

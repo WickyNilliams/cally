@@ -4,6 +4,7 @@ import dts from "vite-plugin-dts";
 import { transform } from "esbuild";
 import { appendFile, readFile } from "fs/promises";
 import { playwright } from "@vitest/browser-playwright";
+import { precompileTemplates } from "./precompile-templates.mjs";
 
 const fileName = "cally";
 
@@ -21,6 +22,8 @@ export default defineConfig({
     minify: false,
   },
   plugins: [
+    precompileTemplates(),
+
     // minify css`` tagged template literals with esbuild's css minifier,
     // which the js minifier won't touch. our sheets contain no backticks or ${}
     {

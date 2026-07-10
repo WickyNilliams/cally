@@ -21,12 +21,6 @@ export type YearOption = {
   selected: boolean;
 };
 
-export const selectTemplate = (label: string) =>
-  template(
-    `<label part="label" for="s"><slot name="label">${label}</slot></label>` +
-      `<select id="s" part="select"></select>`,
-  );
-
 export abstract class SelectBase extends BaseElement {
   static styles_ = [reset, vh];
 

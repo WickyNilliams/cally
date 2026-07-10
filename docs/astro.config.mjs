@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import { precompileTemplates } from "../precompile-templates.mjs";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { h } from "hastscript";
@@ -10,6 +11,9 @@ export default defineConfig({
   trailingSlash: "always",
   devToolbar: {
     enabled: false,
+  },
+  vite: {
+    plugins: [precompileTemplates()],
   },
   // this is used for the changelog.
   // we're importing changelog.md from the root of the repo

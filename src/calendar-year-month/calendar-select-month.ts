@@ -1,9 +1,6 @@
-import { define, str } from "../core/element.js";
-import {
-  SelectBase,
-  selectTemplate,
-  type MonthOption,
-} from "./calendar-year-month-base.js";
+import { define, str, template } from "../core/element.js";
+import { SelectBase, type MonthOption } from "./calendar-year-month-base.js";
+import { selectHtml } from "./calendar-year-month.template.js";
 import type { CalendarContextValue } from "../calendar-month/CalendarMonthContext.js";
 import { dateFormatter } from "../utils/parse.js";
 import { PlainYearMonth } from "../utils/temporal.js";
@@ -17,7 +14,7 @@ export class CalendarSelectMonth extends SelectBase {
     formatMonth: str("long"),
   };
 
-  static template_ = selectTemplate("Month");
+  static template_ = template(selectHtml.replace("$label", "Month"));
 
   protected getOptions_(context: CalendarContextValue): MonthOption[] {
     const { min, max, focusedDate, locale } = context;
