@@ -1,6 +1,9 @@
 import { define, num, template } from "../core/element.js";
-import { SelectBase, type YearOption } from "./calendar-year-month-base.js";
-import { selectHtml } from "./calendar-year-month.template.js";
+import {
+  SelectBase,
+  selectHtml,
+  type YearOption,
+} from "./calendar-year-month-base.js";
 import type { CalendarContextValue } from "../calendar-month/CalendarMonthContext.js";
 
 export interface CalendarSelectYear {

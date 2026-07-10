@@ -1,3 +1,4 @@
+/** @jsxImportSource ../core/jsx-html */
 import { BaseElement, template } from "../core/element.js";
 import { effect } from "../core/signals.js";
 import { consumeContext } from "../core/context.js";
@@ -20,6 +21,15 @@ export type YearOption = {
   value: string;
   selected: boolean;
 };
+
+export const selectHtml = (label: string): string => (
+  <>
+    <label part="label" for="s">
+      <slot name="label">{label}</slot>
+    </label>
+    <select id="s" part="select"></select>
+  </>
+);
 
 export abstract class SelectBase extends BaseElement {
   static styles_ = [reset, vh];
