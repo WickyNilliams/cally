@@ -7,7 +7,7 @@ export class CalendarMulti extends CalendarBase {
   protected readonly type = "multi";
 
   protected parsedValue_() {
-    return parseDateMulti(this.getProp_("value"));
+    return parseDateMulti(this.value);
   }
 
   protected focusFallback_() {

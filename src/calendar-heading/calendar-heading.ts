@@ -6,16 +6,18 @@ import { dateFormatter } from "../utils/parse.js";
 import { toDate } from "../utils/date.js";
 
 type DateFormatOptions = Pick<Intl.DateTimeFormatOptions, "year" | "month">;
+type YearFormat = NonNullable<DateFormatOptions["year"]>;
+type MonthFormat = NonNullable<DateFormatOptions["month"]>;
 
 export interface CalendarHeading {
-  year: "numeric" | "2-digit" | undefined;
-  month: "numeric" | "2-digit" | "long" | "short" | "narrow" | undefined;
+  year: YearFormat | undefined;
+  month: MonthFormat | undefined;
 }
 
 export class CalendarHeading extends BaseElement {
   static props_ = {
-    year: str(),
-    month: str(),
+    year: str<YearFormat>(),
+    month: str<MonthFormat>(),
   };
 
   constructor() {

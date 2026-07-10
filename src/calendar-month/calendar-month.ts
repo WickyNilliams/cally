@@ -187,7 +187,7 @@ export class CalendarMonth extends BaseElement {
       const ctx = this.#context();
       return {
         type: "date" as const,
-        value: ctx.page.start.add({ months: this.getProp_<number>("offset") }),
+        value: ctx.page.start.add({ months: this.offset }),
         locale: ctx.locale,
       };
     });
@@ -262,7 +262,7 @@ export class CalendarMonth extends BaseElement {
 
   #render() {
     const ctx = this.#context();
-    const offset = this.getProp_<number>("offset");
+    const offset = this.offset;
 
     const {
       firstDayOfWeek,

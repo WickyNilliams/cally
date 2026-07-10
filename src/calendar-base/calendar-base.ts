@@ -93,15 +93,15 @@ export abstract class CalendarBase extends BaseElement {
     min: str(""),
     max: str(""),
     today: str(""),
-    isDateDisallowed: func((date: Date) => false),
-    formatWeekday: str("narrow"),
-    getDayParts: func((date: Date): string => ""),
-    firstDayOfWeek: num(1),
+    isDateDisallowed: func<(date: Date) => boolean>((date) => false),
+    formatWeekday: str<"narrow" | "short">("narrow"),
+    getDayParts: func<(date: Date) => string>((date) => ""),
+    firstDayOfWeek: num<DaysOfWeek>(1),
     showOutsideDays: bool(false),
     locale: str(),
     months: num(1),
     focusedDate: str(),
-    pageBy: str("months"),
+    pageBy: str<Pagination>("months"),
     showWeekNumbers: bool(false),
   };
 
@@ -208,7 +208,7 @@ export abstract class CalendarBase extends BaseElement {
     provideContext(this, CalendarHeadingContext, () => ({
       type: "range" as const,
       value: this.#pageSignal().get(),
-      locale: this.getProp_<string | undefined>("locale"),
+      locale: this.locale,
     }));
 
     // page change -> update focused date
@@ -272,18 +272,17 @@ export abstract class CalendarBase extends BaseElement {
   }
 
   protected minDate_() {
-    return parseDate(this.getProp_("min"));
+    return parseDate(this.min);
   }
 
   protected maxDate_() {
-    return parseDate(this.getProp_("max"));
+    return parseDate(this.max);
   }
 
   /** the effective focused date: prop -> value -> today, clamped to min/max */
   protected focusedDatePlain_(): PlainDate {
-    const focused =
-      parseDate(this.getProp_("focusedDate")) ?? this.focusFallback_();
-    const today = parseDate(this.getProp_("today"));
+    const focused = parseDate(this.focusedDate) ?? this.focusFallback_();
+    const today = parseDate(this.today);
     return clamp(
       focused ?? today ?? getToday(),
       this.minDate_(),
@@ -300,7 +299,7 @@ export abstract class CalendarBase extends BaseElement {
       value: this.parsedValue_(),
       min: this.minDate_(),
       max: this.maxDate_(),
-      today: parseDate(this.getProp_("today")),
+      today: parseDate(this.today),
       page: this.#pageSignal().get(),
       focusedDate: this.focusedDatePlain_(),
     } as CalendarContextValue;

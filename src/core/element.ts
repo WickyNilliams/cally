@@ -6,23 +6,33 @@ export type PropType =
   | BooleanConstructor
   | FunctionConstructor;
 
-export interface PropDef {
+export interface PropDef<T = unknown> {
   type: PropType;
-  default?: unknown;
+  default?: T;
 }
 
 export type PropsDef = Record<string, PropDef>;
 
-export const str = (def?: string): PropDef => ({ type: String, default: def });
-export const num = (def?: number): PropDef => ({ type: Number, default: def });
-export const bool = (def?: boolean): PropDef => ({
+// NoInfer keeps the type parameter from being narrowed to the default's
+// literal type: `str("")` is a plain string prop, while an explicit
+// `str<"months" | "single">("months")` declares a union prop and
+// type-checks its default against it
+export const str = <T extends string = string>(
+  def?: NoInfer<T>,
+): PropDef<T> => ({ type: String, default: def });
+
+export const num = <T extends number = number>(
+  def?: NoInfer<T>,
+): PropDef<T> => ({ type: Number, default: def });
+
+export const bool = (def?: boolean): PropDef<boolean> => ({
   type: Boolean,
   default: def,
 });
-export const func = (def?: Function): PropDef => ({
-  type: Function,
-  default: def,
-});
+
+export const func = <T extends Function = Function>(
+  def?: NoInfer<T>,
+): PropDef<T> => ({ type: Function, default: def });
 
 const kebabCase = (name: string) =>
   name.replace(/([A-Z])/g, "-$1").toLowerCase();

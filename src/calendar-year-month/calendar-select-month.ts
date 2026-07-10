@@ -11,7 +11,7 @@ export interface CalendarSelectMonth {
 
 export class CalendarSelectMonth extends SelectBase {
   static props_ = {
-    formatMonth: str("long"),
+    formatMonth: str<"long" | "short">("long"),
   };
 
   static template_ = template(selectHtml("Month"));

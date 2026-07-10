@@ -7,7 +7,7 @@ export class CalendarDate extends CalendarBase {
   protected readonly type = "date";
 
   protected parsedValue_() {
-    return parseDate(this.getProp_("value"));
+    return parseDate(this.value);
   }
 
   protected focusFallback_() {

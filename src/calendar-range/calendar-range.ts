@@ -35,13 +35,13 @@ export class CalendarRange extends CalendarBase {
   }
 
   #tentativeDate() {
-    return parseDate(this.getProp_("tentative"));
+    return parseDate(this.tentative);
   }
 
   protected parsedValue_(): [PlainDate, PlainDate] | [] {
     const tentative = this.#tentativeDate();
     if (!tentative) {
-      return parseDateRange(this.getProp_("value"));
+      return parseDateRange(this.value);
     }
 
     const hovered = this.#hovered.get();
@@ -49,7 +49,7 @@ export class CalendarRange extends CalendarBase {
   }
 
   protected focusFallback_() {
-    return parseDateRange(this.getProp_("value"))[0];
+    return parseDateRange(this.value)[0];
   }
 
   #handleHover(e: CustomEvent<PlainDate>) {
