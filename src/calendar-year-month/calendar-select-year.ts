@@ -12,7 +12,7 @@ export class CalendarSelectYear extends SelectBase {
     maxYears: num(20),
   };
 
-  static template_ = template(selectHtml.replace("$label", "Year"));
+  static template_ = template(selectHtml("Year"));
 
   protected getOptions_(context: CalendarContextValue): YearOption[] {
     const { min, max, focusedDate } = context;

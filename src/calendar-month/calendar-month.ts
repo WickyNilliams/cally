@@ -1,9 +1,5 @@
 import "../calendar-heading/calendar-heading.js";
-import {
-  dayHeaderHtml,
-  monthHtml,
-  weekRowHtml,
-} from "./calendar-month.template.js";
+import { monthHtml } from "./calendar-month.template.js";
 import {
   BaseElement,
   css,
@@ -39,13 +35,7 @@ const isLTR = (e: Event) => (e.target as HTMLElement).matches(":dir(ltr)");
 
 const dispatchOptions = { bubbles: true };
 
-// all 6 possible week rows are rendered up front; rows and week number
-// cells that aren't needed get detached from the DOM as the view changes
-const monthTemplate = template(
-  monthHtml
-    .replace("$days", dayHeaderHtml.repeat(7))
-    .replace("$weeks", weekRowHtml.repeat(6)),
-);
+const monthTemplate = template(monthHtml);
 
 interface Cell {
   td_: HTMLTableCellElement;

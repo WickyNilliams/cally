@@ -14,7 +14,7 @@ export class CalendarSelectMonth extends SelectBase {
     formatMonth: str("long"),
   };
 
-  static template_ = template(selectHtml.replace("$label", "Month"));
+  static template_ = template(selectHtml("Month"));
 
   protected getOptions_(context: CalendarContextValue): MonthOption[] {
     const { min, max, focusedDate, locale } = context;

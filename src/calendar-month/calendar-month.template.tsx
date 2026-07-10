@@ -1,21 +1,17 @@
 /** @jsxImportSource ../core/jsx-html */
+import { repeat } from "../core/jsx-html/jsx-runtime.js";
 
-// this module is a pure string computation: it is evaluated at build time
-// and replaced by its exported string literals (see precompile-templates.mjs)
-
-/** column header for one weekday */
-export const dayHeaderHtml: string = (
+const dayHeader = (
   <th part="th day" scope="col">
     <span class="vh"></span>
     <span aria-hidden="true"></span>
   </th>
 );
 
-/** one of the 6 possible week rows */
-export const weekRowHtml: string = (
+const weekRow = (
   <tr part="tr week">
     <th class="num" part="th weeknumber" scope="row"></th>
-    {Array.from({ length: 7 }, () => (
+    {repeat(7, () => (
       <td part="td">
         <button class="num"></button>
       </td>
@@ -23,11 +19,8 @@ export const weekRowHtml: string = (
   </tr>
 );
 
-/**
- * the month shell. `$days`/`$weeks` are markers the component substitutes
- * with repeated {@link dayHeaderHtml}/{@link weekRowHtml}, so the repetition
- * isn't expanded into the precompiled string
- */
+// all 6 possible week rows are rendered up front; rows and week number
+// cells that aren't needed get detached from the DOM as the view changes
 export const monthHtml: string = (
   <>
     <calendar-heading month="long" id="h" class="vh"></calendar-heading>
@@ -37,7 +30,7 @@ export const monthHtml: string = (
     <table aria-labelledby="h" part="table">
       <colgroup>
         <col part="col-weeknumber" />
-        {Array.from({ length: 7 }, (_, i) => (
+        {repeat(7, (i) => (
           <col part={`col-${i + 1}`} />
         ))}
       </colgroup>
@@ -49,10 +42,10 @@ export const monthHtml: string = (
               <span aria-hidden="true">#</span>
             </slot>
           </th>
-          {"$days"}
+          {repeat(7, () => dayHeader)}
         </tr>
       </thead>
-      <tbody>{"$weeks"}</tbody>
+      <tbody>{repeat(6, () => weekRow)}</tbody>
     </table>
   </>
 );

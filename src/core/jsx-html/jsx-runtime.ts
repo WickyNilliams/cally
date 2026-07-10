@@ -1,10 +1,8 @@
 /**
  * A JSX runtime that renders to an HTML string, for authoring shadow DOM
- * templates as JSX (via a per-file `@jsxImportSource` pragma). Template
- * modules are pure string computations: at build time they are evaluated
- * and replaced with their exported string literals (see
- * precompile-templates.mjs), so neither this runtime nor the JSX calls are
- * shipped. In dev and tests the modules simply run as-is.
+ * templates as JSX (via a per-file `@jsxImportSource` pragma). Templates
+ * are built once at module load and handed to `template()`; there is no
+ * per-instance or per-render JSX cost.
  *
  * This is a trusted authoring tool, not a sanitizer: children are emitted
  * verbatim (nested elements are already-rendered HTML strings), so template
@@ -19,8 +17,6 @@ type Props = Record<string, unknown> & { children?: Child };
 
 /** elements with no closing tag (only the ones we use) */
 const VOID = new Set(["col"]);
-
-const escapeAttr = (value: string) => value.replace(/"/g, "&quot;");
 
 function renderChildren(children: Child): string {
   if (children == null || typeof children === "boolean") return "";
@@ -43,8 +39,7 @@ export function jsx(
     if (name === "children") {
       children = value as Child;
     } else if (value != null && value !== false) {
-      attrs +=
-        value === true ? ` ${name}` : ` ${name}="${escapeAttr(`${value}`)}"`;
+      attrs += value === true ? ` ${name}` : ` ${name}="${value}"`;
     }
   }
 
@@ -56,6 +51,11 @@ export const jsxs = jsx;
 
 export function Fragment(props: { children?: Child }): string {
   return renderChildren(props.children);
+}
+
+/** render `count` copies of a piece of template, joined together */
+export function repeat(count: number, render: (i: number) => string): string {
+  return Array.from({ length: count }, (_, i) => render(i)).join("");
 }
 
 export declare namespace JSX {
