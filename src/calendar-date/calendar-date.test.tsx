@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
-import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
   createSpy,
@@ -17,7 +16,7 @@ import {
   getCalendarVisibleHeading,
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
-import type { Pagination } from "../calendar-base/useCalendarBase.js";
+import type { Pagination } from "../calendar-base/calendar-base.js";
 import { CalendarDate } from "./calendar-date.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
 import { getToday, toDate } from "../utils/date.js";
@@ -36,7 +35,7 @@ type TestProps = {
   min: string;
   max: string;
   today: string;
-  children: VNodeAny[];
+  children: Element | Element[];
   showOutsideDays: boolean;
   months: number;
   locale: string;
@@ -44,7 +43,7 @@ type TestProps = {
   pageBy: Pagination;
 };
 
-function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
+function Fixture({ children, ...props }: Partial<TestProps>): Element {
   return (
     <CalendarDate locale="en-GB" {...props}>
       {children ?? <CalendarMonth />}

@@ -114,3 +114,44 @@ interface DateLike {
 export function toDate(date: DateLike): Date {
   return new Date(Date.UTC(date.year, date.month - 1, date.day ?? 1));
 }
+
+/**
+ * Parses an ISO date string, returning undefined if it is not valid
+ */
+export function parseDate(value: string | undefined): PlainDate | undefined {
+  if (value) {
+    try {
+      return PlainDate.from(value);
+    } catch {}
+  }
+}
+
+type DateFormatOptions = Pick<
+  Intl.DateTimeFormatOptions,
+  "year" | "month" | "day" | "weekday"
+>;
+
+export function getFormatter(options: DateFormatOptions, locale?: string) {
+  return new Intl.DateTimeFormat(locale, { timeZone: "UTC", ...options });
+}
+
+/**
+ * The names of the days of the week, starting from `firstDayOfWeek`
+ */
+export function getDayNames(
+  weekday: NonNullable<Intl.DateTimeFormatOptions["weekday"]>,
+  firstDayOfWeek: DaysOfWeek,
+  locale?: string,
+): string[] {
+  const formatter = getFormatter({ weekday }, locale);
+  const days = [];
+  const day = new Date();
+
+  for (let i = 0; i < 7; i++) {
+    const index = (day.getUTCDay() - firstDayOfWeek + 7) % 7;
+    days[index] = formatter.format(day);
+    day.setUTCDate(day.getUTCDate() + 1);
+  }
+
+  return days;
+}

@@ -1,9 +1,10 @@
 /// <reference types="vitest" />
-import atomico from "@atomico/vite";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { appendFile, readFile } from "fs/promises";
+import { fileURLToPath } from "url";
 import { playwright } from "@vitest/browser-playwright";
+import minifyTemplates from "./vite-plugin-minify-templates.js";
 
 const fileName = "cally";
 
@@ -17,14 +18,19 @@ export default defineConfig({
     },
     minify: true,
   },
+  resolve: {
+    alias: {
+      // jsx is only used by tests, to declare fixtures
+      "test-jsx": fileURLToPath(
+        new URL("./src/utils/test-jsx", import.meta.url),
+      ),
+    },
+  },
   plugins: [
-    ...atomico({
-      cssLiterals: { postcss: true, minify: true },
-    }),
+    minifyTemplates(),
 
     dts({
       rollupTypes: true,
-      bundledPackages: ["atomico"],
       tsconfigPath: "./tsconfig.build.json",
 
       // workaround to include the global types
@@ -34,9 +40,6 @@ export default defineConfig({
       },
     }),
   ],
-  optimizeDeps: {
-    include: ["atomico/jsx-dev-runtime"],
-  },
   test: {
     setupFiles: ["./vitest.setup.ts"],
     browser: {

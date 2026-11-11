@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
-import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
   createSpy,
@@ -11,16 +10,14 @@ import {
   getSelectedDays,
   sendShiftPress,
   getTodayButton,
-  type MonthInstance,
-} from "../utils/test.js";
-import {
+  fixture,
   CalendarContext,
+  type MonthInstance,
   type CalendarDateContext,
   type CalendarMultiContext,
   type CalendarRangeContext,
-} from "./CalendarMonthContext.js";
+} from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
-import { fixture } from "atomico/test-dom";
 import { PlainDate } from "../utils/temporal.js";
 import { toDate, getToday } from "../utils/date.js";
 
@@ -58,7 +55,7 @@ function Fixture({
   type = "date",
   formatWeekday = "narrow",
   ...props
-}: Partial<DateTestProps | RangeTestProps | MultiTestProps>): VNodeAny {
+}: Partial<DateTestProps | RangeTestProps | MultiTestProps>): Element {
   return (
     <CalendarContext
       onselectday={onselectday}
@@ -73,7 +70,6 @@ function Fixture({
         },
         focusedDate,
         formatWeekday,
-        // @ts-expect-error - not sure why this is a problem
         type,
         ...props,
       }}
@@ -83,7 +79,7 @@ function Fixture({
   );
 }
 
-export async function mount(node: VNodeAny) {
+export async function mount(node: Element) {
   const context = fixture<MonthContextInstance>(node);
   const month = getMonth(context);
   await nextFrame();

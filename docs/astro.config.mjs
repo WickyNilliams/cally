@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import atomico from "@atomico/vite";
+import minifyTemplates from "../vite-plugin-minify-templates.js";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { h } from "hastscript";
@@ -13,11 +13,7 @@ export default defineConfig({
     enabled: false,
   },
   vite: {
-    plugins: [
-      ...atomico({
-        cssLiterals: { postcss: true, minify: true },
-      }),
-    ],
+    plugins: [minifyTemplates()],
   },
 
   // this is used for the changelog.

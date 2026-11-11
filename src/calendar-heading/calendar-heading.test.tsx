@@ -1,5 +1,4 @@
 import { describe, it, expect } from "vitest";
-import type { VNodeAny } from "atomico/types/vnode";
 import {
   mount,
   getMonth,
@@ -12,7 +11,7 @@ import { CalendarHeading } from "./calendar-heading.js";
 import { PlainYearMonth } from "../utils/temporal.js";
 import { toDate } from "../utils/date.js";
 
-function Fixture({ children, ...props }: Record<string, any>): VNodeAny {
+function Fixture({ children, ...props }: Record<string, any>): Element {
   return (
     <CalendarDate locale="en-GB" {...props}>
       {children ?? <CalendarMonth />}

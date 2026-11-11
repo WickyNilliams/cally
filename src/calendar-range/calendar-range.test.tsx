@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
-import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
   createSpy,
@@ -11,6 +10,7 @@ import {
   getPrevPageButton,
   getSelectedDays,
   mount,
+  nextFrame,
 } from "../utils/test.js";
 
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
@@ -28,10 +28,10 @@ type TestProps = {
   tentative?: string;
   focusedDate?: string;
   months?: number;
-  children?: VNodeAny;
+  children?: Element;
 };
 
-function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
+function Fixture({ children, ...props }: Partial<TestProps>): Element {
   return (
     <CalendarRange {...props} locale="en-GB">
       {children ?? <CalendarMonth />}
@@ -258,7 +258,7 @@ describe("CalendarRange", () => {
       expect(before[1]!).toHavePart("range-end");
 
       calendar.tentative = "";
-      await calendar.updated;
+      await nextFrame();
 
       const after = getSelectedDays(month);
       expect(after.length).toBe(0);
