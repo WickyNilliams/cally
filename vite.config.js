@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { defineConfig } from "vite";
+import { defineConfig, transformWithEsbuild } from "vite";
 import dts from "vite-plugin-dts";
 import { appendFile, readFile } from "fs/promises";
 import { fileURLToPath } from "url";
@@ -28,6 +28,22 @@ export default defineConfig({
   },
   plugins: [
     staticJsx(),
+
+    // vite does not remove whitespace from es modules in lib mode, as it can
+    // hinder tree-shaking. since defining the elements is a side effect, there
+    // is nothing to be shaken, so we are better off with the smaller file.
+    {
+      name: "minify-es",
+      apply: "build",
+      renderChunk: {
+        order: "post",
+        handler: (code, chunk) =>
+          transformWithEsbuild(code, chunk.fileName, {
+            minify: true,
+            target: "esnext",
+          }),
+      },
+    },
 
     dts({
       rollupTypes: true,
