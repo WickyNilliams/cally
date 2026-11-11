@@ -923,6 +923,94 @@ describe("CalendarDate", () => {
         .toHaveAttribute("tabindex", "0");
       expect(calendar.focusedDate).toBe("2020-01-15");
     });
+    describe("changing in the same task as the page", () => {
+      // A regression here loops forever in microtasks, which would hang the
+      // test run. Stubbing Atomico's update() breaks the loop so the test fails.
+      function guardAgainstLoop(calendar: HTMLElement) {
+        const spy = createSpy<(e: CustomEvent<Date>) => void>(() => {
+          if (spy.count > 50) {
+            (calendar as unknown as { update: () => Promise<void> }).update =
+              () => Promise.resolve();
+          }
+        });
+        calendar.addEventListener("focusday", spy as unknown as EventListener);
+        return spy;
+      }
+
+      async function expectFocused(
+        calendar: HTMLElement,
+        focusedDate: string,
+        label: string,
+      ) {
+        expect(
+          (calendar as InstanceType<typeof CalendarDate>).focusedDate,
+        ).toBe(focusedDate);
+        const day = getDayButton(getMonth(calendar), label);
+        await expect
+          .element(page.elementLocator(day))
+          .toHaveAttribute("tabindex", "0");
+      }
+
+      it("settles when next is clicked and focused date is set", async () => {
+        const calendar = await mount<InstanceType<typeof CalendarDate>>(
+          <Fixture focusedDate="2026-10-15" />,
+        );
+        const spy = guardAgainstLoop(calendar);
+
+        calendar
+          .shadowRoot!.querySelector<HTMLButtonElement>(`button[part~="next"]`)!
+          .click();
+        calendar.focusedDate = "2027-03-10";
+        await nextFrame();
+
+        await expectFocused(calendar, "2027-03-10", "10 March");
+        expect(spy.count).toBe(1);
+      });
+
+      it("settles when a pagechange listener sets focused date", async () => {
+        const calendar = await mount<InstanceType<typeof CalendarDate>>(
+          <Fixture focusedDate="2026-10-15" />,
+        );
+        const spy = guardAgainstLoop(calendar);
+        calendar.addEventListener(
+          "pagechange",
+          () => {
+            calendar.focusedDate = "2027-03-10";
+          },
+          { once: true },
+        );
+
+        await getNextPageButton(calendar).click();
+        await nextFrame();
+
+        await expectFocused(calendar, "2027-03-10", "10 March");
+        expect(spy.count).toBeLessThanOrEqual(1);
+      });
+
+      it("settles when the calendar is moved and focused date is set", async () => {
+        const calendar = await mount<InstanceType<typeof CalendarDate>>(
+          <Fixture focusedDate="2026-10-15" />,
+        );
+        const spy = guardAgainstLoop(calendar);
+        const elsewhere = document.createElement("div");
+        document.body.append(elsewhere);
+
+        try {
+          await getNextPageButton(calendar).click();
+          await getNextPageButton(calendar).click();
+          const before = spy.count;
+
+          elsewhere.append(calendar);
+          calendar.focusedDate = "2026-10-15";
+          await nextFrame();
+
+          await expectFocused(calendar, "2026-10-15", "15 October");
+          expect(spy.count - before).toBeLessThanOrEqual(1);
+        } finally {
+          elsewhere.remove();
+        }
+      });
+    });
   });
 
   describe("localization", () => {

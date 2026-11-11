@@ -71,29 +71,28 @@ function usePagination({
   );
   const dispatchPageChange = useEvent<PageChangeDetail>("pagechange");
 
-  const updatePageBy = (by: number) => {
+  const contains = (date: PlainDate, start = page.start) => {
+    const diff = diffInMonths(start, date.toPlainYearMonth());
+    return diff >= 0 && diff < months;
+  };
+
+  const updatePageBy = (by: number, syncFocus = false) => {
     const next = createPage(page.start.add({ months: by }), months, pageBy);
     setPage(next);
+
+    // Syncing focus here rather than in a page effect avoids two effects
+    // correcting each other forever when page and focus change together.
+    // It runs before pagechange so a listener's focusedDate wins.
+    if (syncFocus && !contains(focusedDate, next.start)) {
+      const diff = diffInMonths(focusedDate.toPlainYearMonth(), next.start);
+      goto(focusedDate.add({ months: diff }));
+    }
+
     dispatchPageChange({
       start: toDate(next.start),
       end: toDate(endOfMonth(next.end)),
     });
   };
-
-  const contains = (date: PlainDate) => {
-    const diff = diffInMonths(page.start, date.toPlainYearMonth());
-    return diff >= 0 && diff < months;
-  };
-
-  // page change -> update focused date
-  useEffect(() => {
-    if (contains(focusedDate)) {
-      return;
-    }
-
-    const diff = diffInMonths(focusedDate.toPlainYearMonth(), page.start);
-    goto(focusedDate.add({ months: diff }));
-  }, [page.start]);
 
   // focused date change -> update page
   useEffect(() => {
@@ -116,8 +115,9 @@ function usePagination({
 
   return {
     page,
-    previous: !min || !contains(min) ? () => updatePageBy(-step) : undefined,
-    next: !max || !contains(max) ? () => updatePageBy(step) : undefined,
+    previous:
+      !min || !contains(min) ? () => updatePageBy(-step, true) : undefined,
+    next: !max || !contains(max) ? () => updatePageBy(step, true) : undefined,
   };
 }
 
