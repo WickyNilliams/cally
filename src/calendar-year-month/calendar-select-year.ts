@@ -1,12 +1,16 @@
-import { html, type PropDefs } from "../utils/base.js";
+import { template, type PropDefs } from "../utils/base.js";
 import type { PlainDate } from "../utils/temporal.js";
-import { SelectBase, option, template } from "./calendar-year-month-base.js";
+import {
+  SelectBase,
+  option,
+  selectTemplate,
+} from "./calendar-year-month-base.js";
 
 interface SelectYearProps {
   maxYears: number;
 }
 
-const optionTemplate = html`${option}`;
+const optionTemplate = template(option);
 
 export interface CalendarSelectYear extends SelectYearProps {}
 
@@ -15,7 +19,7 @@ export class CalendarSelectYear extends SelectBase<SelectYearProps> {
     maxYears: [Number, 20],
   };
 
-  static template = template("Year");
+  static template = selectTemplate("Year");
 
   constructor() {
     super();

@@ -1,4 +1,4 @@
-import { Base, css, html, setAttr, type PropDefs } from "../utils/base.js";
+import { Base, css, setAttr, template, type PropDefs } from "../utils/base.js";
 import {
   computed,
   signal,
@@ -77,7 +77,7 @@ export abstract class CalendarBase<
     showWeekNumbers: [Boolean, false],
   };
 
-  static template = html`
+  static template = template(
     <div role="group" aria-labelledby="h" part="container">
       <calendar-heading
         month="long"
@@ -86,7 +86,7 @@ export abstract class CalendarBase<
         class="vh"
         aria-live="polite"
         aria-atomic="true"
-      ></calendar-heading>
+      />
 
       <div part="header">
         <button part="button previous">
@@ -94,10 +94,7 @@ export abstract class CalendarBase<
         </button>
 
         <slot part="heading" name="heading">
-          <calendar-heading
-            year="numeric"
-            aria-hidden="true"
-          ></calendar-heading>
+          <calendar-heading year="numeric" aria-hidden="true" />
         </slot>
 
         <button part="button next">
@@ -105,9 +102,9 @@ export abstract class CalendarBase<
         </button>
       </div>
 
-      <slot part="months"></slot>
-    </div>
-  `;
+      <slot part="months" />
+    </div>,
+  );
 
   static styles = css(reset, styles);
 

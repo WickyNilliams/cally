@@ -98,6 +98,23 @@ export function computed<T>(fn: () => T): ReadonlySignal<T> {
   };
 }
 
+// effects that are waiting to run
+let queue: (() => void)[] = [];
+
+function flush() {
+  // effects can queue further effects, those run in the same pass
+  for (let i = 0; i < queue.length; i++) {
+    try {
+      queue[i]!();
+    } catch (e) {
+      // one broken effect should not stop the rest from running
+      reportError(e);
+    }
+  }
+
+  queue = [];
+}
+
 /**
  * Runs `fn` in a microtask, and again whenever any signal it read changes.
  * Returns a function to dispose of the effect.
@@ -112,7 +129,10 @@ export function effect(fn: () => void): () => void {
 
       if (!state) {
         state = 1;
-        queueMicrotask(() => {
+        // the first effect to be queued schedules the flush
+        if (!queue.length) queueMicrotask(flush);
+
+        queue.push(() => {
           if (state < 2) {
             state = 0;
             run(observer, fn);

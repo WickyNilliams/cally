@@ -1,9 +1,9 @@
 import {
   Base,
   css,
-  html,
   setAttr,
   setText,
+  template,
   type PropDefs,
 } from "../utils/base.js";
 import { computed } from "../utils/signals.js";
@@ -32,9 +32,25 @@ interface MonthProps {
 const inRange = (date: PlainDate, min?: PlainDate, max?: PlainDate) =>
   clamp(date, min, max) === date;
 
-const day = `<td part="td"><button class="num"></button></td>`;
-const week = `<tr part="tr week"><th class="num" part="th weeknumber" scope="row"></th>${day.repeat(7)}</tr>`;
-const weekday = `<th scope="col"><span class="vh"></span><span aria-hidden="true"></span></th>`;
+const day = (
+  <td part="td">
+    <button class="num" />
+  </td>
+);
+
+const week = (
+  <tr part="tr week">
+    <th class="num" part="th weeknumber" scope="row" />
+    {day.repeat(7)}
+  </tr>
+);
+
+const weekday = (
+  <th scope="col">
+    <span class="vh" />
+    <span aria-hidden="true" />
+  </th>
+);
 
 /**
  * Connects or disconnects a node that was rendered up front
@@ -61,40 +77,40 @@ export class CalendarMonth extends Base<MonthProps> {
 
   // everything that could be shown is rendered once, up front.
   // what is not needed (e.g. a sixth week) is taken out of the tree until it is.
-  static template = html`
-    <calendar-heading month="long" id="h" class="vh"></calendar-heading>
+  static template = template(
+    <>
+      <calendar-heading month="long" id="h" class="vh" />
 
-    <slot name="heading" part="heading">
-      <calendar-heading month="long" aria-hidden="true"></calendar-heading>
-    </slot>
+      <slot name="heading" part="heading">
+        <calendar-heading month="long" aria-hidden="true" />
+      </slot>
 
-    <table aria-labelledby="h" part="table">
-      <colgroup>
-        <col part="col-weeknumber" />
-        <col part="col-1" />
-        <col part="col-2" />
-        <col part="col-3" />
-        <col part="col-4" />
-        <col part="col-5" />
-        <col part="col-6" />
-        <col part="col-7" />
-      </colgroup>
-      <thead>
-        <tr part="tr head">
-          <th part="th weeknumber">
-            <slot name="weeknumber">
-              <span class="vh">Week</span>
-              <span aria-hidden="true">#</span>
-            </slot>
-          </th>
-          ${weekday.repeat(7)}
-        </tr>
-      </thead>
-      <tbody>
-        ${week.repeat(6)}
-      </tbody>
-    </table>
-  `;
+      <table aria-labelledby="h" part="table">
+        <colgroup>
+          <col part="col-weeknumber" />
+          <col part="col-1" />
+          <col part="col-2" />
+          <col part="col-3" />
+          <col part="col-4" />
+          <col part="col-5" />
+          <col part="col-6" />
+          <col part="col-7" />
+        </colgroup>
+        <thead>
+          <tr part="tr head">
+            <th part="th weeknumber">
+              <slot name="weeknumber">
+                <span class="vh">Week</span>
+                <span aria-hidden="true">#</span>
+              </slot>
+            </th>
+            {weekday.repeat(7)}
+          </tr>
+        </thead>
+        <tbody>{week.repeat(6)}</tbody>
+      </table>
+    </>,
+  );
 
   static styles = css(reset, styles);
 

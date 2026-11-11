@@ -1,7 +1,11 @@
 import type { PropDefs } from "../utils/base.js";
 import { getFormatter } from "../utils/date.js";
 import { PlainYearMonth, type PlainDate } from "../utils/temporal.js";
-import { SelectBase, option, template } from "./calendar-year-month-base.js";
+import {
+  SelectBase,
+  option,
+  selectTemplate,
+} from "./calendar-year-month-base.js";
 
 interface SelectMonthProps {
   formatMonth: "long" | "short";
@@ -14,7 +18,7 @@ export class CalendarSelectMonth extends SelectBase<SelectMonthProps> {
     formatMonth: [String, "long"],
   };
 
-  static template = template("Month", option.repeat(12));
+  static template = selectTemplate("Month", option.repeat(12));
 
   constructor() {
     super();

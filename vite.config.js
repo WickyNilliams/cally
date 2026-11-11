@@ -4,7 +4,7 @@ import dts from "vite-plugin-dts";
 import { appendFile, readFile } from "fs/promises";
 import { fileURLToPath } from "url";
 import { playwright } from "@vitest/browser-playwright";
-import minifyTemplates from "./vite-plugin-minify-templates.js";
+import staticJsx from "./vite-plugin-static-jsx.js";
 
 const fileName = "cally";
 
@@ -20,14 +20,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      // jsx is only used by tests, to declare fixtures
+      // the jsx runtime used by tests, to declare fixtures
       "test-jsx": fileURLToPath(
         new URL("./src/utils/test-jsx", import.meta.url),
       ),
     },
   },
   plugins: [
-    minifyTemplates(),
+    staticJsx(),
 
     dts({
       rollupTypes: true,

@@ -11,10 +11,12 @@
     "skipLibCheck": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    // jsx is only used by tests, to declare fixtures
+    // jsx in components is compiled to strings of html at build time.
+    // tests opt into "test-jsx", which creates DOM nodes for fixtures.
     "jsx": "react-jsx",
-    "jsxImportSource": "test-jsx",
+    "jsxImportSource": "jsx-static",
     "paths": {
+      "jsx-static/*": ["./src/utils/jsx-static/*"],
       "test-jsx/*": ["./src/utils/test-jsx/*"]
     }
   }

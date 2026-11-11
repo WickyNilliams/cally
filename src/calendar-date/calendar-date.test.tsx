@@ -1,3 +1,4 @@
+/** @jsxImportSource test-jsx */
 import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
 import {

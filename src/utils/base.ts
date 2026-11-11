@@ -33,10 +33,10 @@ const toProp = (attr: string) =>
   attr.replace(/-(.)/g, (_, char: string) => char.toUpperCase());
 
 /** Creates a `<template>` from a string of HTML */
-export function html(strings: TemplateStringsArray, ...values: unknown[]) {
-  const template = document.createElement("template");
-  template.innerHTML = String.raw({ raw: strings }, ...values);
-  return template;
+export function template(html: string) {
+  const el = document.createElement("template");
+  el.innerHTML = html;
+  return el;
 }
 
 export function css(...styles: string[]) {

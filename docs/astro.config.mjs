@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import minifyTemplates from "../vite-plugin-minify-templates.js";
+import staticJsx from "../vite-plugin-static-jsx.js";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { h } from "hastscript";
@@ -13,7 +13,7 @@ export default defineConfig({
     enabled: false,
   },
   vite: {
-    plugins: [minifyTemplates()],
+    plugins: [staticJsx()],
   },
 
   // this is used for the changelog.
