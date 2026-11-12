@@ -923,6 +923,85 @@ describe("CalendarDate", () => {
         .toHaveAttribute("tabindex", "0");
       expect(calendar.focusedDate).toBe("2020-01-15");
     });
+
+    // see https://github.com/WickyNilliams/cally/issues/137
+    describe("when the calendar is moved within the document", () => {
+      // somewhere else to put the calendar, cleaned up along with the fixture
+      function moveElsewhere(calendar: Element) {
+        const elsewhere = document.createElement("div");
+        calendar.after(elsewhere);
+        elsewhere.append(calendar);
+      }
+
+      it("can be changed to another page in the same task", async () => {
+        const pagechange = createSpy();
+        const focusday = createSpy();
+        const calendar = await mount(
+          <Fixture
+            focusedDate="2026-10-15"
+            onpagechange={pagechange}
+            onfocusday={focusday}
+          />,
+        );
+
+        moveElsewhere(calendar);
+        calendar.focusedDate = "2027-03-10";
+        await nextFrame();
+
+        const month = getMonth(calendar);
+        expect(getCalendarHeading(calendar)).toEqual("March 2027");
+        expect(getMonthHeading(month)).toEqual("March");
+        expect(calendar.focusedDate).toBe("2027-03-10");
+        await expect
+          .element(page.elementLocator(getDayButton(month, "10 March")))
+          .toHaveAttribute("tabindex", "0");
+
+        // the page follows the focused date, and nothing more
+        expect(pagechange.count).toBe(1);
+        expect(focusday.called).toBe(false);
+      });
+
+      it("can be changed back after the user has paged away", async () => {
+        const pagechange = createSpy();
+        const focusday = createSpy();
+        const calendar = await mount(<Fixture focusedDate="2026-10-15" />);
+
+        await getNextPageButton(calendar).click();
+        await getNextPageButton(calendar).click();
+        expect(getCalendarHeading(calendar)).toEqual("December 2026");
+
+        calendar.addEventListener("pagechange", pagechange);
+        calendar.addEventListener("focusday", focusday);
+
+        moveElsewhere(calendar);
+        calendar.focusedDate = "2026-10-15";
+        await nextFrame();
+
+        expect(getCalendarHeading(calendar)).toEqual("October 2026");
+        expect(getMonthHeading(getMonth(calendar))).toEqual("October");
+        expect(calendar.focusedDate).toBe("2026-10-15");
+        expect(pagechange.count).toBe(1);
+        expect(focusday.called).toBe(false);
+      });
+
+      it("stays on the same page if only moved", async () => {
+        const pagechange = createSpy();
+        const focusday = createSpy();
+        const calendar = await mount(<Fixture focusedDate="2026-10-15" />);
+
+        await getNextPageButton(calendar).click();
+        calendar.addEventListener("pagechange", pagechange);
+        calendar.addEventListener("focusday", focusday);
+
+        moveElsewhere(calendar);
+        await nextFrame();
+
+        expect(getCalendarHeading(calendar)).toEqual("November 2026");
+        expect(calendar.focusedDate).toBe("2026-11-15");
+        expect(pagechange.called).toBe(false);
+        expect(focusday.called).toBe(false);
+      });
+    });
   });
 
   describe("localization", () => {
