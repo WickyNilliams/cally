@@ -4,6 +4,7 @@ import {
   setAttr,
   setText,
   template,
+  type ComponentProps,
   type PropDefs,
 } from "../utils/base.js";
 import { computed } from "../utils/signals.js";
@@ -67,6 +68,14 @@ function toggle(
     first ? parent.prepend(node) : parent.append(node);
   }
 }
+
+export type CalendarMonthProps = ComponentProps<
+  MonthProps & {
+    onSelectDay: (event: CustomEvent<string>) => any;
+    onFocusDay: (event: CustomEvent<string>) => any;
+    onHoverDay: (event: CustomEvent<string>) => any;
+  }
+>;
 
 export interface CalendarMonth extends MonthProps {}
 
@@ -336,3 +345,9 @@ export class CalendarMonth extends Base<MonthProps> {
 }
 
 CalendarMonth.define("calendar-month");
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "calendar-month": CalendarMonth;
+  }
+}

@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Build package
-        run: npx vite build
+        run: npm run build:package
 
       # Publish using OIDC trusted publishing (no token needed)
       # Provenance is automatically generated with id-token: write permission

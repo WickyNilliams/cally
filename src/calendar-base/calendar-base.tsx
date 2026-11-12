@@ -51,6 +51,14 @@ export interface CalendarProps {
   showWeekNumbers: boolean;
 }
 
+/** What every kind of calendar has in common, for exporting as props */
+export interface CalendarElementProps extends CalendarProps {
+  focus: (options?: CalendarFocusOptions) => void;
+  onChange: (event: Event) => any;
+  onFocusDay: (event: CustomEvent<Date>) => any;
+  onPageChange: (event: CustomEvent<PageChangeDetail>) => any;
+}
+
 function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
   return (b.year - a.year) * 12 + b.month - a.month;
 }

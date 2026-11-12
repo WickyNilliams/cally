@@ -48,5 +48,5 @@ jobs:
           node-version: "20.x"
 
       - run: npm ci
-      - run: npx vite build
+      - run: npm run build:package
       - run: npx pkg-pr-new publish --no-template

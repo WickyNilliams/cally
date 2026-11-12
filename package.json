@@ -7,13 +7,41 @@
   "files": [
     "dist"
   ],
-  "module": "dist/cally.js",
-  "types": "dist/cally.d.ts",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "unpkg": "dist/cally.js",
   "exports": {
     ".": {
-      "types": "./dist/cally.d.ts",
-      "import": "./dist/cally.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./calendar-date": {
+      "types": "./dist/calendar-date/calendar-date.d.ts",
+      "import": "./dist/calendar-date.js"
+    },
+    "./calendar-range": {
+      "types": "./dist/calendar-range/calendar-range.d.ts",
+      "import": "./dist/calendar-range.js"
+    },
+    "./calendar-multi": {
+      "types": "./dist/calendar-multi/calendar-multi.d.ts",
+      "import": "./dist/calendar-multi.js"
+    },
+    "./calendar-month": {
+      "types": "./dist/calendar-month/calendar-month.d.ts",
+      "import": "./dist/calendar-month.js"
+    },
+    "./calendar-heading": {
+      "types": "./dist/calendar-heading/calendar-heading.d.ts",
+      "import": "./dist/calendar-heading.js"
+    },
+    "./calendar-select-month": {
+      "types": "./dist/calendar-year-month/calendar-select-month.d.ts",
+      "import": "./dist/calendar-select-month.js"
+    },
+    "./calendar-select-year": {
+      "types": "./dist/calendar-year-month/calendar-select-year.d.ts",
+      "import": "./dist/calendar-select-year.js"
     }
   },
   "repository": {
@@ -24,7 +52,8 @@
     "start": "vite",
     "clean": "rm -rf dist docs/dist",
     "prebuild": "npm run clean",
-    "build": "vite build && npm run astro:build",
+    "build": "npm run build:package && npm run astro:build",
+    "build:package": "vite build && vite build --mode standalone",
     "check-types": "attw --pack . --profile esm-only",
     "test": "vitest run",
     "test:ui": "vitest --ui",

@@ -25,6 +25,13 @@ npm install cally
 import "cally";
 ```
 
+Or import only the components you use:
+
+```js
+import "cally/calendar-date";
+import "cally/calendar-month";
+```
+
 ### Via CDN
 
 ```html
