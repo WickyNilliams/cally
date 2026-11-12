@@ -1,4 +1,10 @@
-import { effect, signal, type ReadonlySignal, type Signal } from "./signals.js";
+import {
+  effect,
+  signal,
+  untracked,
+  type ReadonlySignal,
+  type Signal,
+} from "./signals.js";
 
 type PropType =
   | StringConstructor
@@ -22,10 +28,10 @@ export interface Context<T> {
   initial: T;
 }
 
-// requests for context that are yet to find a provider.
-// they are retried whenever a provider is connected, since a consumer
-// can end up connected before its provider (e.g. order of upgrades).
-const pending = new Set<() => void>();
+// incremented whenever a provider is connected, which has consumers look for
+// their provider again. a provider can turn up after its consumers (e.g. the
+// order in which elements are defined), or end up nearer than the one found before.
+const providers = signal(0);
 
 const TRUTHY = /^(|true|1)$/;
 const toAttr = (prop: string) => prop.replace(/[A-Z]/g, "-$&").toLowerCase();
@@ -172,30 +178,30 @@ export abstract class Base<Props = {}> extends HTMLElement {
       (e as CustomEvent<(value: T) => void>).detail(value);
     });
 
-    this.#setup.push(() => pending.forEach((request) => request()));
+    this.#setup.push(() => {
+      untracked(() => providers.value++);
+    });
   }
 
-  /** Gets the value of the nearest provider, re-evaluated on every connect */
+  /** Gets the value of the nearest provider */
   protected consume<T>(context: Context<T>): ReadonlySignal<T> {
     const current = signal(context.initial);
 
-    const request = () =>
+    // this is not done upon connecting, but along with all other effects.
+    // by then everything that was connected in the same task is in place.
+    this.effect(() => {
+      let found = context.initial;
+      providers.value;
+
       this.dispatchEvent(
         new CustomEvent(context.name, {
           bubbles: true,
           composed: true,
-          detail(value: T) {
-            current.value = value;
-            pending.delete(request);
-          },
+          detail: (value: T) => (found = value),
         }),
       );
 
-    this.#setup.push(() => {
-      current.value = context.initial;
-      pending.add(request);
-      request();
-      return () => pending.delete(request);
+      current.value = found;
     });
 
     return current;
