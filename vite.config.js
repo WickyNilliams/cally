@@ -60,7 +60,10 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     browser: {
       enabled: true,
-      provider: playwright(),
+      provider: playwright({
+        // allows tests to force garbage collection, to check for leaks
+        launchOptions: { args: ["--js-flags=--expose-gc"] },
+      }),
       instances: [{ browser: "chromium" }],
       headless: true,
       screenshotFailures: false,
