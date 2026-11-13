@@ -26,6 +26,13 @@ type Setup = () => void | (() => void);
  */
 export type ComponentProps<T> = { [K in keyof Partial<T>]: Partial<T>[K] } & {};
 
+/** The arguments for dispatching an event, given the type of its detail */
+type EmitArgs<Detail> = undefined extends Detail
+  ? [detail?: Detail, bubbles?: boolean]
+  : [detail: Detail, bubbles?: boolean];
+
+type ListenerOptions = boolean | AddEventListenerOptions;
+
 export interface Context<T> {
   /** doubles as the name of the event used to request the context */
   name: string;
@@ -75,14 +82,52 @@ export function setText(node: Node, text: string | number) {
   }
 }
 
+// makes listeners aware of the events a component dispatches. this is purely
+// a matter of types, and is declared here so as to merge with the class below.
+export interface Base<Props, Events> {
+  addEventListener<K extends keyof Events>(
+    type: K,
+    listener: (this: this, event: CustomEvent<Events[K]>) => unknown,
+    options?: ListenerOptions,
+  ): void;
+  addEventListener<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: this, event: HTMLElementEventMap[K]) => unknown,
+    options?: ListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject | null,
+    options?: ListenerOptions,
+  ): void;
+
+  removeEventListener<K extends keyof Events>(
+    type: K,
+    listener: (this: this, event: CustomEvent<Events[K]>) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: this, event: HTMLElementEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject | null,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
+
 /**
  * Just enough base class to serve our needs:
  *
  * - props backed by signals, settable via attributes
  * - a shadow root stamped once from a static template
  * - effects/context that follow the connected lifecycle
+ *
+ * `Events` maps the name of each event it dispatches to the type of its detail.
  */
-export abstract class Base<Props = {}> extends HTMLElement {
+export abstract class Base<Props = {}, Events = {}> extends HTMLElement {
   static props: PropDefs<any> = {};
   static template?: HTMLTemplateElement;
   static styles?: CSSStyleSheet;
@@ -168,7 +213,11 @@ export abstract class Base<Props = {}> extends HTMLElement {
     this.#setup.push(() => effect(fn));
   }
 
-  protected emit(type: string, detail?: unknown, bubbles?: boolean) {
+  /** Dispatches one of the events this component has declared */
+  protected emit<K extends keyof Events & string>(
+    type: K,
+    ...[detail, bubbles]: EmitArgs<Events[K]>
+  ) {
     this.dispatchEvent(new CustomEvent(type, { detail, bubbles }));
   }
 

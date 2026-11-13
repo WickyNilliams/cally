@@ -17,6 +17,7 @@ import {
 import {
   CalendarContext,
   type CalendarType,
+  type DayEvents,
 } from "../calendar-month/CalendarMonthContext.js";
 import { CalendarHeadingContext } from "../calendar-heading/CalendarHeadingContext.js";
 import "../calendar-heading/calendar-heading.js";
@@ -51,23 +52,31 @@ export interface CalendarProps {
   showWeekNumbers: boolean;
 }
 
+/** The events dispatched by every kind of calendar, and the type of their detail */
+export interface CalendarEvents {
+  change: undefined;
+  focusday: Date;
+  pagechange: PageChangeDetail;
+}
+
 /** What every kind of calendar has in common, for exporting as props */
 export interface CalendarElementProps extends CalendarProps {
   focus: (options?: CalendarFocusOptions) => void;
   onChange: (event: Event) => any;
-  onFocusDay: (event: CustomEvent<Date>) => any;
-  onPageChange: (event: CustomEvent<PageChangeDetail>) => any;
+  onFocusDay: (event: CustomEvent<CalendarEvents["focusday"]>) => any;
+  onPageChange: (event: CustomEvent<CalendarEvents["pagechange"]>) => any;
 }
 
 function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
   return (b.year - a.year) * 12 + b.month - a.month;
 }
 
-export interface CalendarBase<Props> extends CalendarProps {}
+export interface CalendarBase<Props, Events> extends CalendarProps {}
 
 export abstract class CalendarBase<
   Props extends CalendarProps = CalendarProps,
-> extends Base<Props> {
+  Events extends CalendarEvents = CalendarEvents,
+> extends Base<Props, Events> {
   static props: PropDefs<CalendarProps> = {
     value: [String, ""],
     min: [String, ""],
@@ -182,7 +191,7 @@ export abstract class CalendarBase<
       this.emit("pagechange", {
         start: toDate(start),
         end: toDate(endOfMonth(page.value.end)),
-      } satisfies PageChangeDetail);
+      });
     };
 
     // focused date change -> update page
@@ -283,9 +292,12 @@ export abstract class CalendarBase<
    * Listens for an event from a descendant.
    * They come from slotted content, so pass through our shadow root on the way to the host.
    */
-  protected on(type: string, fn: (date: PlainDate, e: Event) => void) {
+  protected on<K extends keyof DayEvents>(
+    type: K,
+    fn: (date: DayEvents[K], e: Event) => void,
+  ) {
     this.root.addEventListener(type, (e) =>
-      fn((e as CustomEvent<PlainDate>).detail, e),
+      fn((e as CustomEvent<DayEvents[K]>).detail, e),
     );
   }
 

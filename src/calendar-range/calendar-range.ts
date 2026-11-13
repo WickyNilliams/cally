@@ -6,7 +6,13 @@ import {
   CalendarBase,
   type CalendarElementProps,
   type CalendarProps,
+  type CalendarEvents,
 } from "../calendar-base/calendar-base.js";
+
+interface RangeEvents extends CalendarEvents {
+  rangestart: Date;
+  rangeend: Date;
+}
 
 interface RangeProps extends CalendarProps {
   tentative: string;
@@ -18,14 +24,14 @@ const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
 export type CalendarRangeProps = ComponentProps<
   CalendarElementProps &
     Pick<RangeProps, "tentative"> & {
-      onRangeStart: (event: CustomEvent<Date>) => any;
-      onRangeEnd: (event: CustomEvent<Date>) => any;
+      onRangeStart: (event: CustomEvent<RangeEvents["rangestart"]>) => any;
+      onRangeEnd: (event: CustomEvent<RangeEvents["rangeend"]>) => any;
     }
 >;
 
 export interface CalendarRange extends RangeProps {}
 
-export class CalendarRange extends CalendarBase<RangeProps> {
+export class CalendarRange extends CalendarBase<RangeProps, RangeEvents> {
   static props: PropDefs<RangeProps> = {
     ...CalendarBase.props,
     tentative: [String, ""],

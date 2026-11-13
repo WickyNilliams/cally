@@ -1,6 +1,9 @@
 import { Base, css, template } from "../utils/base.js";
 import type { PlainDate } from "../utils/temporal.js";
-import { CalendarContext } from "../calendar-month/CalendarMonthContext.js";
+import {
+  CalendarContext,
+  type DayEvents,
+} from "../calendar-month/CalendarMonthContext.js";
 import reset from "../utils/reset.css?inline";
 
 export const option = <option part="option" />;
@@ -17,7 +20,10 @@ export const selectTemplate = (label: string, options = "") =>
     </>,
   );
 
-export abstract class SelectBase<Props> extends Base<Props> {
+export abstract class SelectBase<Props> extends Base<
+  Props,
+  Pick<DayEvents, "focusday">
+> {
   static styles = css(reset);
 
   protected context = this.consume(CalendarContext);

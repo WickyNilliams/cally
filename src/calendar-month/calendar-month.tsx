@@ -22,7 +22,7 @@ import {
 import type { PlainDate } from "../utils/temporal.js";
 import { CalendarHeadingContext } from "../calendar-heading/CalendarHeadingContext.js";
 import "../calendar-heading/calendar-heading.js";
-import { CalendarContext } from "./CalendarMonthContext.js";
+import { CalendarContext, type DayEvents } from "./CalendarMonthContext.js";
 import reset from "../utils/reset.css?inline";
 import styles from "./calendar-month.css?inline";
 
@@ -71,15 +71,15 @@ function toggle(
 
 export type CalendarMonthProps = ComponentProps<
   MonthProps & {
-    onSelectDay: (event: CustomEvent<string>) => any;
-    onFocusDay: (event: CustomEvent<string>) => any;
-    onHoverDay: (event: CustomEvent<string>) => any;
+    onSelectDay: (event: CustomEvent<DayEvents["selectday"]>) => any;
+    onFocusDay: (event: CustomEvent<DayEvents["focusday"]>) => any;
+    onHoverDay: (event: CustomEvent<DayEvents["hoverday"]>) => any;
   }
 >;
 
 export interface CalendarMonth extends MonthProps {}
 
-export class CalendarMonth extends Base<MonthProps> {
+export class CalendarMonth extends Base<MonthProps, DayEvents> {
   static props: PropDefs<MonthProps> = {
     offset: [Number, 0],
   };

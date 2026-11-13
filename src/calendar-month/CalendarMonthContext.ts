@@ -4,6 +4,13 @@ import { signal, type ReadonlySignal } from "../utils/signals.js";
 import type { PlainDate } from "../utils/temporal.js";
 import { getToday, type DaysOfWeek } from "../utils/date.js";
 
+/** What descendants of a calendar dispatch, for the calendar to act upon */
+export interface DayEvents {
+  selectday: PlainDate;
+  focusday: PlainDate;
+  hoverday: PlainDate;
+}
+
 export type CalendarType = "date" | "range" | "multi";
 
 export interface CalendarContextValue {
