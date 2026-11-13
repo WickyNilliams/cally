@@ -78,8 +78,9 @@ root.render(<App />)
 
   <p>
     If you are using TypeScript, you can augment React's types to add
-    type-checking and improve your editor experience. Cally exports types for
-    each component's props making this a simple, one-time procedure.
+    type-checking and improve your editor experience. Cally exports types which
+    derive the props and events of each component, making this a simple,
+    one-time procedure.
   </p>
 
   <p>
@@ -92,27 +93,22 @@ root.render(<App />)
     lang="tsx"
     code={`
 import type {
-  CalendarRangeProps,
-  CalendarMonthProps,
-  CalendarDateProps,
-  CalendarMultiProps,
+  CalendarRange,
+  CalendarMonth,
+  CalendarDate,
+  CalendarMulti,
+  ReactProps,
 } from "cally";
 
-type MapEvents<T> = {
-  [K in keyof T as K extends \`on\${infer E}\` ? \`on\${Lowercase<E>}\` : K]: T[K];
-};
+type Props<T> = ReactProps<T> & React.HTMLAttributes<HTMLElement>;
 
 declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      "calendar-month": MapEvents<CalendarMonthProps> &
-        React.HTMLAttributes<HTMLElement>;
-      "calendar-range": MapEvents<CalendarRangeProps> &
-        React.HTMLAttributes<HTMLElement>;
-      "calendar-date": MapEvents<CalendarDateProps> &
-        React.HTMLAttributes<HTMLElement>;
-      "calendar-multi": MapEvents<CalendarMultiProps> &
-        React.HTMLAttributes<HTMLElement>;
+      "calendar-month": Props<CalendarMonth>;
+      "calendar-range": Props<CalendarRange>;
+      "calendar-date": Props<CalendarDate>;
+      "calendar-multi": Props<CalendarMulti>;
     }
   }
 }
@@ -237,8 +233,9 @@ function onChange(event) {
 
   <p>
     If you are using TypeScript, you can augment Vue's types to add
-    type-checking and improve your editor experience. Cally exports types for
-    each component's props making this a simple, one-time procedure.
+    type-checking and improve your editor experience. Cally exports types which
+    derive the props and events of each component, making this a simple,
+    one-time procedure.
   </p>
 
   <p>
@@ -252,15 +249,16 @@ function onChange(event) {
     code={`
 import type { DefineComponent } from "vue";
 import type {
-  CalendarRangeProps,
-  CalendarMonthProps,
-  CalendarDateProps,
+  CalendarRange,
+  CalendarMonth,
+  CalendarDate,
+  VueProps,
 } from "cally";
 
 interface CallyComponents {
-  "calendar-range": DefineComponent<CalendarRangeProps>;
-  "calendar-date": DefineComponent<CalendarDateProps>;
-  "calendar-month": DefineComponent<CalendarMonthProps>;
+  "calendar-range": DefineComponent<VueProps<CalendarRange>>;
+  "calendar-date": DefineComponent<VueProps<CalendarDate>>;
+  "calendar-month": DefineComponent<VueProps<CalendarMonth>>;
 }
 
 declare module "vue" {
@@ -333,8 +331,9 @@ declare global {
 
   <p>
     If you are using TypeScript, you can augment Svelte's types to add
-    type-checking and improve your editor experience. Cally exports types for
-    each component's props making this a simple, one-time procedure.
+    type-checking and improve your editor experience. Cally exports types which
+    derive the props and events of each component, making this a simple,
+    one-time procedure.
   </p>
 
   <p>
@@ -347,20 +346,17 @@ declare global {
     lang="typescript"
     code={`
 import type {
-  CalendarRangeProps,
-  CalendarMonthProps,
-  CalendarDateProps,
+  CalendarRange,
+  CalendarMonth,
+  CalendarDate,
+  SvelteProps,
 } from "cally";
-
-type MapEvents<T> = {
-  [K in keyof T as K extends \`on\${infer E}\` ? \`on:\${Lowercase<E>}\` : K]: T[K];
-};
 
 declare module "svelte/elements" {
   interface SvelteHTMLElements {
-    "calendar-range": MapEvents<CalendarRangeProps>;
-    "calendar-month": MapEvents<CalendarMonthProps>;
-    "calendar-date": MapEvents<CalendarDateProps>;
+    "calendar-range": SvelteProps<CalendarRange>;
+    "calendar-month": SvelteProps<CalendarMonth>;
+    "calendar-date": SvelteProps<CalendarDate>;
   }
 }
 `.trim()}

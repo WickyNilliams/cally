@@ -1,10 +1,9 @@
-import type { ComponentProps, PropDefs } from "../utils/base.js";
+import type { PropDefs } from "../utils/base.js";
 import { computed, signal } from "../utils/signals.js";
 import { parseDate, toDate } from "../utils/date.js";
 import { PlainDate } from "../utils/temporal.js";
 import {
   CalendarBase,
-  type CalendarElementProps,
   type CalendarProps,
   type CalendarEvents,
 } from "../calendar-base/calendar-base.js";
@@ -20,14 +19,6 @@ interface RangeProps extends CalendarProps {
 
 const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
   PlainDate.compare(a, b) < 0 ? [a, b] : [b, a];
-
-export type CalendarRangeProps = ComponentProps<
-  CalendarElementProps &
-    Pick<RangeProps, "tentative"> & {
-      onRangeStart: (event: CustomEvent<RangeEvents["rangestart"]>) => any;
-      onRangeEnd: (event: CustomEvent<RangeEvents["rangeend"]>) => any;
-    }
->;
 
 export interface CalendarRange extends RangeProps {}
 

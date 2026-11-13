@@ -1,13 +1,7 @@
 import { computed } from "../utils/signals.js";
 import { parseDate } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
-import {
-  CalendarBase,
-  type CalendarElementProps,
-} from "../calendar-base/calendar-base.js";
-import type { ComponentProps } from "../utils/base.js";
-
-export type CalendarMultiProps = ComponentProps<CalendarElementProps>;
+import { CalendarBase } from "../calendar-base/calendar-base.js";
 
 export class CalendarMulti extends CalendarBase {
   protected parsed = computed(() =>

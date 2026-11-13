@@ -22,6 +22,7 @@ export const selectTemplate = (label: string, options = "") =>
 
 export abstract class SelectBase<Props> extends Base<
   Props,
+  {},
   Pick<DayEvents, "focusday">
 > {
   static styles = css(reset);

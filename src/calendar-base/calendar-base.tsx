@@ -59,14 +59,6 @@ export interface CalendarEvents {
   pagechange: PageChangeDetail;
 }
 
-/** What every kind of calendar has in common, for exporting as props */
-export interface CalendarElementProps extends CalendarProps {
-  focus: (options?: CalendarFocusOptions) => void;
-  onChange: (event: Event) => any;
-  onFocusDay: (event: CustomEvent<CalendarEvents["focusday"]>) => any;
-  onPageChange: (event: CustomEvent<CalendarEvents["pagechange"]>) => any;
-}
-
 function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
   return (b.year - a.year) * 12 + b.month - a.month;
 }

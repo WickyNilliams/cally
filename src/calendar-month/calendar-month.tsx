@@ -4,7 +4,6 @@ import {
   setAttr,
   setText,
   template,
-  type ComponentProps,
   type PropDefs,
 } from "../utils/base.js";
 import { computed } from "../utils/signals.js";
@@ -69,11 +68,9 @@ function toggle(
   }
 }
 
-export type CalendarMonthProps = ComponentProps<MonthProps>;
-
 export interface CalendarMonth extends MonthProps {}
 
-export class CalendarMonth extends Base<MonthProps, DayEvents> {
+export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
   static props: PropDefs<MonthProps> = {
     offset: [Number, 0],
   };

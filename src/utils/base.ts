@@ -21,11 +21,6 @@ type PropSignals<Props> = { [K in keyof Props]-?: Signal<Props[K]> };
 
 type Setup = () => void | (() => void);
 
-/**
- * The props of a component, as exported for use in react/vue/etc
- */
-export type ComponentProps<T> = { [K in keyof Partial<T>]: Partial<T>[K] } & {};
-
 /** The arguments for dispatching an event, given the type of its detail */
 type EmitArgs<Detail> = undefined extends Detail
   ? [detail?: Detail, bubbles?: boolean]
@@ -84,7 +79,7 @@ export function setText(node: Node, text: string | number) {
 
 // makes listeners aware of the events a component dispatches. this is purely
 // a matter of types, and is declared here so as to merge with the class below.
-export interface Base<Props, Events> {
+export interface Base<Props, Events, Internal> {
   addEventListener<K extends keyof Events>(
     type: K,
     listener: (this: this, event: CustomEvent<Events[K]>) => unknown,
@@ -126,8 +121,13 @@ export interface Base<Props, Events> {
  * - effects/context that follow the connected lifecycle
  *
  * `Events` maps the name of each event it dispatches to the type of its detail.
+ * `Internal` is the same, for events which are not meant for public use.
  */
-export abstract class Base<Props = {}, Events = {}> extends HTMLElement {
+export abstract class Base<
+  Props = {},
+  Events = {},
+  Internal = {},
+> extends HTMLElement {
   static props: PropDefs<any> = {};
   static template?: HTMLTemplateElement;
   static styles?: CSSStyleSheet;
@@ -144,10 +144,10 @@ export abstract class Base<Props = {}, Events = {}> extends HTMLElement {
       const initial = this.props[name]![1];
 
       Object.defineProperty(this.prototype, name, {
-        get(this: Base<any>) {
+        get(this: Base<any, any, any>) {
           return this.$[name]!.value;
         },
-        set(this: Base<any>, value) {
+        set(this: Base<any, any, any>, value) {
           this.$[name]!.value = value ?? initial;
         },
       });
@@ -155,6 +155,9 @@ export abstract class Base<Props = {}, Events = {}> extends HTMLElement {
 
     customElements.define(tag, this as unknown as CustomElementConstructor);
   }
+
+  /** Exists only so that the type of the public events can be inferred */
+  declare protected readonly _events?: Events;
 
   /** The signals backing each prop */
   protected $ = {} as PropSignals<Props>;
@@ -214,9 +217,9 @@ export abstract class Base<Props = {}, Events = {}> extends HTMLElement {
   }
 
   /** Dispatches one of the events this component has declared */
-  protected emit<K extends keyof Events & string>(
+  protected emit<K extends keyof (Events & Internal) & string>(
     type: K,
-    ...[detail, bubbles]: EmitArgs<Events[K]>
+    ...[detail, bubbles]: EmitArgs<(Events & Internal)[K]>
   ) {
     this.dispatchEvent(new CustomEvent(type, { detail, bubbles }));
   }

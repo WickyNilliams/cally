@@ -1,4 +1,4 @@
-import { template, type ComponentProps, type PropDefs } from "../utils/base.js";
+import { template, type PropDefs } from "../utils/base.js";
 import type { PlainDate } from "../utils/temporal.js";
 import {
   SelectBase,
@@ -11,8 +11,6 @@ interface SelectYearProps {
 }
 
 const optionTemplate = template(option);
-
-export type CalendarSelectYearProps = ComponentProps<SelectYearProps>;
 
 export interface CalendarSelectYear extends SelectYearProps {}
 
