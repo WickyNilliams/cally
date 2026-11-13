@@ -69,13 +69,7 @@ function toggle(
   }
 }
 
-export type CalendarMonthProps = ComponentProps<
-  MonthProps & {
-    onSelectDay: (event: CustomEvent<DayEvents["selectday"]>) => any;
-    onFocusDay: (event: CustomEvent<DayEvents["focusday"]>) => any;
-    onHoverDay: (event: CustomEvent<DayEvents["hoverday"]>) => any;
-  }
->;
+export type CalendarMonthProps = ComponentProps<MonthProps>;
 
 export interface CalendarMonth extends MonthProps {}
 
