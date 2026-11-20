@@ -1,6 +1,6 @@
+/** @jsxImportSource test-jsx */
 import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
-import type { VNodeAny } from "atomico/types/vnode";
 import {
   clickDay,
   createSpy,
@@ -23,10 +23,10 @@ type TestProps = {
   max: string;
   today: string;
   months?: number;
-  children?: VNodeAny;
+  children?: Element;
 };
 
-function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
+function Fixture({ children, ...props }: Partial<TestProps>): Element {
   return (
     <CalendarMulti {...props} locale="en-GB">
       {children ?? <CalendarMonth />}
