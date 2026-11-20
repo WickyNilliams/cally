@@ -15,7 +15,6 @@ import {
   getFormatter,
   getToday,
   getViewOfMonth,
-  getWeekNumber,
   startOfWeek,
   toDate,
 } from "../utils/date.js";
@@ -192,6 +191,7 @@ export class CalendarMonth extends Base<MonthProps> {
       const focusedDate = ctx.focusedDate.value;
       const isDateDisallowed = ctx.isDateDisallowed.value;
       const getDayParts = ctx.getDayParts.value;
+      const getWeekNumber = ctx.getWeekNumber.value;
       const showOutsideDays = ctx.showOutsideDays.value;
       const [start, end] = ctx.value.value;
 
@@ -200,7 +200,7 @@ export class CalendarMonth extends Base<MonthProps> {
       weeks.forEach((week, i) => {
         const date = dates[i * 7];
         toggle(tbody, week, date);
-        if (date) setText(weekNumbers[i]!, getWeekNumber(date));
+        if (date) setText(weekNumbers[i]!, getWeekNumber(toDate(date)));
       });
 
       buttons.forEach((button, i) => {

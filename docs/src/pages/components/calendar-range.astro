@@ -114,8 +114,13 @@ import Link from "../../components/Link.astro";
     </tr>
     <tr>
       <td><code>showWeekNumbers</code></td>
-      <td>show-week-numbers</td>
-      <td>Whether to show week numbers</td>
+      <td><code>show-week-numbers</code></td>
+      <td>
+        Whether to show week numbers. By default these are ISO week numbers,
+        taken from the first day of each week. ISO weeks start on Monday, so if
+        <code>firstDayOfWeek</code> is another day, each week shown spans two ISO
+        weeks. Use <code>getWeekNumber</code> to number weeks differently
+      </td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
     </tr>
@@ -172,6 +177,16 @@ import Link from "../../components/Link.astro";
       </td>
       <td><code>(date: Date) =&gt; string</code></td>
       <td><code>() =&gt; ""</code></td>
+    </tr>
+    <tr>
+      <td><code>getWeekNumber</code></td>
+      <td>-</td>
+      <td>
+        A function that takes the first day of a week and returns its number,
+        when <code>showWeekNumbers</code> is set
+      </td>
+      <td><code>(date: Date) =&gt; number</code></td>
+      <td>ISO week number</td>
     </tr>
   </Table>
 

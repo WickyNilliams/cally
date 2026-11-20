@@ -865,5 +865,56 @@ describe("CalendarMonth", () => {
           .toHaveTextContent(expectedWeeks[i]!.toString());
       }
     });
+
+    it("numbers each week by the ISO week of its first day", async () => {
+      // ISO weeks start on a Monday, so with weeks starting on a Sunday each
+      // row's first day is the last day of an ISO week.
+      const month = await mount(
+        <Fixture
+          focusedDate={PlainDate.from("2025-01-01")}
+          showWeekNumbers
+          firstDayOfWeek={0}
+        />,
+      );
+
+      // rows start on 29 Dec, 5 Jan, 12 Jan, 19 Jan, 26 Jan
+      const weekNumbers = [...getWeekNumbers(month)];
+      expect(weekNumbers.map((th) => th.textContent)).toEqual([
+        "52",
+        "1",
+        "2",
+        "3",
+        "4",
+      ]);
+    });
+
+    it("supports custom week numbering", async () => {
+      const spy = createSpy((date: Date) => date.getUTCDate());
+      const month = await mount(
+        <Fixture
+          focusedDate={PlainDate.from("2020-01-01")}
+          showWeekNumbers
+          getWeekNumber={spy}
+        />,
+      );
+
+      // called with the first day of each week, at midnight UTC
+      expect(spy.calls.map(([date]) => date.toISOString())).toEqual([
+        "2019-12-30T00:00:00.000Z",
+        "2020-01-06T00:00:00.000Z",
+        "2020-01-13T00:00:00.000Z",
+        "2020-01-20T00:00:00.000Z",
+        "2020-01-27T00:00:00.000Z",
+      ]);
+
+      const weekNumbers = [...getWeekNumbers(month)];
+      expect(weekNumbers.map((th) => th.textContent)).toEqual([
+        "30",
+        "6",
+        "13",
+        "20",
+        "27",
+      ]);
+    });
   });
 });

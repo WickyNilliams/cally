@@ -10,6 +10,7 @@ import {
   clamp,
   endOfMonth,
   getToday,
+  getWeekNumber,
   parseDate,
   toDate,
   type DaysOfWeek,
@@ -42,6 +43,7 @@ export interface CalendarProps {
   isDateDisallowed: (date: Date) => boolean;
   formatWeekday: "narrow" | "short";
   getDayParts: (date: Date) => string;
+  getWeekNumber: (date: Date) => number;
   firstDayOfWeek: DaysOfWeek;
   showOutsideDays: boolean;
   locale: string | undefined;
@@ -76,6 +78,7 @@ export abstract class CalendarBase<
     isDateDisallowed: [Function, () => false],
     formatWeekday: [String, "narrow"],
     getDayParts: [Function, () => ""],
+    getWeekNumber: [Function, getWeekNumber],
     firstDayOfWeek: [Number, 1],
     showOutsideDays: [Boolean, false],
     locale: [String],

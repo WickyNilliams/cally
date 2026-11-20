@@ -5,7 +5,7 @@ import {
 } from "../calendar-heading/CalendarHeadingContext.js";
 import { signal, type ReadonlySignal } from "../utils/signals.js";
 import type { PlainDate } from "../utils/temporal.js";
-import { getToday, type DaysOfWeek } from "../utils/date.js";
+import { getToday, getWeekNumber, type DaysOfWeek } from "../utils/date.js";
 
 export type CalendarType = "date" | "range" | "multi";
 
@@ -24,6 +24,8 @@ export interface CalendarContextValue {
   firstDayOfWeek: ReadonlySignal<DaysOfWeek>;
   isDateDisallowed: ReadonlySignal<((date: Date) => boolean) | undefined>;
   getDayParts: ReadonlySignal<((date: Date) => string) | undefined>;
+  /** given the first day of a week, as shown */
+  getWeekNumber: ReadonlySignal<(date: Date) => number>;
   page: ReadonlySignal<Page>;
   focusedDate: ReadonlySignal<PlainDate>;
   showOutsideDays: ReadonlySignal<boolean | undefined>;
@@ -49,6 +51,7 @@ export const CalendarContext: Context<CalendarContextValue> = {
     firstDayOfWeek: signal(1),
     isDateDisallowed: none,
     getDayParts: none,
+    getWeekNumber: signal(getWeekNumber),
     focusedDate: signal(t),
     showOutsideDays: none,
     showWeekNumbers: none,

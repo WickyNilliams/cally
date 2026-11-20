@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `getWeekNumber` option to `<calendar-date>`, `<calendar-range>`, and `<calendar-multi>` components, for custom week numbering.
 - Each component can be imported individually, e.g. `import "cally/calendar-date"`.
 
 ### Fixed
