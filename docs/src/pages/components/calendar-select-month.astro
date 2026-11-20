@@ -1,7 +1,6 @@
 ---
 import ApiLayout from "../../layouts/ApiLayout.astro";
-import Table from "../../components/Table.astro";
-import Heading from "../../components/Heading.astro";
+import ApiReference from "../../components/ApiReference.astro";
 import Link from "../../components/Link.astro";
 import Example from "../../components/Example.astro";
 ---
@@ -35,57 +34,14 @@ import Example from "../../components/Example.astro";
     </calendar-date>
   </Example>
 
-  <Heading level={2}>Properties and attributes</Heading>
-
-  <Table>
-    <tr slot="head">
-      <th>Property</th>
-      <th>Attribute</th>
-      <th>Description</th>
-      <th>Type</th>
-      <th>Default</th>
-    </tr>
-
-    <tr>
-      <td><code>formatMonth</code></td>
-      <td><code>format-month</code></td>
-      <td>
-        Whether months have long ("January") or short ("Jan") names. Names are
-        dependent on the calendar's <code>locale</code>
-      </td>
-      <td><code>"short" | "long"</code></td>
-      <td><code>"long"</code></td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>CSS Parts</Heading>
-
-  <p>
-    CSS parts allow for fine-grained styling and theming. They target specific
-    elements inside the component.
-  </p>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-
-    <tr>
-      <td><code>label</code></td>
-      <td>
-        The <code>&lt;label&gt;</code> for the <code>&lt;select&gt;</code>
-      </td>
-    </tr>
-    <tr>
-      <td><code>select</code></td>
-      <td> The <code>&lt;select&gt;</code> element itself</td>
-    </tr>
-    <tr>
-      <td><code>option</code></td>
-      <td>The <code>&lt;option&gt;</code> for each month</td>
-    </tr>
-  </Table>
+  <ApiReference tag="calendar-select-month">
+    <Fragment slot="parts">
+      <p>
+        CSS parts allow for fine-grained styling and theming. They target specific
+        elements inside the component.
+      </p>
+    </Fragment>
+  </ApiReference>
 </ApiLayout>
 
 <style is:global>

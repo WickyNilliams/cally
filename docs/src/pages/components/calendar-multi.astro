@@ -1,8 +1,7 @@
 ---
 import ApiLayout from "../../layouts/ApiLayout.astro";
 import Example from "../../components/Example.astro";
-import Table from "../../components/Table.astro";
-import Heading from "../../components/Heading.astro";
+import ApiReference from "../../components/ApiReference.astro";
 import Link from "../../components/Link.astro";
 ---
 
@@ -33,310 +32,31 @@ import Link from "../../components/Link.astro";
     </calendar-multi>
   </Example>
 
-  <Heading level={2}>Properties and attributes</Heading>
+  <ApiReference tag="calendar-multi">
+    <Fragment slot="props">
+      <p>All dates are expected in ISO-8601 format (<code>YYYY-MM-DD</code>).</p>
+    </Fragment>
 
-  <p>All dates are expected in ISO-8601 format (<code>YYYY-MM-DD</code>).</p>
+    <Fragment slot="events">
+      <p>
+        Emits non-bubbling <code>CustomEvents</code> in response to user interaction.
+      </p>
+    </Fragment>
 
-  <Table>
-    <tr slot="head">
-      <th>Property</th>
-      <th>Attribute</th>
-      <th>Description</th>
-      <th>Type</th>
-      <th>Default</th>
-    </tr>
+    <Fragment slot="parts">
+      <p>
+        CSS parts allow for fine-grained styling and theming. They target specific
+        elements inside the component. An element may have multiple parts, and a
+        part may be used on multiple elements. They can be used in isolation, or
+        combined.
+      </p>
 
-    <tr>
-      <td><code>value</code></td>
-      <td><code>value</code></td>
-      <td>A space-separated list of selected dates</td>
-      <td><code>string</code></td>
-      <td><code>""</code></td>
-    </tr>
-    <tr>
-      <td><code>min</code></td>
-      <td><code>min</code></td>
-      <td>The earliest date that can be selected</td>
-      <td><code>string</code></td>
-      <td><code>""</code></td>
-    </tr>
-    <tr>
-      <td><code>max</code></td>
-      <td><code>max</code></td>
-      <td>The latest date that can be selected</td>
-      <td><code>string</code></td>
-      <td><code>""</code></td>
-    </tr>
-    <tr>
-      <td><code>today</code></td>
-      <td><code>today</code></td>
-      <td>The date that is considered today</td>
-      <td><code>string</code></td>
-      <td><code>""</code></td>
-    </tr>
-    <tr>
-      <td><code>focusedDate</code></td>
-      <td><code>focused-date</code></td>
-      <td>The date that is considered "focused" by the calendar</td>
-      <td><code>string</code></td>
-      <td><code>undefined</code></td>
-    </tr>
-    <tr>
-      <td><code>firstDayOfWeek</code></td>
-      <td><code>first-day-of-week</code></td>
-      <td>
-        The first day of the week, where Sunday is <code>0</code>, Monday is
-        <code>1</code>, etc
-      </td>
-      <td><code>number</code></td>
-      <td><code>1</code></td>
-    </tr>
-    <tr>
-      <td><code>showOutsideDays</code></td>
-      <td><code>show-outside-days</code></td>
-      <td>Whether to show days outside the month</td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-    </tr>
-    <tr>
-      <td><code>showWeekNumbers</code></td>
-      <td><code>show-week-numbers</code></td>
-      <td>
-        Whether to show week numbers. By default these are ISO week numbers,
-        taken from the first day of each week. ISO weeks start on Monday, so if
-        <code>firstDayOfWeek</code> is another day, each week shown spans two ISO
-        weeks. Use <code>getWeekNumber</code> to number weeks differently
-      </td>
-      <td><code>boolean</code></td>
-      <td><code>false</code></td>
-    </tr>
-    <tr>
-      <td><code>locale</code></td>
-      <td><code>locale</code></td>
-      <td>
-        The locale for formatting dates. If not set, will use the browser's
-        locale
-      </td>
-      <td><code>string | undefined</code></td>
-      <td><code>undefined</code></td>
-    </tr>
-    <tr>
-      <td><code>months</code></td>
-      <td><code>months</code></td>
-      <td>The number of months to display per page</td>
-      <td><code>number</code></td>
-      <td><code>1</code></td>
-    </tr>
-    <tr>
-      <td><code>pageBy</code></td>
-      <td><code>page-by</code></td>
-      <td>
-        Whether next and previous should move by number of <code>months</code> or
-        by a single month at a time
-      </td>
-      <td><code>"months" | "single"</code></td>
-      <td><code>"months"</code></td>
-    </tr>
-    <tr>
-      <td><code>formatWeekday</code></td>
-      <td><code>format-weekday</code></td>
-      <td> Controls the format of the weekday headers in the month table </td>
-      <td><code>"narrow" | "short"</code></td>
-      <td><code>"narrow"</code></td>
-    </tr>
-    <tr>
-      <td><code>isDateDisallowed</code></td>
-      <td>-</td>
-      <td>
-        A function that takes a date and returns <code>true</code> if the date should
-        not be selectable
-      </td>
-      <td><code>(date: Date) =&gt; boolean</code></td>
-      <td><code>() =&gt; false</code></td>
-    </tr>
-    <tr>
-      <td><code>getDayParts</code></td>
-      <td>-</td>
-      <td>
-        A function that takes a date and returns a string of CSS parts, allowing
-        custom styling for individual dates
-      </td>
-      <td><code>(date: Date) =&gt; string</code></td>
-      <td><code>() =&gt; ""</code></td>
-    </tr>
-    <tr>
-      <td><code>getWeekNumber</code></td>
-      <td>-</td>
-      <td>
-        A function that takes the first day of a week and returns its number,
-        when <code>showWeekNumbers</code> is set
-      </td>
-      <td><code>(date: Date) =&gt; number</code></td>
-      <td>ISO week number</td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>Events</Heading>
-
-  <p>
-    Emits non-bubbling <code>CustomEvents</code> in response to user interaction.
-  </p>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Description</th>
-      <th>Type</th>
-    </tr>
-
-    <tr>
-      <td><code>change</code></td>
-      <td>
-        Emitted when the <code>value</code> changes via user interaction. Not emitted
-        when <code>value</code> is programmatically changed
-      </td>
-      <td><code>Event</code></td>
-    </tr>
-    <tr>
-      <td><code>focusday</code></td>
-      <td>
-        Emitted when the currently focused day changes. This can happen via
-        keyboard commands, or clicking the next or previous buttons
-      </td>
-      <td><code>CustomEvent&lt;Date&gt;</code></td>
-    </tr>
-    <tr>
-      <td><code>pagechange</code></td>
-      <td>Emitted when the visible months change</td>
-      <td>
-        <code>
-          CustomEvent&lt;{"{"} start: Date; end: Date {"}"}&gt;
-        </code>
-      </td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>Methods</Heading>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Parameters</th>
-      <th>Description</th>
-    </tr>
-
-    <tr>
-      <td>
-        <code>
-          focus(options?: FocusOptions & {"{"} target: "previous" | "next" | "day"
-          {"}"}) => void
-        </code>
-      </td>
-      <td><code>options</code> - controls what gets focused, and how</td>
-      <td>
-        Focuses the <code>&lt;calendar-month&gt;</code> containing the currently
-        focused date. <code>option.target</code> controls which part of the component
-        gets focused
-      </td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>CSS Parts</Heading>
-
-  <p>
-    CSS parts allow for fine-grained styling and theming. They target specific
-    elements inside the component. An element may have multiple parts, and a
-    part may be used on multiple elements. They can be used in isolation, or
-    combined.
-  </p>
-
-  <p>
-    See the guide on <Link href="/guides/theming/">theming</Link> for a walkthrough
-    of how to style this component.
-  </p>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-
-    <tr>
-      <td><code>container</code></td>
-      <td>The container for the entire component</td>
-    </tr>
-    <tr>
-      <td><code>header</code></td>
-      <td>The container for <code>heading</code> and <code>button</code>s</td>
-    </tr>
-    <tr>
-      <td><code>button</code></td>
-      <td>Any button within the component</td>
-    </tr>
-    <tr>
-      <td><code>previous</code></td>
-      <td>The previous page <code>button</code></td>
-    </tr>
-    <tr>
-      <td><code>next</code></td>
-      <td>The next page <code>button</code></td>
-    </tr>
-    <tr>
-      <td><code>disabled</code></td>
-      <td>A <code>button</code> that is disabled due to min/max</td>
-    </tr>
-    <tr>
-      <td><code>heading</code></td>
-      <td>The heading that labels the calendar</td>
-    </tr>
-    <tr>
-      <td><code>months</code></td>
-      <td>
-        The default slot, where <code>&lt;calendar-month&gt;</code>s get
-        rendered
-      </td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>Slots</Heading>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-
-    <tr>
-      <td>Default slot</td>
-      <td>
-        The default slot is where you place your
-        <code>&lt;calendar-month&gt;</code> components, along with any other markup.
-        Note <code>&lt;calendar-month&gt;</code> does not need to be a direct descendant
-      </td>
-    </tr>
-    <tr>
-      <td><code>previous</code></td>
-      <td>
-        The inner content of the previous page button. By default uses text
-        "Previous". You will likely want to slot an icon here
-      </td>
-    </tr>
-    <tr>
-      <td><code>next</code></td>
-      <td>
-        The inner content of the next page button. By default uses text "Next".
-        You will likely want to slot an icon here
-      </td>
-    </tr>
-    <tr>
-      <td><code>heading</code></td>
-      <td>
-        By default displays the visible heading for the component. You may want
-        to replace this with a year select. A separate visually-hidden heading
-        is always rendered for accessibility purposes
-      </td>
-    </tr>
-  </Table>
+      <p>
+        See the guide on <Link href="/guides/theming/">theming</Link> for a walkthrough
+        of how to style this component.
+      </p>
+    </Fragment>
+  </ApiReference>
 </ApiLayout>
 
 <style is:global>

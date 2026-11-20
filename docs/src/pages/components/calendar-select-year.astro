@@ -1,7 +1,6 @@
 ---
 import ApiLayout from "../../layouts/ApiLayout.astro";
-import Table from "../../components/Table.astro";
-import Heading from "../../components/Heading.astro";
+import ApiReference from "../../components/ApiReference.astro";
 import Link from "../../components/Link.astro";
 import Example from "../../components/Example.astro";
 ---
@@ -36,60 +35,14 @@ import Example from "../../components/Example.astro";
     </calendar-date>
   </Example>
 
-  <Heading level={2}>Properties and attributes</Heading>
-
-  <Table>
-    <tr slot="head">
-      <th>Property</th>
-      <th>Attribute</th>
-      <th>Description</th>
-      <th>Type</th>
-      <th>Default</th>
-    </tr>
-
-    <tr>
-      <td><code>maxYears</code></td>
-      <td><code>max-years</code></td>
-      <td>
-        The maximum number of years to display, centered around the focused
-        year. The range is constrained by any <code>min</code> and <code
-          >max</code
-        >
-        values from the parent calendar, which may result in fewer years being shown.
-      </td>
-      <td><code>number</code></td>
-      <td><code>20</code></td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>CSS Parts</Heading>
-
-  <p>
-    CSS parts allow for fine-grained styling and theming. They target specific
-    elements inside the component.
-  </p>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-
-    <tr>
-      <td><code>label</code></td>
-      <td>
-        The <code>&lt;label&gt;</code> for the <code>&lt;select&gt;</code>
-      </td>
-    </tr>
-    <tr>
-      <td><code>select</code></td>
-      <td>The <code>&lt;select&gt;</code> element itself</td>
-    </tr>
-    <tr>
-      <td><code>option</code></td>
-      <td>The <code>&lt;option&gt;</code> for each year</td>
-    </tr>
-  </Table>
+  <ApiReference tag="calendar-select-year">
+    <Fragment slot="parts">
+      <p>
+        CSS parts allow for fine-grained styling and theming. They target specific
+        elements inside the component.
+      </p>
+    </Fragment>
+  </ApiReference>
 </ApiLayout>
 
 <style is:global>

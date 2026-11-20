@@ -55,12 +55,13 @@
     "clean": "rm -rf dist docs/dist",
     "prebuild": "npm run clean",
     "build": "npm run build:package && npm run astro:build",
-    "build:package": "vite build && vite build --mode standalone && cem analyze --quiet",
+    "build:package": "vite build && vite build --mode standalone && npm run analyze",
+    "analyze": "cem analyze --quiet",
     "check-types": "attw --pack . --profile esm-only",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "astro:dev": "astro dev --root ./docs",
-    "astro:build": "astro check --root ./docs && astro build --root ./docs",
+    "astro:dev": "npm run analyze && astro dev --root ./docs",
+    "astro:build": "npm run analyze && astro check --root ./docs && astro build --root ./docs",
     "astro:preview": "astro preview --root ./docs"
   },
   "devDependencies": {

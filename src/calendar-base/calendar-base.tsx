@@ -45,32 +45,32 @@ export interface CalendarProps {
   max: string;
   /** The date that is considered today */
   today: string;
-  /** A function that takes a date and returns `true` if the date should not be selectable */
-  isDateDisallowed: (date: Date) => boolean;
-  /** Controls the format of the weekday headers in the month table */
-  formatWeekday: "narrow" | "short";
-  /** A function that takes a date and returns a string of CSS parts, allowing custom styling for individual dates */
-  getDayParts: (date: Date) => string;
-  /** A function that takes the first day of a week and returns its number, when `showWeekNumbers` is set. Defaults to ISO week numbers */
-  getWeekNumber: (date: Date) => number;
+  /** The date that is considered "focused" by the calendar */
+  focusedDate: string | undefined;
   /** The first day of the week, where Sunday is 0, Monday is 1, etc */
   firstDayOfWeek: DaysOfWeek;
   /** Whether to show days outside the month */
   showOutsideDays: boolean;
-  /** The locale for formatting dates. If not set, will use the browser's locale */
-  locale: string | undefined;
-  /** The number of months to display per page */
-  months: number;
-  /** The date that is considered "focused" by the calendar */
-  focusedDate: string | undefined;
-  /** Whether next and previous should move by number of `months` or by a single month at a time */
-  pageBy: Pagination;
   /**
    * Whether to show week numbers. By default these are ISO week numbers, taken from the first day of each week.
    * ISO weeks start on Monday, so if `firstDayOfWeek` is another day, each week shown spans two ISO weeks.
    * Use `getWeekNumber` to number weeks differently
    */
   showWeekNumbers: boolean;
+  /** The locale for formatting dates. If not set, will use the browser's locale */
+  locale: string | undefined;
+  /** The number of months to display per page */
+  months: number;
+  /** Whether next and previous should move by number of `months` or by a single month at a time */
+  pageBy: Pagination;
+  /** Controls the format of the weekday headers in the month table */
+  formatWeekday: "narrow" | "short";
+  /** A function that takes a date and returns `true` if the date should not be selectable */
+  isDateDisallowed: (date: Date) => boolean;
+  /** A function that takes a date and returns a string of CSS parts, allowing custom styling for individual dates */
+  getDayParts: (date: Date) => string;
+  /** A function that takes the first day of a week and returns its number, when `showWeekNumbers` is set. Defaults to ISO week numbers */
+  getWeekNumber: (date: Date) => number;
 }
 
 /** The events dispatched by every kind of calendar, and the type of their detail */

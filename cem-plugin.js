@@ -41,6 +41,34 @@ export default function cally({ tsconfig = "tsconfig.json" } = {}) {
       d.getSourceFile().fileName.startsWith(src),
     );
 
+  /**
+   * Prints a type as written in the source, so unions keep their order.
+   * Our own aliases and interfaces are expanded, as they aren't exported.
+   */
+  function printNode(node) {
+    if (ts.isUnionTypeNode(node)) return node.types.map(printNode).join(" | ");
+
+    if (ts.isTypeReferenceNode(node)) {
+      let symbol = checker.getSymbolAtLocation(node.typeName);
+      if (symbol && symbol.flags & ts.SymbolFlags.Alias) {
+        symbol = checker.getAliasedSymbol(symbol);
+      }
+
+      if (isOurs(symbol)) {
+        const decl = symbol.declarations[0];
+        return ts.isTypeAliasDeclaration(decl)
+          ? printNode(decl.type)
+          : print(checker.getTypeFromTypeNode(node));
+      }
+    }
+
+    return node.getText();
+  }
+
+  /** The type of a declaration, as written if possible */
+  const typeOf = (decl, type) =>
+    decl?.type ? printNode(decl.type) : print(type);
+
   /** Prints a type, expanding our own aliases and interfaces into what they hold */
   function print(type) {
     if (type.aliasSymbol && isOurs(type.aliasSymbol) && type.isUnion()) {
@@ -238,9 +266,22 @@ export default function cally({ tsconfig = "tsconfig.json" } = {}) {
           const members = [];
           const attributes = [];
 
-          for (const { name } of checker.getPropertiesOfType(
-            checker.getTypeOfSymbolAtLocation(propsSymbol, classDecl),
-          )) {
+          // those of base classes come first, in the order they are declared
+          const files = chainOf(classDecl).map((d) => d.getSourceFile());
+          const propNames = checker
+            .getPropertiesOfType(
+              checker.getTypeOfSymbolAtLocation(propsSymbol, classDecl),
+            )
+            .map((p, i) => ({
+              name: p.name,
+              i,
+              depth: files.indexOf(
+                instance.getProperty(p.name).declarations[0].getSourceFile(),
+              ),
+            }))
+            .sort((a, b) => b.depth - a.depth || a.i - b.i);
+
+          for (const { name } of propNames) {
             const symbol = instance.getProperty(name);
             const type = checker.getTypeOfSymbolAtLocation(symbol, classDecl);
             const def = findPropDef(propsTable, name);
@@ -256,12 +297,13 @@ export default function cally({ tsconfig = "tsconfig.json" } = {}) {
 
             const item = {
               name,
-              type: { text: print(type) },
+              type: { text: typeOf(symbol.declarations[0], type) },
               // a default which refers to something internal is meaningless outside
-              default:
-                initial && !ts.isIdentifier(initial)
-                  ? initial.getText()
-                  : undefined,
+              default: !initial
+                ? "undefined"
+                : ts.isIdentifier(initial)
+                  ? undefined
+                  : initial.getText(),
               description,
             };
 
@@ -290,10 +332,25 @@ export default function cally({ tsconfig = "tsconfig.json" } = {}) {
                 const type =
                   node &&
                   checker.getNonNullableType(checker.getTypeAtLocation(node));
-                return type ? { ...param, type: { text: print(type) } } : param;
+                if (!type) return param;
+                const text =
+                  node.type && !node.questionToken
+                    ? printNode(node.type)
+                    : print(type);
+                return { ...param, type: { text } };
               });
 
-              members.push(strip({ ...member, parameters }));
+              const signature =
+                decl && checker.getSignatureFromDeclaration(decl);
+              const returns = signature && print(signature.getReturnType());
+
+              members.push(
+                strip({
+                  ...member,
+                  parameters,
+                  return: returns ? { type: { text: returns } } : member.return,
+                }),
+              );
             }
           }
 
@@ -304,7 +361,14 @@ export default function cally({ tsconfig = "tsconfig.json" } = {}) {
           );
           const events = checker
             .getPropertiesOfType(eventsType)
-            .map((symbol) => {
+            .map((symbol, i) => ({
+              symbol,
+              i,
+              depth: files.indexOf(symbol.declarations[0].getSourceFile()),
+            }))
+            // those of base classes come first, in the order they are declared
+            .sort((a, b) => b.depth - a.depth || a.i - b.i)
+            .map(({ symbol }) => {
               const detail = checker.getTypeOfSymbol(symbol);
               const description = describe(symbol);
               if (!description)
@@ -316,7 +380,7 @@ export default function cally({ tsconfig = "tsconfig.json" } = {}) {
                   text:
                     detail.flags & ts.TypeFlags.Undefined
                       ? "Event"
-                      : `CustomEvent<${print(detail)}>`,
+                      : `CustomEvent<${typeOf(symbol.declarations[0], detail)}>`,
                 },
                 description,
               };

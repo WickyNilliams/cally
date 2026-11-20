@@ -1,0 +1,40 @@
+---
+// renders every section of a component's API which the manifest has, so a
+// section appears as soon as a component has something to document in it.
+// prose for a section can be given in a slot named for it e.g. `slot="props"`
+import Heading from "./Heading.astro";
+import ApiTable from "./ApiTable.astro";
+import { getItems, sections, type ApiKind } from "../api";
+
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+const kinds = Object.keys(sections) as ApiKind[];
+
+const present = kinds.filter((kind) => getItems(tag, kind).length);
+
+// prose for a section which no longer exists would otherwise go unseen
+for (const kind of kinds) {
+  if (Astro.slots.has(kind) && !present.includes(kind)) {
+    throw new Error(`<${tag}> has prose for ${kind}, but none to document`);
+  }
+}
+
+const prose = Object.fromEntries(
+  await Promise.all(
+    present.map(async (kind) => [kind, await Astro.slots.render(kind)]),
+  ),
+);
+---
+
+{
+  present.map((kind) => (
+    <>
+      <Heading level={2}>{sections[kind]}</Heading>
+      <Fragment set:html={prose[kind]} />
+      <ApiTable tag={tag} kind={kind} />
+    </>
+  ))
+}
