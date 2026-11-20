@@ -11,14 +11,7 @@ describe("PlainDate", () => {
     });
 
     it("throws on invalid strings", () => {
-      expect(() => PlainDate.from("invalid")).toThrow(TypeError);
-    });
-
-    it("can parse Date objects", () => {
-      const date = PlainDate.from(new Date("2020-01-01"));
-      expect(date.year).toBe(2020);
-      expect(date.month).toBe(1);
-      expect(date.day).toBe(1);
+      expect(() => PlainDate.from("invalid")).toThrow(RangeError);
     });
   });
 
@@ -113,7 +106,7 @@ describe("PlainYearMonth", () => {
   describe("toPlainDate()", () => {
     it("returns a PlainDate", () => {
       const yearMonth = new PlainYearMonth(2020, 1);
-      const date = yearMonth.toPlainDate();
+      const date = yearMonth.toPlainDate({ day: 1 });
 
       expect(date).toBeInstanceOf(PlainDate);
       expect(date.year).toBe(2020);

@@ -8,6 +8,15 @@ const ISO_DATE = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[0-1])$/;
 const padZero = (value: number, length: number) =>
   value.toString().padStart(length, "0");
 
+// unlike Temporal, the polyfill uses Date internally. but it doesn't accept
+// a Date anywhere, so that it can be replaced by Temporal when available.
+const fromDate = (date: Date) =>
+  new PlainDate(
+    date.getUTCFullYear(),
+    date.getUTCMonth() + 1,
+    date.getUTCDate()
+  );
+
 export class PlainDate {
   constructor(
     public readonly year: number,
@@ -23,7 +32,7 @@ export class PlainDate {
 
     if ("days" in duration) {
       date.setUTCDate(this.day + duration.days);
-      return PlainDate.from(date);
+      return fromDate(date);
     }
 
     // let min: PlainDate;
@@ -42,8 +51,9 @@ export class PlainDate {
       date.setUTCFullYear(year);
     }
 
-    const min = PlainDate.from(toDate({ year, month, day: 1 }));
-    return clamp(PlainDate.from(date), min, endOfMonth(min));
+    // via a Date, which handles any overflow of the month into the year
+    const min = fromDate(toDate({ year, month, day: 1 }));
+    return clamp(fromDate(date), min, endOfMonth(min));
   }
 
   toString(): string {
@@ -68,26 +78,18 @@ export class PlainDate {
     return 0;
   }
 
-  static from(value: string | Date): PlainDate {
-    if (typeof value === "string") {
-      const match = value.match(ISO_DATE);
+  static from(value: string): PlainDate {
+    const match = value.match(ISO_DATE);
 
-      if (!match) {
-        throw new TypeError(value);
-      }
-
-      const [, year, month, day] = match;
-      return new PlainDate(
-        parseInt(year!, 10),
-        parseInt(month!, 10),
-        parseInt(day!, 10)
-      );
+    if (!match) {
+      throw new RangeError(value);
     }
 
+    const [, year, month, day] = match;
     return new PlainDate(
-      value.getUTCFullYear(),
-      value.getUTCMonth() + 1,
-      value.getUTCDate()
+      parseInt(year!, 10),
+      parseInt(month!, 10),
+      parseInt(day!, 10)
     );
   }
 }
@@ -112,8 +114,8 @@ export class PlainYearMonth {
     return this.year === date.year && this.month === date.month;
   }
 
-  toPlainDate() {
-    return new PlainDate(this.year, this.month, 1);
+  toPlainDate({ day }: { day: number }) {
+    return new PlainDate(this.year, this.month, day);
   }
 
   static compare(
