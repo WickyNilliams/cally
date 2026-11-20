@@ -3,6 +3,11 @@ import { parseDate } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import { CalendarBase } from "../calendar-base/calendar-base.js";
 
+/**
+ * A calendar for selecting any number of dates
+ *
+ * @property value - A space-separated list of selected dates
+ */
 export class CalendarMulti extends CalendarBase {
   protected parsed = computed(() =>
     this.value

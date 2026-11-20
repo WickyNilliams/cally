@@ -5,11 +5,21 @@ import type { CalendarContextValue } from "../calendar-month/CalendarMonthContex
 import { SelectBase, selectTemplate } from "./calendar-year-month-base.js";
 
 interface SelectMonthProps {
+  /** Whether months have long ("January") or short ("Jan") names. Names depend on the calendar's locale */
   formatMonth: "long" | "short";
 }
 
 export interface CalendarSelectMonth extends SelectMonthProps {}
 
+/**
+ * A select for changing the month shown by a calendar
+ *
+ * @slot label - The label for the select. Defaults to "Month"
+ *
+ * @csspart label - The `<label>` for the `<select>`
+ * @csspart select - The `<select>` element itself
+ * @csspart option - The `<option>` for each month
+ */
 export class CalendarSelectMonth extends SelectBase<SelectMonthProps> {
   static props: PropDefs<SelectMonthProps> = {
     formatMonth: [String, "long"],

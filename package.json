@@ -10,6 +10,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "unpkg": "dist/cally.js",
+  "customElements": "dist/custom-elements.json",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -42,7 +43,8 @@
     "./calendar-select-year": {
       "types": "./dist/calendar-year-month/calendar-select-year.d.ts",
       "import": "./dist/calendar-select-year.js"
-    }
+    },
+    "./custom-elements.json": "./dist/custom-elements.json"
   },
   "repository": {
     "type": "git",
@@ -53,7 +55,7 @@
     "clean": "rm -rf dist docs/dist",
     "prebuild": "npm run clean",
     "build": "npm run build:package && npm run astro:build",
-    "build:package": "vite build && vite build --mode standalone",
+    "build:package": "vite build && vite build --mode standalone && cem analyze --quiet",
     "check-types": "attw --pack . --profile esm-only",
     "test": "vitest run",
     "test:ui": "vitest --ui",
@@ -64,6 +66,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@astrojs/check": "^0.9.4",
+    "@custom-elements-manifest/analyzer": "^0.11.0",
     "@vitest/browser": "^4.0.16",
     "@vitest/browser-playwright": "^4.0.16",
     "@vitest/ui": "^4.0.16",

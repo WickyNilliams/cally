@@ -37,27 +37,49 @@ export interface CalendarFocusOptions extends FocusOptions {
 }
 
 export interface CalendarProps {
+  /** The selected value */
   value: string;
+  /** The earliest date that can be selected */
   min: string;
+  /** The latest date that can be selected */
   max: string;
+  /** The date that is considered today */
   today: string;
+  /** A function that takes a date and returns `true` if the date should not be selectable */
   isDateDisallowed: (date: Date) => boolean;
+  /** Controls the format of the weekday headers in the month table */
   formatWeekday: "narrow" | "short";
+  /** A function that takes a date and returns a string of CSS parts, allowing custom styling for individual dates */
   getDayParts: (date: Date) => string;
+  /** A function that takes the first day of a week and returns its number, when `showWeekNumbers` is set. Defaults to ISO week numbers */
   getWeekNumber: (date: Date) => number;
+  /** The first day of the week, where Sunday is 0, Monday is 1, etc */
   firstDayOfWeek: DaysOfWeek;
+  /** Whether to show days outside the month */
   showOutsideDays: boolean;
+  /** The locale for formatting dates. If not set, will use the browser's locale */
   locale: string | undefined;
+  /** The number of months to display per page */
   months: number;
+  /** The date that is considered "focused" by the calendar */
   focusedDate: string | undefined;
+  /** Whether next and previous should move by number of `months` or by a single month at a time */
   pageBy: Pagination;
+  /**
+   * Whether to show week numbers. By default these are ISO week numbers, taken from the first day of each week.
+   * ISO weeks start on Monday, so if `firstDayOfWeek` is another day, each week shown spans two ISO weeks.
+   * Use `getWeekNumber` to number weeks differently
+   */
   showWeekNumbers: boolean;
 }
 
 /** The events dispatched by every kind of calendar, and the type of their detail */
 export interface CalendarEvents {
+  /** Emitted when the value changes via user interaction. Not emitted when `value` is changed programmatically */
   change: undefined;
+  /** Emitted when the focused day changes. This can happen via keyboard commands, or clicking the next or previous buttons */
   focusday: Date;
+  /** Emitted when the visible months change */
   pagechange: PageChangeDetail;
 }
 
@@ -67,6 +89,21 @@ function diffInMonths(a: PlainYearMonth, b: PlainYearMonth): number {
 
 export interface CalendarBase<Props, Events> extends CalendarProps {}
 
+/**
+ * @slot - Where your `<calendar-month>` components go, along with any other markup. `<calendar-month>` does not need to be a direct descendant
+ * @slot previous - The inner content of the previous page button. By default uses text "Previous". You will likely want to slot an icon here
+ * @slot next - The inner content of the next page button. By default uses text "Next". You will likely want to slot an icon here
+ * @slot heading - By default displays the visible heading for the component. You may want to replace this with a year select. A separate visually-hidden heading is always rendered for accessibility purposes
+ *
+ * @csspart container - The container for the entire component
+ * @csspart header - The container for heading and buttons
+ * @csspart button - Any button within the component
+ * @csspart previous - The previous page button
+ * @csspart next - The next page button
+ * @csspart disabled - A button that is disabled due to min/max
+ * @csspart heading - The heading that labels the calendar
+ * @csspart months - The default slot, where `<calendar-month>`s get rendered
+ */
 export abstract class CalendarBase<
   Props extends CalendarProps = CalendarProps,
   Events extends CalendarEvents = CalendarEvents,
@@ -296,6 +333,10 @@ export abstract class CalendarBase<
     );
   }
 
+  /**
+   * Focuses the `<calendar-month>` containing the currently focused date.
+   * @param options - controls what gets focused, and how. `options.target` controls which part of the component gets focused
+   */
   focus(options?: CalendarFocusOptions) {
     const target = options?.target ?? "day";
 

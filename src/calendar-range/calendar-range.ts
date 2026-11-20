@@ -9,11 +9,14 @@ import {
 } from "../calendar-base/calendar-base.js";
 
 interface RangeEvents extends CalendarEvents {
+  /** Emitted when the user starts selecting a range */
   rangestart: Date;
+  /** Emitted when the user finishes selecting a range */
   rangeend: Date;
 }
 
 interface RangeProps extends CalendarProps {
+  /** The date that is tentatively selected e.g. the start of a range selection */
   tentative: string;
 }
 
@@ -22,6 +25,11 @@ const sort = (a: PlainDate, b: PlainDate): [PlainDate, PlainDate] =>
 
 export interface CalendarRange extends RangeProps {}
 
+/**
+ * A calendar for selecting a range of dates
+ *
+ * @property value - The currently selected range, as two dates separated by a `/`
+ */
 export class CalendarRange extends CalendarBase<RangeProps, RangeEvents> {
   static props: PropDefs<RangeProps> = {
     ...CalendarBase.props,
