@@ -1,12 +1,10 @@
-import type { ComponentProps, PropDefs } from "../utils/base.js";
+import type { PropDefs } from "../utils/base.js";
 import type { CalendarContextValue } from "../calendar-month/CalendarMonthContext.js";
 import { SelectBase, selectTemplate } from "./calendar-year-month-base.js";
 
 interface SelectYearProps {
   maxYears: number;
 }
-
-export type CalendarSelectYearProps = ComponentProps<SelectYearProps>;
 
 export interface CalendarSelectYear extends SelectYearProps {}
 

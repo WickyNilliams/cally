@@ -1,4 +1,4 @@
-import type { ComponentProps, PropDefs } from "../utils/base.js";
+import type { PropDefs } from "../utils/base.js";
 import { getFormatter } from "../utils/date.js";
 import { PlainYearMonth } from "../utils/temporal.js";
 import type { CalendarContextValue } from "../calendar-month/CalendarMonthContext.js";
@@ -7,8 +7,6 @@ import { SelectBase, selectTemplate } from "./calendar-year-month-base.js";
 interface SelectMonthProps {
   formatMonth: "long" | "short";
 }
-
-export type CalendarSelectMonthProps = ComponentProps<SelectMonthProps>;
 
 export interface CalendarSelectMonth extends SelectMonthProps {}
 

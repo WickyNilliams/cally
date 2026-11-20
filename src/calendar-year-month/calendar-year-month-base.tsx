@@ -2,6 +2,7 @@ import { Base, css, template } from "../utils/base.js";
 import {
   CalendarContext,
   type CalendarContextValue,
+  type DayEvents,
 } from "../calendar-month/CalendarMonthContext.js";
 import reset from "../utils/reset.css?inline";
 
@@ -26,7 +27,11 @@ export interface Option {
 /**
  * A select for changing one part of the date focused by a calendar
  */
-export abstract class SelectBase<Props> extends Base<Props> {
+export abstract class SelectBase<Props> extends Base<
+  Props,
+  {},
+  Pick<DayEvents, "focusday">
+> {
   static styles = css(reset);
 
   /** The part of the focused date which is chosen with the select */
