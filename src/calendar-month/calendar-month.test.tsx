@@ -784,6 +784,22 @@ describe("CalendarMonth", () => {
         expect(day).toHavePart(part);
       }
     });
+
+    it("has a part for the day of the week headings only", async () => {
+      const month = await mount(
+        <Fixture focusedDate={PlainDate.from("2020-01-15")} showWeekNumbers />,
+      );
+      const grid = getGrid(month);
+
+      const weekdays = [...grid.querySelectorAll("thead th[scope=col]")];
+      expect(weekdays.length).toBe(7);
+      for (const th of weekdays) expect(th).toHavePart("weekday");
+
+      // the week number headings are also `th`, but not weekdays
+      const weekNumbers = [...grid.querySelectorAll("[part~=weeknumber]")];
+      expect(weekNumbers.length).toBeGreaterThan(1);
+      for (const th of weekNumbers) expect(th).not.toHavePart("weekday");
+    });
   });
 
   describe("week numbers", () => {

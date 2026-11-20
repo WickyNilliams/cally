@@ -176,7 +176,7 @@ export class CalendarMonth extends Base<MonthProps> {
       const visible = getDayNames(formatWeekday.value, first, locale.value);
 
       weekdays.forEach((th, i) => {
-        setAttr(th, "part", `th day day-${(i + first) % 7}`);
+        setAttr(th, "part", `th weekday day day-${(i + first) % 7}`);
         setText(th.children[0]!, long[i]!);
         setText(th.children[1]!, visible[i]!);
       });
