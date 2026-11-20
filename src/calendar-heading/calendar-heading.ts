@@ -1,4 +1,9 @@
-import { Base, setText, type PropDefs } from "../utils/base.js";
+import {
+  Base,
+  setText,
+  type ComponentProps,
+  type PropDefs,
+} from "../utils/base.js";
 import { getFormatter, toDate } from "../utils/date.js";
 import { CalendarHeadingContext } from "./CalendarHeadingContext.js";
 
@@ -6,6 +11,8 @@ interface HeadingProps {
   year: "numeric" | "2-digit" | undefined;
   month: "numeric" | "2-digit" | "long" | "short" | "narrow" | undefined;
 }
+
+export type CalendarHeadingProps = ComponentProps<HeadingProps>;
 
 export interface CalendarHeading extends HeadingProps {}
 
@@ -39,3 +46,9 @@ export class CalendarHeading extends Base<HeadingProps> {
 }
 
 CalendarHeading.define("calendar-heading");
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "calendar-heading": CalendarHeading;
+  }
+}

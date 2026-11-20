@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Rewritten with no dependencies, reducing the bundle size from 12.5KB to 6.6KB min/gzip.
 
+### Added
+
+- Each component can be imported individually, e.g. `import "cally/calendar-date"`.
+
 ### Fixed
 
 - Infinite loop when the visible page and `focusedDate` change at the same time, e.g. when moving a calendar within the document ([#137](https://github.com/WickyNilliams/cally/issues/137)).
