@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Rewritten with no dependencies.
+- Rewritten with no dependencies, reducing the bundle size from 12.5KB to 6.6KB min/gzip.
 
 ### Fixed
 
