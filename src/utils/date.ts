@@ -1,25 +1,7 @@
 import { PlainDate, type PlainYearMonth } from "./temporal.js";
 
-/**
- * ISO day of week, Monday is 1 and Sunday is 7.
- * `0` for Sunday is deprecated and will be removed in v1.
- */
-export type DaysOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
-
-let warned = false;
-
-/**
- * Maps ISO day of week to JS day of week. Warns once if legacy `0` is used.
- */
-export function normalizeFirstDayOfWeek(day: DaysOfWeek): DaysOfWeek {
-  if (day === 0 && !warned) {
-    warned = true;
-    console.warn(
-      "[cally] Using 0 for Sunday in firstDayOfWeek is deprecated and will be removed in v1. Use 7 instead."
-    );
-  }
-  return day === 7 ? 0 : day;
-}
+/** ISO day of week, Monday is 1 and Sunday is 7 */
+export type DaysOfWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export function getToday() {
   const d = new Date();
@@ -29,41 +11,29 @@ export function getToday() {
 const DAY_MS = 86400000;
 
 /**
- * The ISO week number of a date, given at midnight UTC.
- * Slightly modified from https://weeknumber.co.uk/how-to/javascript
+ * The ISO week number of a date, given at midnight UTC
  */
 export function getWeekNumber(day: Date): number {
-  const date = new Date(day);
-  // Thursday in current week decides the year.
-  date.setUTCDate(date.getUTCDate() + 3 - ((date.getUTCDay() + 6) % 7));
-  // January 4 is always in week 1.
-  const week1 = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));
+  // the year is that of the thursday in the same week
+  const thursday = new Date(day);
+  thursday.setUTCDate(day.getUTCDate() + 4 - (day.getUTCDay() || 7));
+  const start = Date.UTC(thursday.getUTCFullYear(), 0, 1);
 
-  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return (
-    1 +
-    Math.round(
-      ((date.getTime() - week1.getTime()) / DAY_MS -
-        3 +
-        ((week1.getUTCDay() + 6) % 7)) /
-        7
-    )
-  );
+  return Math.ceil(((+thursday - start) / DAY_MS + 1) / 7);
 }
 
 export function startOfWeek(
   date: PlainDate,
-  firstDayOfWeek: DaysOfWeek = 0
+  firstDayOfWeek: DaysOfWeek = 7
 ): PlainDate {
-  const day = toDate(date).getUTCDay();
-  const diff = (day < firstDayOfWeek ? 7 : 0) + day - firstDayOfWeek;
+  const diff = (date.dayOfWeek - firstDayOfWeek + 7) % 7;
 
   return date.add({ days: -diff });
 }
 
 export function endOfWeek(
   date: PlainDate,
-  firstDayOfWeek: DaysOfWeek = 0
+  firstDayOfWeek: DaysOfWeek = 7
 ): PlainDate {
   return startOfWeek(date, firstDayOfWeek).add({ days: 6 });
 }
@@ -103,7 +73,7 @@ type Week = [
  */
 export function getViewOfMonth(
   yearMonth: PlainYearMonth,
-  firstDayOfWeek: DaysOfWeek = 0
+  firstDayOfWeek: DaysOfWeek = 7
 ): Week[] {
   let start = startOfWeek(yearMonth.toPlainDate({ day: 1 }), firstDayOfWeek);
   const end = endOfWeek(endOfMonth(yearMonth), firstDayOfWeek);
@@ -165,13 +135,12 @@ export function getDayNames(
   locale?: string,
 ): string[] {
   const formatter = getFormatter({ weekday }, locale);
+  // any week will do
+  const start = startOfWeek(getToday(), firstDayOfWeek);
   const days = [];
-  const day = new Date();
 
   for (let i = 0; i < 7; i++) {
-    const index = (day.getUTCDay() - firstDayOfWeek + 7) % 7;
-    days[index] = formatter.format(day);
-    day.setUTCDate(day.getUTCDate() + 1);
+    days.push(formatter.format(toDate(start.add({ days: i }))));
   }
 
   return days;

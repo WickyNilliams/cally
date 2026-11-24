@@ -56,6 +56,11 @@ export class PlainDate {
     return clamp(fromDate(date), min, endOfMonth(min));
   }
 
+  /** The ISO day of week, Monday is 1 and Sunday is 7 */
+  get dayOfWeek(): number {
+    return toDate(this).getUTCDay() || 7;
+  }
+
   toString(): string {
     return `${padZero(this.year, 4)}-${padZero(this.month, 2)}-${padZero(this.day, 2)}`;
   }

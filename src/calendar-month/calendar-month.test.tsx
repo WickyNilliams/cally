@@ -890,7 +890,7 @@ describe("CalendarMonth", () => {
         <Fixture
           focusedDate={PlainDate.from("2025-01-01")}
           showWeekNumbers
-          firstDayOfWeek={0}
+          firstDayOfWeek={7}
         />,
       );
 

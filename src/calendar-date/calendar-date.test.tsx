@@ -1,5 +1,5 @@
 /** @jsxImportSource test-jsx */
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
 import {
   clickDay,
@@ -1072,16 +1072,14 @@ describe("CalendarDate", () => {
     });
   });
 
-  it("supports legacy 0 for sunday, with deprecation warning", async () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+  it("numbers sunday as 7", async () => {
     const calendar = await mount(
-      <Fixture value="2020-01-15" firstDayOfWeek={0} />,
+      <Fixture value="2020-01-15" firstDayOfWeek={7} />,
     );
     const firstHeading = getMonth(calendar).shadowRoot!.querySelector("th")!;
 
     expect(firstHeading).toHavePart("day-7");
-    expect(warn).toHaveBeenCalledTimes(1);
-    warn.mockRestore();
+    expect(firstHeading).not.toHavePart("day-0");
   });
 
   describe("grid", () => {

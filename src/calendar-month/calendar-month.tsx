@@ -52,9 +52,6 @@ const weekday = (
   </th>
 );
 
-// sunday is 7 in ISO numbering. 0 is still given until v1, for compatibility
-const dayPart = (day: number) => (day ? `day-${day}` : "day-0 day-7");
-
 /**
  * Connects or disconnects a node that was rendered up front
  */
@@ -214,7 +211,7 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
       const visible = getDayNames(formatWeekday.value, first, locale.value);
 
       weekdays.forEach((th, i) => {
-        setAttr(th, "part", `th weekday day ${dayPart((i + first) % 7)}`);
+        setAttr(th, "part", `th weekday day day-${((i + first - 1) % 7) + 1}`);
         setText(th.children[0]!, long[i]!);
         setText(th.children[1]!, visible[i]!);
       });
@@ -270,7 +267,7 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
           "part",
           [
             "button day",
-            dayPart(asDate.getUTCDay()),
+            `day-${date.dayOfWeek}`,
             // we don't want outside days to ever be shown as selected
             isInMonth ? isSelected && "selected" : "outside",
             isDisallowed && "disallowed",

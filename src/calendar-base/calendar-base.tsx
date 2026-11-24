@@ -11,7 +11,6 @@ import {
   endOfMonth,
   getToday,
   getWeekNumber,
-  normalizeFirstDayOfWeek,
   parseDate,
   toDate,
   type DaysOfWeek,
@@ -300,9 +299,6 @@ export abstract class CalendarBase<
 
     const context = {
       ...$,
-      firstDayOfWeek: computed(() =>
-        normalizeFirstDayOfWeek(this.firstDayOfWeek),
-      ),
       type,
       min,
       max,
