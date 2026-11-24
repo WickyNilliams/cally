@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { userEvent, page } from "vitest/browser";
 import type { VNodeAny } from "atomico/types/vnode";
 import {
@@ -20,7 +20,7 @@ import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { Pagination } from "../calendar-base/useCalendarBase.js";
 import { CalendarDate } from "./calendar-date.js";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
-import { getToday, toDate } from "../utils/date.js";
+import { getToday, toDate, type DaysOfWeek } from "../utils/date.js";
 
 async function nextFrame() {
   return new Promise((resolve) =>
@@ -42,6 +42,7 @@ type TestProps = {
   locale: string;
   focusedDate: string;
   pageBy: Pagination;
+  firstDayOfWeek: DaysOfWeek;
 };
 
 function Fixture({ children, ...props }: Partial<TestProps>): VNodeAny {
@@ -966,6 +967,18 @@ describe("CalendarDate", () => {
       await getNextPageButton(calendar).click();
       expect(getCalendarHeading(calendar)).toEqual("Dezember 2020");
     });
+  });
+
+  it("supports legacy 0 for sunday, with deprecation warning", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const calendar = await mount(
+      <Fixture value="2020-01-15" firstDayOfWeek={0} />,
+    );
+    const firstHeading = getMonth(calendar).shadowRoot!.querySelector("th")!;
+
+    expect(firstHeading).toHavePart("day-7");
+    expect(warn).toHaveBeenCalledTimes(1);
+    warn.mockRestore();
   });
 
   describe("grid", () => {

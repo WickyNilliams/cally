@@ -1,6 +1,25 @@
 import { PlainDate, type PlainYearMonth } from "./temporal.js";
 
-export type DaysOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+/**
+ * ISO day of week, Monday is 1 and Sunday is 7.
+ * `0` for Sunday is deprecated and will be removed in v1.
+ */
+export type DaysOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+let warned = false;
+
+/**
+ * Maps ISO day of week to JS day of week. Warns once if legacy `0` is used.
+ */
+export function normalizeFirstDayOfWeek(day: DaysOfWeek): DaysOfWeek {
+  if (day === 0 && !warned) {
+    warned = true;
+    console.warn(
+      "[cally] Using 0 for Sunday in firstDayOfWeek is deprecated and will be removed in v1. Use 7 instead."
+    );
+  }
+  return day === 7 ? 0 : day;
+}
 
 export function getToday() {
   const d = new Date();

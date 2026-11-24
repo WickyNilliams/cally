@@ -759,8 +759,9 @@ describe("CalendarMonth", () => {
     });
 
     it("renders parts for each day corresponding to day number", async () => {
+      // ISO day numbers, 1-7
       const mapToDayNumber = (firstDayOfWeek: number, i: number) =>
-        (i + firstDayOfWeek) % 7;
+        ((i + firstDayOfWeek - 1) % 7) + 1;
 
       const firstDayOfWeek = 2;
       const month = await mount(

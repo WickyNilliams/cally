@@ -7,7 +7,7 @@ import {
 } from "../calendar-month/CalendarMonthContext.js";
 import { CalendarHeading } from "../calendar-heading/calendar-heading.js";
 import { reset, vh } from "../utils/styles.js";
-import { type DaysOfWeek } from "../utils/date.js";
+import { normalizeFirstDayOfWeek, type DaysOfWeek } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import type { Pagination } from "./useCalendarBase.js";
 
@@ -45,7 +45,10 @@ export function CalendarBase(
 ) {
   return (
     <CalendarContext
-      value={props}
+      value={{
+        ...props,
+        firstDayOfWeek: normalizeFirstDayOfWeek(props.firstDayOfWeek),
+      }}
       onselectday={props.onSelect}
       onfocusday={props.onFocus}
       onhoverday={props.onHover}
