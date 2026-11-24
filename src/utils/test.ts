@@ -45,6 +45,7 @@ interface CalendarContextBase {
   firstDayOfWeek: DaysOfWeek;
   isDateDisallowed?: (date: Date) => boolean;
   getDayParts?: (date: Date) => string;
+  getWeekNumber?: (date: Date) => number;
   page: Page;
   focusedDate: PlainDate;
   showOutsideDays?: boolean;

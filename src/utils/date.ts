@@ -28,9 +28,12 @@ export function getToday() {
 
 const DAY_MS = 86400000;
 
-// slightly modified from https://weeknumber.co.uk/how-to/javascript
-export function getWeekNumber(plainDate: PlainDate) {
-  const date = toDate(plainDate);
+/**
+ * The ISO week number of a date, given at midnight UTC.
+ * Slightly modified from https://weeknumber.co.uk/how-to/javascript
+ */
+export function getWeekNumber(day: Date): number {
+  const date = new Date(day);
   // Thursday in current week decides the year.
   date.setUTCDate(date.getUTCDate() + 3 - ((date.getUTCDay() + 6) % 7));
   // January 4 is always in week 1.

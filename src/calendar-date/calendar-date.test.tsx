@@ -1005,6 +1005,30 @@ describe("CalendarDate", () => {
     });
   });
 
+  describe("week numbers", () => {
+    it("can be numbered by a function of your own", async () => {
+      const calendar = await mount(
+        <CalendarDate locale="en-GB" value="2020-01-15" showWeekNumbers>
+          <CalendarMonth />
+        </CalendarDate>,
+      );
+      const grid = getMonth(calendar).shadowRoot!.querySelector("tbody")!;
+      const weekNumbers = () =>
+        [...grid.querySelectorAll("th")].map((th) => th.textContent);
+
+      expect(weekNumbers()).toEqual(["1", "2", "3", "4", "5"]);
+
+      calendar.getWeekNumber = (date) => date.getUTCDate();
+      await nextFrame();
+      expect(weekNumbers()).toEqual(["30", "6", "13", "20", "27"]);
+
+      // removing it restores the default
+      calendar.getWeekNumber = undefined!;
+      await nextFrame();
+      expect(weekNumbers()).toEqual(["1", "2", "3", "4", "5"]);
+    });
+  });
+
   describe("localization", () => {
     it("localizes heading", async () => {
       const calendar = await mount(
