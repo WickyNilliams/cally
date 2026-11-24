@@ -25,6 +25,7 @@ import reset from "../utils/reset.css?inline";
 import styles from "./calendar-month.css?inline";
 
 interface MonthProps {
+  /** In a multi-month view, controls which month is shown relative to the start of the view */
   offset: number;
 }
 
@@ -72,6 +73,49 @@ function toggle(
 
 export interface CalendarMonth extends MonthProps {}
 
+/**
+ * A grid of the days in a month, for use within a calendar
+ *
+ * @slot heading - Replaces the default month heading. Accepts a `<calendar-heading>` or custom content
+ * @slot weeknumber - If week numbers are shown, this slot holds the heading for the column. Defaults to "#"
+ *
+ * @csspart heading - The heading that labels the month
+ * @csspart table - The `<table>` element
+ * @csspart tr - Any row within the table
+ * @csspart head - The table's header row
+ * @csspart week - The table's body rows
+ * @csspart th - The table's header cells
+ * @csspart td - The table's body cells
+ * @csspart col-weeknumber - The `<col>` for the week number
+ * @csspart col-1 - The `<col>` for the first day of the week
+ * @csspart col-2 - The `<col>` for the second day of the week
+ * @csspart col-3 - The `<col>` for the third day of the week
+ * @csspart col-4 - The `<col>` for the fourth day of the week
+ * @csspart col-5 - The `<col>` for the fifth day of the week
+ * @csspart col-6 - The `<col>` for the sixth day of the week
+ * @csspart col-7 - The `<col>` for the seventh day of the week
+ * @csspart weekday - The `<th>` for each day of the week
+ * @csspart weeknumber - The `<th>` for the week number, and the heading of that column
+ * @csspart button - Any button used in the component
+ * @csspart day - The buttons and headings corresponding to each day in the grid
+ * @csspart day-1 - The buttons and headings corresponding to Monday
+ * @csspart day-2 - The buttons and headings corresponding to Tuesday
+ * @csspart day-3 - The buttons and headings corresponding to Wednesday
+ * @csspart day-4 - The buttons and headings corresponding to Thursday
+ * @csspart day-5 - The buttons and headings corresponding to Friday
+ * @csspart day-6 - The buttons and headings corresponding to Saturday
+ * @csspart day-7 - The buttons and headings corresponding to Sunday
+ * @csspart selected - Any days which are selected
+ * @csspart today - Today's day
+ * @csspart disallowed - Any day that has been disallowed via `isDateDisallowed`
+ * @csspart outside - Any days which are outside the current month
+ * @csspart range-start - The day at the start of a date range
+ * @csspart range-end - The day at the end of a date range
+ * @csspart range-inner - Any days between the start and end of a date range
+ *
+ * @cssprop --color-accent - The accent color used throughout
+ * @cssprop --color-text-on-accent - The color used on `--color-accent`
+ */
 export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
   static props: PropDefs<MonthProps> = {
     offset: [Number, 0],
@@ -333,6 +377,7 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
     });
   }
 
+  /** Focuses the currently focused day */
   focus() {
     this.#table.querySelector<HTMLElement>("button[tabindex='0']")?.focus();
   }

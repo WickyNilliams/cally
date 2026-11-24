@@ -3,6 +3,11 @@ import { parseDate } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import { CalendarBase } from "../calendar-base/calendar-base.js";
 
+/**
+ * A calendar for selecting a single date
+ *
+ * @property value - The currently selected date
+ */
 export class CalendarDate extends CalendarBase {
   protected parsed = computed(() => {
     const date = parseDate(this.value);

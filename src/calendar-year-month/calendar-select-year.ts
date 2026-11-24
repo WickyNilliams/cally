@@ -3,11 +3,24 @@ import type { CalendarContextValue } from "../calendar-month/CalendarMonthContex
 import { SelectBase, selectTemplate } from "./calendar-year-month-base.js";
 
 interface SelectYearProps {
+  /**
+   * The maximum number of years to display, centered around the focused year.
+   * The range is constrained by any min and max values from the parent calendar, which may result in fewer years being shown
+   */
   maxYears: number;
 }
 
 export interface CalendarSelectYear extends SelectYearProps {}
 
+/**
+ * A select for changing the year shown by a calendar
+ *
+ * @slot label - The label for the select. Defaults to "Year"
+ *
+ * @csspart label - The `<label>` for the `<select>`
+ * @csspart select - The `<select>` element itself
+ * @csspart option - The `<option>` for each year
+ */
 export class CalendarSelectYear extends SelectBase<SelectYearProps> {
   static props: PropDefs<SelectYearProps> = {
     maxYears: [Number, 20],

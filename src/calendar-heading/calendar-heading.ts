@@ -3,12 +3,17 @@ import { getFormatter, toDate } from "../utils/date.js";
 import { CalendarHeadingContext } from "./CalendarHeadingContext.js";
 
 interface HeadingProps {
+  /** How to display the year. When omitted, the year is not shown */
   year: "numeric" | "2-digit" | undefined;
+  /** How to display the month. When omitted, the month is not shown */
   month: "numeric" | "2-digit" | "long" | "short" | "narrow" | undefined;
 }
 
 export interface CalendarHeading extends HeadingProps {}
 
+/**
+ * A heading for the month, or range of months, shown by a calendar or month
+ */
 export class CalendarHeading extends Base<HeadingProps> {
   static props: PropDefs<HeadingProps> = {
     year: [String],
