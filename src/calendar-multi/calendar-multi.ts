@@ -1,7 +1,13 @@
 import { computed } from "../utils/signals.js";
 import { parseDate } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
-import { CalendarBase } from "../calendar-base/calendar-base.js";
+import {
+  CalendarBase,
+  type CalendarElementProps,
+} from "../calendar-base/calendar-base.js";
+import type { ComponentProps } from "../utils/base.js";
+
+export type CalendarMultiProps = ComponentProps<CalendarElementProps>;
 
 export class CalendarMulti extends CalendarBase {
   protected parsed = computed(() =>
@@ -30,3 +36,9 @@ export class CalendarMulti extends CalendarBase {
 }
 
 CalendarMulti.define("calendar-multi");
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "calendar-multi": CalendarMulti;
+  }
+}

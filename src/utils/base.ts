@@ -21,6 +21,11 @@ type PropSignals<Props> = { [K in keyof Props]-?: Signal<Props[K]> };
 
 type Setup = () => void | (() => void);
 
+/**
+ * The props of a component, as exported for use in react/vue/etc
+ */
+export type ComponentProps<T> = { [K in keyof Partial<T>]: Partial<T>[K] } & {};
+
 export interface Context<T> {
   /** doubles as the name of the event used to request the context */
   name: string;

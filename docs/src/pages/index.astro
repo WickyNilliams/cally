@@ -90,6 +90,30 @@ const tagline = "Small, feature-rich calendar components";
 
   <Code lang="javascript" code={`import "cally";`} />
 
+  <Heading level={3}>Importing individual components</Heading>
+
+  <p>
+    The above makes every component available. If you only use some of them,
+    you can import those alone, and your bundle will be smaller still. Each
+    component has a module of its own, named after its tag:
+  </p>
+
+  <Code
+    lang="javascript"
+    code={`
+import "cally/calendar-date";
+import "cally/calendar-month";
+`.trim()}
+  />
+
+  <p>
+    Import every component that appears in your markup. They can be imported
+    in any order, and it is fine to load them at different times. The one
+    exception is <code>&lt;calendar-heading&gt;</code>, which is included
+    along with any calendar or month, so only needs importing if you use it
+    without them.
+  </p>
+
   <Heading level={2}>Quick start</Heading>
 
   <p>
