@@ -1,0 +1,129 @@
+---
+// renders part of a component's API, as described by the manifest
+import Table from "./Table.astro";
+import { getItems, type ApiItem, type ApiKind } from "../api";
+
+interface Props {
+  tag: string;
+  kind: ApiKind;
+}
+
+const { tag, kind } = Astro.props;
+const items: ApiItem[] = getItems(tag, kind);
+
+if (!items.length) {
+  throw new Error(`<${tag}> has no ${kind} to document`);
+}
+
+const escape = (text = "") =>
+  text.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
+
+/** escapes the text, and treats anything in backticks as code */
+const format = (text = "") =>
+  escape(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+
+const code = (text = "") => `<code>${escape(text)}</code>`;
+
+const signature = (method: ApiItem) =>
+  `${method.name}(${(method.parameters ?? [])
+    .map((p) => `${p.name}${p.optional ? "?" : ""}: ${p.type?.text}`)
+    .join(", ")}) => ${method.return?.type?.text ?? "void"}`;
+---
+
+<Table>
+  {
+    kind === "props" && (
+      <tr slot="head">
+        <th>Property</th>
+        <th>Attribute</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Default</th>
+      </tr>
+    )
+  }
+  {
+    kind === "events" && (
+      <tr slot="head">
+        <th>Name</th>
+        <th>Description</th>
+        <th>Type</th>
+      </tr>
+    )
+  }
+  {
+    kind === "methods" && (
+      <tr slot="head">
+        <th>Name</th>
+        <th>Parameters</th>
+        <th>Description</th>
+      </tr>
+    )
+  }
+  {
+    kind === "cssprops" && (
+      <tr slot="head">
+        <th>Name</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    )
+  }
+  {
+    (kind === "slots" || kind === "parts") && (
+      <tr slot="head">
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    )
+  }
+
+  {
+    items.map((item) => (
+      <tr>
+        {kind === "props" && (
+          <>
+            <td set:html={code(item.name)} />
+            <td set:html={item.attribute ? code(item.attribute) : "-"} />
+            <td set:html={format(item.description)} />
+            <td set:html={code(item.type?.text)} />
+            <td set:html={item.default ? code(item.default) : "-"} />
+          </>
+        )}
+        {kind === "events" && (
+          <>
+            <td set:html={code(item.name)} />
+            <td set:html={format(item.description)} />
+            <td set:html={code(item.type?.text)} />
+          </>
+        )}
+        {kind === "methods" && (
+          <>
+            <td set:html={code(signature(item))} />
+            <td
+              set:html={
+                (item.parameters ?? [])
+                  .map((p) => `${code(p.name)} - ${format(p.description)}`)
+                  .join("<br>") || "-"
+              }
+            />
+            <td set:html={format(item.description)} />
+          </>
+        )}
+        {kind === "cssprops" && (
+          <>
+            <td set:html={code(item.name)} />
+            <td set:html={format(item.description)} />
+            <td set:html={item.default ? code(item.default) : "-"} />
+          </>
+        )}
+        {(kind === "slots" || kind === "parts") && (
+          <>
+            <td set:html={item.name ? code(item.name) : "Default slot"} />
+            <td set:html={format(item.description)} />
+          </>
+        )}
+      </tr>
+    ))
+  }
+</Table>

@@ -1,7 +1,6 @@
 ---
 import ApiLayout from "../../layouts/ApiLayout.astro";
-import Table from "../../components/Table.astro";
-import Heading from "../../components/Heading.astro";
+import ApiReference from "../../components/ApiReference.astro";
 import Link from "../../components/Link.astro";
 ---
 
@@ -27,233 +26,23 @@ import Link from "../../components/Link.astro";
     >.
   </p>
 
-  <Heading level={2}>Properties and attributes</Heading>
+  <ApiReference tag="calendar-month">
+    <Fragment slot="cssprops">
+      <p>CSS custom properties allow for coarse-grained styling and theming</p>
+    </Fragment>
 
-  <Table>
-    <tr slot="head">
-      <th>Property</th>
-      <th>Attribute</th>
-      <th>Description</th>
-      <th>Type</th>
-      <th>Default</th>
-    </tr>
+    <Fragment slot="parts">
+      <p>
+        CSS parts allow for fine-grained styling and theming. They target specific
+        elements inside the component. An element may have multiple parts, and a
+        part may be used on multiple elements. They can be used in isolation, or
+        combined to e.g. style selected days within a range.
+      </p>
 
-    <tr>
-      <td><code>offset</code></td>
-      <td><code>offset</code></td>
-      <td>
-        In a multi-month view, controls which month is shown relative to the
-        start of the view.
-      </td>
-      <td><code>number</code></td>
-      <td><code>0</code></td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>CSS Custom Properties</Heading>
-
-  <p>CSS custom properties allow for coarse-grained styling and theming</p>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-
-    <tr>
-      <td><code>--color-accent</code></td>
-      <td>The accent color used throughout</td>
-      <td><code>black</code></td>
-    </tr>
-    <tr>
-      <td><code>--color-text-on-accent</code></td>
-      <td>The color used on with <code>--color-accent</code></td>
-      <td><code>white</code></td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>CSS Parts</Heading>
-
-  <p>
-    CSS parts allow for fine-grained styling and theming. They target specific
-    elements inside the component. An element may have multiple parts, and a
-    part may be used on multiple elements. They can be used in isolation, or
-    combined to e.g. style selected days within a range.
-  </p>
-
-  <p>
-    See the guide on <Link href="/guides/theming/">theming</Link> for a walkthrough
-    of how to style this component.
-  </p>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-
-    <tr>
-      <td><code>heading</code></td>
-      <td>The heading that labels the month</td>
-    </tr>
-    <tr>
-      <td><code>table</code></td>
-      <td>The <code>&lt;table&gt;</code> element</td>
-    </tr>
-    <tr>
-      <td><code>tr</code></td>
-      <td>Any row within the table</td>
-    </tr>
-    <tr>
-      <td><code>head</code></td>
-      <td>The table's header row</td>
-    </tr>
-    <tr>
-      <td><code>week</code></td>
-      <td>The table's body rows</td>
-    </tr>
-    <tr>
-      <td><code>th</code></td>
-      <td>The table's header cells</td>
-    </tr>
-    <tr>
-      <td><code>td</code></td>
-      <td>The table's body cells</td>
-    </tr>
-    <tr>
-      <td><code>col-weeknumber</code></td>
-      <td>The <code>&lt;col&gt;</code> for the week number</td>
-    </tr>
-    <tr>
-      <td><code>col-1</code></td>
-      <td>The <code>&lt;col&gt;</code> for the first day of the week</td>
-    </tr>
-    <tr>
-      <td><code>col-2</code></td>
-      <td>The <code>&lt;col&gt;</code> for the second day of the week </td>
-    </tr>
-    <tr>
-      <td><code>col-3</code></td>
-      <td>The <code>&lt;col&gt;</code> for the third day of the week</td>
-    </tr>
-    <tr>
-      <td><code>col-4</code></td>
-      <td>The <code>&lt;col&gt;</code> for the fourth day of the week</td>
-    </tr>
-    <tr>
-      <td><code>col-5</code></td>
-      <td>The <code>&lt;col&gt;</code> for the fifth day of the week</td>
-    </tr>
-    <tr>
-      <td><code>col-6</code></td>
-      <td>The <code>&lt;col&gt;</code> for the sixth day of the week</td>
-    </tr>
-    <tr>
-      <td><code>col-7</code></td>
-      <td>The <code>&lt;col&gt;</code> for the seventh day of the week</td>
-    </tr>
-    <tr>
-      <td><code>weekday</code></td>
-      <td>The <code>th</code> for the day of the week</td>
-    </tr>
-    <tr>
-      <td><code>weeknumber</code></td>
-      <td>The <code>td</code> for the week number</td>
-    </tr>
-    <tr>
-      <td><code>button</code></td>
-      <td>Any button used in the component</td>
-    </tr>
-    <tr>
-      <td><code>day</code></td>
-      <td>The buttons and headings corresponding to each day in the grid</td>
-    </tr>
-    <tr>
-      <td><code>day-1</code></td>
-      <td>The buttons and headings corresponding to Monday</td>
-    </tr>
-    <tr>
-      <td><code>day-2</code></td>
-      <td>The buttons and headings corresponding to Tuesday</td>
-    </tr>
-    <tr>
-      <td><code>day-3</code></td>
-      <td>The buttons and headings corresponding to Wednesday</td>
-    </tr>
-    <tr>
-      <td><code>day-4</code></td>
-      <td>The buttons and headings corresponding to Thursday</td>
-    </tr>
-    <tr>
-      <td><code>day-5</code></td>
-      <td>The buttons and headings corresponding to Friday</td>
-    </tr>
-    <tr>
-      <td><code>day-6</code></td>
-      <td>The buttons and headings corresponding to Saturday</td>
-    </tr>
-    <tr>
-      <td><code>day-7</code></td>
-      <td>The buttons and headings corresponding to Sunday</td>
-    </tr>
-    <tr>
-      <td><code>selected</code></td>
-      <td>Any <code>day</code>s which are selected</td>
-    </tr>
-    <tr>
-      <td><code>today</code></td>
-      <td>Today's <code>day</code></td>
-    </tr>
-    <tr>
-      <td><code>disallowed</code></td>
-      <td>
-        Any <code>day</code>that has been disallowed via
-        <code>isDateDisallowed</code>
-      </td>
-    </tr>
-    <tr>
-      <td><code>outside</code></td>
-      <td>Any <code>day</code>s which are outside the current month</td>
-    </tr>
-    <tr>
-      <td><code>range-start</code></td>
-      <td>The <code>day</code> at the start of a date range</td>
-    </tr>
-    <tr>
-      <td><code>range-end</code></td>
-      <td>The <code>day</code> at the end of a date range</td>
-    </tr>
-    <tr>
-      <td><code>range-inner</code></td>
-      <td>
-        Any <code>day</code>s between the start and end of a date range
-      </td>
-    </tr>
-  </Table>
-
-  <Heading level={2}>Slots</Heading>
-
-  <Table>
-    <tr slot="head">
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-    <tr>
-      <td><code>heading</code></td>
-      <td>
-        Replaces the default month heading. Accepts a
-        <Link href="/components/calendar-heading/"
-          ><code>{`<calendar-heading>`}</code></Link
-        > or custom content.
-      </td>
-    </tr>
-    <tr>
-      <td>weeknumber</td>
-      <td>
-        If week numbers are shown, this slot holds the heading for the column.
-        Defaults to "#"
-      </td>
-    </tr>
-  </Table>
+      <p>
+        See the guide on <Link href="/guides/theming/">theming</Link> for a walkthrough
+        of how to style this component.
+      </p>
+    </Fragment>
+  </ApiReference>
 </ApiLayout>
