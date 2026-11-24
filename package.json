@@ -44,7 +44,7 @@
     "@vitest/ui": "^4.0.16",
     "astro": "^5.5.6",
     "hastscript": "^9.0.1",
-    "playwright": "^1.50.1",
+    "playwright": "^1.65.1",
     "postcss-nesting": "^13.0.1",
     "prettier": "^3.5.3",
     "rehype-autolink-headings": "^7.1.0",
