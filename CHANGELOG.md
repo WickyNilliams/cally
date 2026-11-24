@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Page locking up when a calendar is removed from the document and added again.
 - Removing a numeric attribute, e.g. `months`, setting its value to `0` rather than its default.
 - Invalid numeric attributes throwing an error, rather than using the default value.
+- `weekday` CSS part missing from `<calendar-month>`, despite being documented.
 
 ## `0.9.2`
 
