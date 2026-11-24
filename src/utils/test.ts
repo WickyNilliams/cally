@@ -1,15 +1,104 @@
-import { userEvent, page, type Locator } from "vitest/browser";
-import { fixture } from "atomico/test-dom";
-import type { VNodeAny } from "atomico/types/vnode";
+import { afterEach, beforeEach } from "vitest";
+import { userEvent, page } from "vitest/browser";
 import type { CalendarDate } from "../calendar-date/calendar-date.js";
 import type { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { CalendarRange } from "../calendar-range/calendar-range.js";
+import type { CalendarMulti } from "../calendar-multi/calendar-multi.js";
+import {
+  CalendarContext as Context,
+  type CalendarContextValue,
+} from "../calendar-month/CalendarMonthContext.js";
+import type { Page } from "../calendar-heading/CalendarHeadingContext.js";
+import { signal } from "./signals.js";
+import type { PlainDate } from "./temporal.js";
+import type { DaysOfWeek } from "./date.js";
 
-async function nextFrame() {
+export async function nextFrame() {
   return new Promise((resolve) =>
     requestAnimationFrame(() => resolve(undefined)),
   );
 }
+
+let host: HTMLElement;
+
+beforeEach(() => {
+  host = document.createElement("div");
+  document.body.append(host);
+});
+
+afterEach(() => {
+  host.remove();
+});
+
+/**
+ * Adds a node to the document for the duration of a test
+ */
+export function fixture<T extends Element>(node: Element): T {
+  host.append(node);
+  return node as T;
+}
+
+interface CalendarContextBase {
+  min?: PlainDate;
+  max?: PlainDate;
+  today?: PlainDate;
+  firstDayOfWeek: DaysOfWeek;
+  isDateDisallowed?: (date: Date) => boolean;
+  getDayParts?: (date: Date) => string;
+  page: Page;
+  focusedDate: PlainDate;
+  showOutsideDays?: boolean;
+  showWeekNumbers?: boolean;
+  locale?: string;
+  formatWeekday: "narrow" | "short";
+}
+
+export interface CalendarDateContext extends CalendarContextBase {
+  type: "date";
+  value?: PlainDate;
+}
+
+export interface CalendarRangeContext extends CalendarContextBase {
+  type: "range";
+  value: [PlainDate, PlainDate] | [];
+}
+
+export interface CalendarMultiContext extends CalendarContextBase {
+  type: "multi";
+  value: PlainDate[];
+}
+
+/**
+ * Stands in for a calendar, so that descendants can be tested in isolation.
+ * Provides whatever its `value` is as context.
+ */
+export class CalendarContext extends HTMLElement {
+  value!: CalendarDateContext | CalendarRangeContext | CalendarMultiContext;
+
+  constructor() {
+    super();
+
+    this.addEventListener(Context.name, (e) => {
+      const { type, value, ...rest } = this.value;
+      const context: Record<string, unknown> = {
+        ...Context.initial,
+        type,
+        value: signal([value ?? []].flat()),
+      };
+
+      for (const [key, value] of Object.entries(rest)) {
+        context[key] = signal(value);
+      }
+
+      e.stopPropagation();
+      (e as CustomEvent<(value: CalendarContextValue) => void>).detail(
+        context as unknown as CalendarContextValue,
+      );
+    });
+  }
+}
+
+customElements.define("calendar-ctx", CalendarContext);
 
 type SpySubject = (...args: any[]) => any;
 
@@ -51,9 +140,10 @@ export function createSpy<T extends SpySubject>(fn?: T) {
 export type MonthInstance = InstanceType<typeof CalendarMonth>;
 export type CalendarInstance =
   | InstanceType<typeof CalendarDate>
-  | InstanceType<typeof CalendarRange>;
+  | InstanceType<typeof CalendarRange>
+  | InstanceType<typeof CalendarMulti>;
 
-export async function mount<T extends CalendarInstance>(node: VNodeAny) {
+export async function mount<T extends CalendarInstance>(node: Element) {
   const calendar = fixture<T>(node);
   await nextFrame();
   return calendar;

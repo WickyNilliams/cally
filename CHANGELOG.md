@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Changed
+
+- Rewritten with no dependencies.
+
+### Fixed
+
+- Infinite loop when the visible page and `focusedDate` change at the same time, e.g. when moving a calendar within the document ([#137](https://github.com/WickyNilliams/cally/issues/137)).
+- Calendar heading not updating when `months` changes.
+- `<calendar-heading>` within a `<calendar-month>` showing the current month, rather than its own month, when the components are defined after the page has loaded.
+- Page locking up when a calendar is removed from the document and added again.
+- Removing a numeric attribute, e.g. `months`, setting its value to `0` rather than its default.
+- Invalid numeric attributes throwing an error, rather than using the default value.
+
 ## `0.9.2`
 
 _Released: 2026-02-05_

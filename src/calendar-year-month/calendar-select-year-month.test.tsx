@@ -1,4 +1,4 @@
-import type { VNodeAny } from "atomico/types/vnode";
+/** @jsxImportSource test-jsx */
 import { describe, it, expect } from "vitest";
 import { userEvent, page } from "vitest/browser";
 import { CalendarDate } from "../calendar-date/calendar-date";
@@ -26,7 +26,7 @@ function Fixture({
   max,
   maxYears,
   formatMonth,
-}: Partial<TestProps>): VNodeAny {
+}: Partial<TestProps>): Element {
   return (
     <CalendarDate value={value} min={min} max={max} locale="en-GB">
       <CalendarSelectMonth formatMonth={formatMonth} />
