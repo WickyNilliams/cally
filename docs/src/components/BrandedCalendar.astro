@@ -1,11 +1,11 @@
 ---
-import { type CalendarDateProps } from "../../../src/index.js";
+import type { CalendarDate, PropsOf } from "../../../src/index.js";
 
 type ExcludeByValue<T, V> = {
   [K in keyof T as NonNullable<T[K]> extends V ? never : K]: T[K];
 };
 
-interface Props extends ExcludeByValue<CalendarDateProps, Function> {
+interface Props extends ExcludeByValue<PropsOf<CalendarDate>, Function> {
   class?: string;
 }
 

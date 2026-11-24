@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `getWeekNumber` option to `<calendar-date>`, `<calendar-range>`, and `<calendar-multi>` components, for custom week numbering.
 - Each component can be imported individually, e.g. `import "cally/calendar-date"`.
+- Types for the events of each component, so listeners added with `addEventListener` know the type of an event's `detail`.
+- `PropsOf`, `EventsOf`, `ReactProps`, `SvelteProps`, and `VueProps` types, for use with frameworks.
 
 ### Fixed
 
@@ -25,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removing a numeric attribute, e.g. `months`, setting its value to `0` rather than its default.
 - Invalid numeric attributes throwing an error, rather than using the default value.
 - `weekday` CSS part missing from `<calendar-month>`, despite being documented.
+
+### Removed
+
+- `CalendarDateProps`, `CalendarRangeProps`, `CalendarMultiProps`, `CalendarMonthProps`, `CalendarHeadingProps`, `CalendarSelectMonthProps`, and `CalendarSelectYearProps` types. These had event listeners named in a way no framework uses, listed `focus` as a prop, and gave the wrong type for `<calendar-month>` events. Use `ReactProps`, `SvelteProps`, `VueProps`, or `PropsOf` instead, as described in the frameworks guide.
 
 ## `0.9.2`
 
