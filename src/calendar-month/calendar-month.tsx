@@ -53,15 +53,19 @@ export const CalendarMonth = c(
                   </slot>
                 </th>
               )}
-              {calendar.daysLong.map((dayName, i) => (
-                <th
-                  part={`th day day-${mapToDayNumber(context.firstDayOfWeek, i)}`}
-                  scope="col"
-                >
-                  <span class="vh">{dayName}</span>
-                  <span aria-hidden="true">{calendar.daysVisible[i]}</span>
-                </th>
-              ))}
+              {calendar.daysLong.map((dayName, i) => {
+                const day = mapToDayNumber(context.firstDayOfWeek, i);
+
+                return (
+                  <th
+                    part={`th day day-${day === 0 ? "0 day-7" : day}`}
+                    scope="col"
+                  >
+                    <span class="vh">{dayName}</span>
+                    <span aria-hidden="true">{calendar.daysVisible[i]}</span>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
 
