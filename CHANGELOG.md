@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rewritten with no dependencies, reducing the bundle size from 12.5KB to 6.6KB min/gzip.
 - `firstDayOfWeek` uses ISO 8601 numbering, from `1` for Monday to `7` for Sunday. `0` is no longer supported.
 - The CSS part for Sunday is `day-7`, rather than `day-0`.
+- Events and functions are given dates as plain `{ year, month, day }` objects, rather than `Date` objects. These can be converted with e.g. `Temporal.PlainDate.from(date)`.
 
 ### Added
 

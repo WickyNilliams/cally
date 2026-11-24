@@ -12,12 +12,13 @@ import {
   mount,
 } from "../utils/test.js";
 
+import type { DateLike } from "../utils/date.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { CalendarMulti } from "./calendar-multi.js";
 
 type TestProps = {
   onchange: (e: Event) => void;
-  onfocusday: (e: CustomEvent<Date>) => any;
+  onfocusday: (e: CustomEvent<DateLike>) => any;
   value: string;
   min: string;
   max: string;

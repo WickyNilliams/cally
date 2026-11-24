@@ -20,7 +20,7 @@ import {
 } from "../utils/test.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { PlainDate } from "../utils/temporal.js";
-import { toDate, getToday } from "../utils/date.js";
+import { toDate, getToday, type DateLike } from "../utils/date.js";
 
 async function nextFrame() {
   return new Promise((resolve) =>
@@ -40,8 +40,10 @@ interface DateTestProps extends TestPropsBase, CalendarDateContext {}
 interface RangeTestProps extends TestPropsBase, CalendarRangeContext {}
 interface MultiTestProps extends TestPropsBase, CalendarMultiContext {}
 
-const isWeekend = (date: Date) =>
-  date.getUTCDay() === 0 || date.getUTCDay() === 6;
+const isWeekend = (date: DateLike) => {
+  const day = toDate(date).getUTCDay();
+  return day === 0 || day === 6;
+};
 
 function getWeekNumbers(month: MonthInstance) {
   const grid = getGrid(month);
@@ -906,7 +908,7 @@ describe("CalendarMonth", () => {
     });
 
     it("supports custom week numbering", async () => {
-      const spy = createSpy((date: Date) => date.getUTCDate());
+      const spy = createSpy((date: DateLike) => date.day);
       const month = await mount(
         <Fixture
           focusedDate={PlainDate.from("2020-01-01")}
@@ -915,13 +917,13 @@ describe("CalendarMonth", () => {
         />,
       );
 
-      // called with the first day of each week, at midnight UTC
-      expect(spy.calls.map(([date]) => date.toISOString())).toEqual([
-        "2019-12-30T00:00:00.000Z",
-        "2020-01-06T00:00:00.000Z",
-        "2020-01-13T00:00:00.000Z",
-        "2020-01-20T00:00:00.000Z",
-        "2020-01-27T00:00:00.000Z",
+      // called with the first day of each week
+      expect(spy.calls.map(([date]) => date)).toEqual([
+        { year: 2019, month: 12, day: 30 },
+        { year: 2020, month: 1, day: 6 },
+        { year: 2020, month: 1, day: 13 },
+        { year: 2020, month: 1, day: 20 },
+        { year: 2020, month: 1, day: 27 },
       ]);
 
       const weekNumbers = [...getWeekNumbers(month)];

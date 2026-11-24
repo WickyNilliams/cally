@@ -11,12 +11,13 @@ export function getToday() {
 const DAY_MS = 86400000;
 
 /**
- * The ISO week number of a date, given at midnight UTC
+ * The ISO week number of a date
  */
-export function getWeekNumber(day: Date): number {
+export function getWeekNumber(date: DateLike): number {
   // the year is that of the thursday in the same week
-  const thursday = new Date(day);
-  thursday.setUTCDate(day.getUTCDate() + 4 - (day.getUTCDay() || 7));
+  const thursday = toDate(date);
+  const day = thursday.getUTCDay() || 7;
+  thursday.setUTCDate(date.day + 4 - day);
   const start = Date.UTC(thursday.getUTCFullYear(), 0, 1);
 
   return Math.ceil(((+thursday - start) / DAY_MS + 1) / 7);
@@ -96,13 +97,25 @@ export function getViewOfMonth(
   return weeks;
 }
 
-interface DateLike {
+/**
+ * A date, as a plain object. It can be converted with e.g.
+ * `Temporal.PlainDate.from(date)`, or `new Date(year, month - 1, day)`
+ */
+export interface DateLike {
   year: number;
+  /** from 1 for January to 12 for December */
   month: number;
-  day?: number;
+  day: number;
 }
 
-export function toDate(date: DateLike): Date {
+/** Copies a date to a plain object, so that nothing else is exposed */
+export const toDateLike = ({ year, month, day }: DateLike): DateLike => ({
+  year,
+  month,
+  day,
+});
+
+export function toDate(date: { year: number; month: number; day?: number }): Date {
   return new Date(Date.UTC(date.year, date.month - 1, date.day ?? 1));
 }
 

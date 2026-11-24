@@ -14,7 +14,7 @@ export type PropsOf<Element> =
  * Each is mapped to the type of its `detail`.
  *
  * @example
- * EventsOf<CalendarDate> // { change: undefined; focusday: Date; ... }
+ * EventsOf<CalendarDate> // { change: undefined; focusday: DateLike; ... }
  */
 export type EventsOf<Element> =
   Element extends Base<any, infer Events, any> ? Events : never;

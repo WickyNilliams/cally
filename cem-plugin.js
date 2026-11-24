@@ -48,6 +48,14 @@ export default function cally({ tsconfig = "tsconfig.json" } = {}) {
   function printNode(node) {
     if (ts.isUnionTypeNode(node)) return node.types.map(printNode).join(" | ");
 
+    if (ts.isFunctionTypeNode(node)) {
+      const params = node.parameters.map(
+        (p) =>
+          `${p.name.getText()}${p.questionToken ? "?" : ""}: ${printNode(p.type)}`,
+      );
+      return `(${params.join(", ")}) => ${printNode(node.type)}`;
+    }
+
     if (ts.isTypeReferenceNode(node)) {
       let symbol = checker.getSymbolAtLocation(node.typeName);
       if (symbol && symbol.flags & ts.SymbolFlags.Alias) {

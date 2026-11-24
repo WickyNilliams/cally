@@ -16,6 +16,7 @@ import {
   getViewOfMonth,
   startOfWeek,
   toDate,
+  toDateLike,
 } from "../utils/date.js";
 import type { PlainDate } from "../utils/temporal.js";
 import { CalendarHeadingContext } from "../calendar-heading/CalendarHeadingContext.js";
@@ -235,7 +236,7 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
       weeks.forEach((week, i) => {
         const date = dates[i * 7];
         toggle(tbody, week, date);
-        if (date) setText(weekNumbers[i]!, getWeekNumber(toDate(date)));
+        if (date) setText(weekNumbers[i]!, getWeekNumber(toDateLike(date)));
       });
 
       buttons.forEach((button, i) => {
@@ -249,7 +250,7 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
 
         const isToday = date.equals(today);
         const asDate = toDate(date);
-        const isDisallowed = isDateDisallowed?.(asDate);
+        const isDisallowed = isDateDisallowed?.(toDateLike(date));
 
         const isRange = ctx.type === "range";
         const isRangeStart = isRange && start?.equals(date);
@@ -272,7 +273,7 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
             isInMonth ? isSelected && "selected" : "outside",
             isDisallowed && "disallowed",
             isToday && "today",
-            getDayParts?.(asDate),
+            getDayParts?.(toDateLike(date)),
             isRangeStart && "range-start",
             isRangeEnd && "range-end",
             isRange &&
@@ -307,7 +308,7 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
       dates[buttons.indexOf((e.target as Element).closest("button")!)];
 
     const isDisallowed = (date: PlainDate) =>
-      context.value.isDateDisallowed.value?.(toDate(date));
+      context.value.isDateDisallowed.value?.(toDateLike(date));
 
     const focusDay = (date: PlainDate) => {
       const { min, max } = context.value;

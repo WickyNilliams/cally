@@ -20,7 +20,12 @@ import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { Pagination } from "../calendar-base/calendar-base.js";
 import { CalendarDate } from "./calendar-date.js";
 import { PlainYearMonth } from "../utils/temporal.js";
-import { getToday, toDate, type DaysOfWeek } from "../utils/date.js";
+import {
+  getToday,
+  toDate,
+  type DateLike,
+  type DaysOfWeek,
+} from "../utils/date.js";
 
 async function nextFrame() {
   return new Promise((resolve) =>
@@ -30,8 +35,8 @@ async function nextFrame() {
 
 type TestProps = {
   onchange: (e: Event) => void;
-  onfocusday: (e: CustomEvent<Date>) => void;
-  onpagechange: (e: CustomEvent<{ start: Date; end: Date }>) => void;
+  onfocusday: (e: CustomEvent<DateLike>) => void;
+  onpagechange: (e: CustomEvent<{ start: DateLike; end: DateLike }>) => void;
   value: string;
   min: string;
   max: string;
@@ -212,7 +217,8 @@ describe("CalendarDate", () => {
 
       // disable weekends
       calendar.isDateDisallowed = function isWeekend(date) {
-        return date.getUTCDay() === 0 || date.getUTCDay() === 6;
+        const day = toDate(date).getUTCDay();
+        return day === 0 || day === 6;
       };
 
       // tab to next page button
@@ -614,7 +620,7 @@ describe("CalendarDate", () => {
 
   describe("events", () => {
     it("raises a focusday event", async () => {
-      const spy = createSpy<(e: CustomEvent<Date>) => void>();
+      const spy = createSpy<(e: CustomEvent<DateLike>) => void>();
       const calendar = await mount(
         <Fixture value="2022-01-01" onfocusday={spy} />,
       );
@@ -623,7 +629,7 @@ describe("CalendarDate", () => {
       await getNextPageButton(calendar).click();
 
       expect(spy.count).toBe(1);
-      expect(spy.last[0].detail).toEqual(new Date("2022-02-01"));
+      expect(spy.last[0].detail).toEqual({ year: 2022, month: 2, day: 1 });
     });
 
     it("raises a change event", async () => {
@@ -643,7 +649,7 @@ describe("CalendarDate", () => {
 
     describe("pagechange", () => {
       type PageChangeSpy = (
-        e: CustomEvent<{ start: Date; end: Date }>
+        e: CustomEvent<{ start: DateLike; end: DateLike }>
       ) => void;
 
       it("fires when clicking the next button", async () => {
@@ -656,8 +662,8 @@ describe("CalendarDate", () => {
 
         expect(spy.count).toBe(1);
         expect(spy.last[0].detail).toEqual({
-          start: new Date("2022-02-01"),
-          end: new Date("2022-02-28"),
+          start: { year: 2022, month: 2, day: 1 },
+          end: { year: 2022, month: 2, day: 28 },
         });
       });
 
@@ -671,8 +677,8 @@ describe("CalendarDate", () => {
 
         expect(spy.count).toBe(1);
         expect(spy.last[0].detail).toEqual({
-          start: new Date("2022-02-01"),
-          end: new Date("2022-02-28"),
+          start: { year: 2022, month: 2, day: 1 },
+          end: { year: 2022, month: 2, day: 28 },
         });
       });
 
@@ -688,8 +694,8 @@ describe("CalendarDate", () => {
 
         expect(spy.count).toBe(1);
         expect(spy.last[0].detail).toEqual({
-          start: new Date("2022-02-01"),
-          end: new Date("2022-02-28"),
+          start: { year: 2022, month: 2, day: 1 },
+          end: { year: 2022, month: 2, day: 28 },
         });
       });
 
@@ -726,8 +732,8 @@ describe("CalendarDate", () => {
 
         expect(spy.count).toBe(1);
         expect(spy.last[0].detail).toEqual({
-          start: new Date("2022-03-01"),
-          end: new Date("2022-04-30"),
+          start: { year: 2022, month: 3, day: 1 },
+          end: { year: 2022, month: 4, day: 30 },
         });
       });
 
@@ -749,8 +755,8 @@ describe("CalendarDate", () => {
 
         expect(spy.count).toBe(1);
         expect(spy.last[0].detail).toEqual({
-          start: new Date("2022-02-01"),
-          end: new Date("2022-03-31"),
+          start: { year: 2022, month: 2, day: 1 },
+          end: { year: 2022, month: 3, day: 31 },
         });
       });
     });
@@ -1018,7 +1024,7 @@ describe("CalendarDate", () => {
 
       expect(weekNumbers()).toEqual(["1", "2", "3", "4", "5"]);
 
-      calendar.getWeekNumber = (date) => date.getUTCDate();
+      calendar.getWeekNumber = (date) => date.day;
       await nextFrame();
       expect(weekNumbers()).toEqual(["30", "6", "13", "20", "27"]);
 
@@ -1137,8 +1143,8 @@ describe("CalendarDate", () => {
     const almostGone = new Set(["2020-01-13", "2020-01-14"]);
 
     const calendar = await mount(<Fixture value="2020-01-01" />);
-    calendar.getDayParts = function getDayParts(date: Date) {
-      const d = date.toISOString().slice(0, 10);
+    calendar.getDayParts = function getDayParts(date) {
+      const d = toDate(date).toISOString().slice(0, 10);
 
       if (available.has(d)) return "available";
       if (almostGone.has(d)) return "almost-gone";

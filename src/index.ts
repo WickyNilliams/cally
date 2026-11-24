@@ -6,6 +6,7 @@ export { CalendarRange } from "./calendar-range/calendar-range.js";
 export { CalendarMulti } from "./calendar-multi/calendar-multi.js";
 export { CalendarHeading } from "./calendar-heading/calendar-heading.js";
 
+export type { DateLike } from "./utils/date.js";
 export type {
   PropsOf,
   EventsOf,

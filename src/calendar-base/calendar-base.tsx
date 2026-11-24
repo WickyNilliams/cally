@@ -12,7 +12,8 @@ import {
   getToday,
   getWeekNumber,
   parseDate,
-  toDate,
+  toDateLike,
+  type DateLike,
   type DaysOfWeek,
 } from "../utils/date.js";
 import {
@@ -26,8 +27,8 @@ import reset from "../utils/reset.css?inline";
 import styles from "./calendar-base.css?inline";
 
 export interface PageChangeDetail {
-  start: Date;
-  end: Date;
+  start: DateLike;
+  end: DateLike;
 }
 
 export type Pagination = "single" | "months";
@@ -66,11 +67,11 @@ export interface CalendarProps {
   /** Controls the format of the weekday headers in the month table */
   formatWeekday: "narrow" | "short";
   /** A function that takes a date and returns `true` if the date should not be selectable */
-  isDateDisallowed: (date: Date) => boolean;
+  isDateDisallowed: (date: DateLike) => boolean;
   /** A function that takes a date and returns a string of CSS parts, allowing custom styling for individual dates */
-  getDayParts: (date: Date) => string;
+  getDayParts: (date: DateLike) => string;
   /** A function that takes the first day of a week and returns its number, when `showWeekNumbers` is set. Defaults to ISO week numbers */
-  getWeekNumber: (date: Date) => number;
+  getWeekNumber: (date: DateLike) => number;
 }
 
 /** The events dispatched by every kind of calendar, and the type of their detail */
@@ -78,7 +79,7 @@ export interface CalendarEvents {
   /** Emitted when the value changes via user interaction. Not emitted when `value` is changed programmatically */
   change: undefined;
   /** Emitted when the focused day changes. This can happen via keyboard commands, or clicking the next or previous buttons */
-  focusday: Date;
+  focusday: DateLike;
   /** Emitted when the visible months change */
   pagechange: PageChangeDetail;
 }
@@ -187,7 +188,7 @@ export abstract class CalendarBase<
 
     const goto = (date: PlainDate) => {
       this.focusedDate = date.toString();
-      this.emit("focusday", toDate(date));
+      this.emit("focusday", toDateLike(date));
     };
 
     //
@@ -221,8 +222,8 @@ export abstract class CalendarBase<
       pageStart.value = start;
 
       this.emit("pagechange", {
-        start: toDate(start),
-        end: toDate(endOfMonth(page.value.end)),
+        start: toDateLike(start.toPlainDate({ day: 1 })),
+        end: toDateLike(endOfMonth(page.value.end)),
       });
     };
 

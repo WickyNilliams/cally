@@ -1,6 +1,6 @@
 import type { PropDefs } from "../utils/base.js";
 import { computed, signal } from "../utils/signals.js";
-import { parseDate, toDate } from "../utils/date.js";
+import { parseDate, toDateLike, type DateLike } from "../utils/date.js";
 import { PlainDate } from "../utils/temporal.js";
 import {
   CalendarBase,
@@ -10,9 +10,9 @@ import {
 
 interface RangeEvents extends CalendarEvents {
   /** Emitted when the user starts selecting a range */
-  rangestart: Date;
+  rangestart: DateLike;
   /** Emitted when the user finishes selecting a range */
-  rangeend: Date;
+  rangeend: DateLike;
 }
 
 interface RangeProps extends CalendarProps {
@@ -79,11 +79,11 @@ export class CalendarRange extends CalendarBase<RangeProps, RangeEvents> {
 
     if (!tentative) {
       this.tentative = date.toString();
-      this.emit("rangestart", toDate(date));
+      this.emit("rangestart", toDateLike(date));
     } else {
       this.value = sort(tentative, date).join("/");
       this.tentative = "";
-      this.emit("rangeend", toDate(date));
+      this.emit("rangeend", toDateLike(date));
       this.emit("change");
     }
   }

@@ -11,7 +11,7 @@ import {
 import type { Page } from "../calendar-heading/CalendarHeadingContext.js";
 import { signal } from "./signals.js";
 import type { PlainDate } from "./temporal.js";
-import type { DaysOfWeek } from "./date.js";
+import type { DateLike, DaysOfWeek } from "./date.js";
 
 export async function nextFrame() {
   return new Promise((resolve) =>
@@ -43,9 +43,9 @@ interface CalendarContextBase {
   max?: PlainDate;
   today?: PlainDate;
   firstDayOfWeek: DaysOfWeek;
-  isDateDisallowed?: (date: Date) => boolean;
-  getDayParts?: (date: Date) => string;
-  getWeekNumber?: (date: Date) => number;
+  isDateDisallowed?: (date: DateLike) => boolean;
+  getDayParts?: (date: DateLike) => string;
+  getWeekNumber?: (date: DateLike) => number;
   page: Page;
   focusedDate: PlainDate;
   showOutsideDays?: boolean;

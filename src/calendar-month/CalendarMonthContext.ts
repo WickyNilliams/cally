@@ -5,7 +5,12 @@ import {
 } from "../calendar-heading/CalendarHeadingContext.js";
 import { signal, type ReadonlySignal } from "../utils/signals.js";
 import type { PlainDate } from "../utils/temporal.js";
-import { getToday, getWeekNumber, type DaysOfWeek } from "../utils/date.js";
+import {
+  getToday,
+  getWeekNumber,
+  type DateLike,
+  type DaysOfWeek,
+} from "../utils/date.js";
 
 /** What descendants of a calendar dispatch, for the calendar to act upon */
 export interface DayEvents {
@@ -29,10 +34,10 @@ export interface CalendarContextValue {
   max: ReadonlySignal<PlainDate | undefined>;
   today: ReadonlySignal<PlainDate | undefined>;
   firstDayOfWeek: ReadonlySignal<DaysOfWeek>;
-  isDateDisallowed: ReadonlySignal<((date: Date) => boolean) | undefined>;
-  getDayParts: ReadonlySignal<((date: Date) => string) | undefined>;
+  isDateDisallowed: ReadonlySignal<((date: DateLike) => boolean) | undefined>;
+  getDayParts: ReadonlySignal<((date: DateLike) => string) | undefined>;
   /** given the first day of a week, as shown */
-  getWeekNumber: ReadonlySignal<(date: Date) => number>;
+  getWeekNumber: ReadonlySignal<(date: DateLike) => number>;
   page: ReadonlySignal<Page>;
   focusedDate: ReadonlySignal<PlainDate>;
   showOutsideDays: ReadonlySignal<boolean | undefined>;

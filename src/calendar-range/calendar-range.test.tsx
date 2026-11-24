@@ -14,14 +14,15 @@ import {
   nextFrame,
 } from "../utils/test.js";
 
+import type { DateLike } from "../utils/date.js";
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import { CalendarRange } from "./calendar-range.js";
 
 type TestProps = {
   onchange: (e: Event) => void;
-  onfocusday: (e: CustomEvent<Date>) => any;
-  onrangestart: (e: CustomEvent<Date>) => any;
-  onrangeend: (e: CustomEvent<Date>) => any;
+  onfocusday: (e: CustomEvent<DateLike>) => any;
+  onrangestart: (e: CustomEvent<DateLike>) => any;
+  onrangeend: (e: CustomEvent<DateLike>) => any;
   value: string;
   min: string;
   max: string;
@@ -160,7 +161,7 @@ describe("CalendarRange", () => {
 
   describe("events", () => {
     it("raises a focusday event", async () => {
-      const spy = createSpy<(e: CustomEvent<Date>) => void>();
+      const spy = createSpy<(e: CustomEvent<DateLike>) => void>();
       const calendar = await mount(
         <Fixture value="2022-01-01/2022-01-01" onfocusday={spy} />,
       );
@@ -169,7 +170,7 @@ describe("CalendarRange", () => {
       await getNextPageButton(calendar).click();
 
       expect(spy.count).toBe(1);
-      expect(spy.last[0].detail).toEqual(new Date("2022-02-01"));
+      expect(spy.last[0].detail).toEqual({ year: 2022, month: 2, day: 1 });
     });
 
     it("raises a change event", async () => {
@@ -190,8 +191,8 @@ describe("CalendarRange", () => {
     });
 
     it("raises rangestart and rangeend events", async () => {
-      const startSpy = createSpy<(e: CustomEvent<Date>) => void>();
-      const endSpy = createSpy<(e: CustomEvent<Date>) => void>();
+      const startSpy = createSpy<(e: CustomEvent<DateLike>) => void>();
+      const endSpy = createSpy<(e: CustomEvent<DateLike>) => void>();
 
       const calendar = await mount(
         <Fixture
@@ -206,13 +207,17 @@ describe("CalendarRange", () => {
 
       await clickDay(month, "31 December");
       expect(startSpy.count).toBe(1);
-      expect(startSpy.last[0].detail).toEqual(new Date("2021-12-31"));
+      expect(startSpy.last[0].detail).toEqual({
+        year: 2021,
+        month: 12,
+        day: 31,
+      });
       expect(endSpy.called).toBe(false);
 
       await clickDay(month, "30 December");
       expect(startSpy.count).toBe(1);
       expect(endSpy.count).toBe(1);
-      expect(endSpy.last[0].detail).toEqual(new Date("2021-12-30"));
+      expect(endSpy.last[0].detail).toEqual({ year: 2021, month: 12, day: 30 });
     });
   });
 
