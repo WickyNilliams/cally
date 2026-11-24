@@ -19,7 +19,7 @@ import {
 import { CalendarMonth } from "../calendar-month/calendar-month.js";
 import type { Pagination } from "../calendar-base/calendar-base.js";
 import { CalendarDate } from "./calendar-date.js";
-import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
+import { PlainYearMonth } from "../utils/temporal.js";
 import { getToday, toDate, type DaysOfWeek } from "../utils/date.js";
 
 async function nextFrame() {
@@ -1116,7 +1116,7 @@ describe("CalendarDate", () => {
 
     const calendar = await mount(<Fixture value="2020-01-01" />);
     calendar.getDayParts = function getDayParts(date: Date) {
-      const d = PlainDate.from(date).toString();
+      const d = date.toISOString().slice(0, 10);
 
       if (available.has(d)) return "available";
       if (almostGone.has(d)) return "almost-gone";
