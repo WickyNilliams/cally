@@ -24,6 +24,7 @@ jobs:
         uses: withastro/action@v2
         with:
           path: ./docs # root location of Astro inside the repo
+          node-version: 24
           package-manager: npm@latest # not finding my package-lock file for some reason, so be explicit
 
   deploy:
