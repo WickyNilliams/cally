@@ -30,7 +30,8 @@
     "test:ui": "vitest --ui",
     "astro:dev": "astro dev --root ./docs",
     "astro:build": "astro check --root ./docs && astro build --root ./docs",
-    "astro:preview": "astro preview --root ./docs"
+    "astro:preview": "astro preview --root ./docs",
+    "version": "node scripts/version-changelog.js && git add CHANGELOG.md"
   },
   "dependencies": {
     "atomico": "^1.79.2"
