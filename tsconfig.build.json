@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["**/*.test.ts", "**/*.test.tsx", "./vitest.d.ts"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "./vitest.d.ts", "./src/utils/test.ts"],
   "compilerOptions": {
     "moduleResolution": "node"
   }
