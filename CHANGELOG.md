@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## `0.10.0`
+
+### Added
+
+- `<calendar-heading>` component for displaying the current month and/or year, configured via `month` and `year` attributes.
+- `heading` slot to `<calendar-month>` for replacing the default month heading.
+- `pagechange` event to `<calendar-date>`, `<calendar-range>`, and `<calendar-multi>` components.
+- Support for ISO 8601 day numbering in `first-day-of-week` attribute/`firstDayOfWeek` property, where Monday is `1` and Sunday is `7`.
+- `day-7` CSS part for Sunday on `<calendar-month>`, matching ISO numbering
+
+### Deprecated
+
+- Using `0` for Sunday in `first-day-of-week`/`firstDayOfWeek`. Use `7` instead. A warning is logged when `0` is used. This will be removed in v1.
+- `day-0` CSS part on `<calendar-month>`. Use `day-7` instead. This will be removed in v1.
+
+### Fixed
+
+- `page-by="single"` not working with a 12-month calendar.
+- Published type declarations.
+- Missing `<calendar-select-month>`, `<calendar-select-year>`, and `<calendar-heading>` in global `HTMLElementTagNameMap` types.
+
 ## `0.9.2`
 
 _Released: 2026-02-05_
