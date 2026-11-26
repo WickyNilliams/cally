@@ -39,6 +39,7 @@
     "@astrojs/check": "^0.9.4",
     "@atomico/tsconfig": "^1.1.2",
     "@atomico/vite": "^2.21.1",
+    "@types/node": "^20.19.43",
     "@vitest/browser": "^4.0.16",
     "@vitest/browser-playwright": "^4.0.16",
     "@vitest/ui": "^4.0.16",
