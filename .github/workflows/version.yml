@@ -36,7 +36,7 @@ jobs:
 
       - name: Run tests
         run: |
-          npx playwright install chromium --with-deps
+          npx playwright install chromium firefox webkit --with-deps
           npm test
 
       - name: Build

@@ -89,11 +89,18 @@ export default defineConfig(({ mode }) => {
             setupFiles: ["./vitest.setup.ts"],
             browser: {
               enabled: true,
-              provider: playwright({
-                // allows tests to force garbage collection, to check for leaks
-                launchOptions: { args: ["--js-flags=--expose-gc"] },
-              }),
-              instances: [{ browser: "chromium" }],
+              provider: playwright(),
+              instances: [
+                {
+                  browser: "chromium",
+                  provider: playwright({
+                    // allows tests to force garbage collection, to check for leaks
+                    launchOptions: { args: ["--js-flags=--expose-gc"] },
+                  }),
+                },
+                { browser: "firefox" },
+                { browser: "webkit" },
+              ],
               headless: true,
               screenshotFailures: false,
             },
