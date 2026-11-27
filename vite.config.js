@@ -80,17 +80,35 @@ export default defineConfig(({ mode }) => {
         }),
     ],
     test: {
-      setupFiles: ["./vitest.setup.ts"],
-      browser: {
-        enabled: true,
-        provider: playwright({
-          // allows tests to force garbage collection, to check for leaks
-          launchOptions: { args: ["--js-flags=--expose-gc"] },
-        }),
-        instances: [{ browser: "chromium" }],
-        headless: true,
-        screenshotFailures: false,
-      },
+      projects: [
+        {
+          extends: true,
+          test: {
+            name: "browser",
+            exclude: ["**/node_modules/**", "**/*.server.test.ts"],
+            setupFiles: ["./vitest.setup.ts"],
+            browser: {
+              enabled: true,
+              provider: playwright({
+                // allows tests to force garbage collection, to check for leaks
+                launchOptions: { args: ["--js-flags=--expose-gc"] },
+              }),
+              instances: [{ browser: "chromium" }],
+              headless: true,
+              screenshotFailures: false,
+            },
+          },
+        },
+        {
+          // for what must also work on a server, where there is no DOM
+          extends: true,
+          test: {
+            name: "server",
+            include: ["**/*.server.test.ts"],
+            environment: "node",
+          },
+        },
+      ],
     },
   };
 });

@@ -1,4 +1,4 @@
-import { Base, css, setAttr, template, type PropDefs } from "../utils/base.js";
+import { Base, setAttr, type PropDefs } from "../utils/base.js";
 import {
   computed,
   signal,
@@ -127,7 +127,7 @@ export abstract class CalendarBase<
     showWeekNumbers: [Boolean, false],
   };
 
-  static template = template(
+  static template = (
     <div role="group" aria-labelledby="h" part="container">
       <calendar-heading
         month="long"
@@ -153,10 +153,10 @@ export abstract class CalendarBase<
       </div>
 
       <slot part="months" />
-    </div>,
+    </div>
   );
 
-  static styles = css(reset, styles);
+  static styles = reset + styles;
 
   /** The dates parsed from the `value` prop */
   protected abstract parsed: ReadonlySignal<PlainDate[]>;

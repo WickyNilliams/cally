@@ -1,4 +1,4 @@
-import { Base, css, template } from "../utils/base.js";
+import { Base } from "../utils/base.js";
 import {
   CalendarContext,
   type CalendarContextValue,
@@ -6,17 +6,14 @@ import {
 } from "../calendar-month/CalendarMonthContext.js";
 import reset from "../utils/reset.css?inline";
 
-const option = template(<option part="option" />);
-
-export const selectTemplate = (label: string) =>
-  template(
-    <>
-      <label part="label" for="s">
-        <slot name="label">{label}</slot>
-      </label>
-      <select id="s" part="select" />
-    </>,
-  );
+export const selectTemplate = (label: string) => (
+  <>
+    <label part="label" for="s">
+      <slot name="label">{label}</slot>
+    </label>
+    <select id="s" part="select" />
+  </>
+);
 
 export interface Option {
   label: string;
@@ -32,7 +29,7 @@ export abstract class SelectBase<Props> extends Base<
   {},
   Pick<DayEvents, "focusday">
 > {
-  static styles = css(reset);
+  static styles = reset;
 
   /** The part of the focused date which is chosen with the select */
   protected abstract unit: "month" | "year";
@@ -51,7 +48,9 @@ export abstract class SelectBase<Props> extends Base<
 
       // the number of options can vary, so top up or trim as necessary
       while (options.length < items.length) {
-        select.append(option.content.cloneNode(true));
+        const option = document.createElement("option");
+        option.setAttribute("part", "option");
+        select.append(option);
       }
       while (options.length > items.length) {
         select.lastChild!.remove();

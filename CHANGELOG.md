@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Types for the events of each component, so listeners added with `addEventListener` know the type of an event's `detail`.
 - `PropsOf`, `EventsOf`, `ReactProps`, `SvelteProps`, and `VueProps` types, for use with frameworks.
 - A [custom elements manifest](https://github.com/webcomponents/custom-elements-manifest), at `cally/custom-elements.json`.
+- Components can be imported on a server, e.g. during server-side rendering with Next.js, without throwing. They do nothing until they are loaded in a browser.
 
 ### Fixed
 

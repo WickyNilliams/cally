@@ -43,23 +43,32 @@ const providers = signal(0);
 // classes whose props have accessors on their prototype
 const finalized = new WeakSet<Function>();
 
+// templates and stylesheets are created when first needed, rather than when
+// the module is loaded, as that may happen on a server where there is no DOM
+const cache: Record<string, any> = {};
+
+/** Gets a `<template>` for a string of HTML */
+function template(html: string): HTMLTemplateElement {
+  if (!cache[html]) {
+    cache[html] = document.createElement("template");
+    cache[html].innerHTML = html;
+  }
+  return cache[html];
+}
+
+/** Gets a stylesheet for a string of CSS */
+function stylesheet(css: string): CSSStyleSheet {
+  if (!cache[css]) {
+    cache[css] = new CSSStyleSheet();
+    cache[css].replaceSync(css);
+  }
+  return cache[css];
+}
+
 const TRUTHY = /^(|true|1)$/;
 const toAttr = (prop: string) => prop.replace(/[A-Z]/g, "-$&").toLowerCase();
 const toProp = (attr: string) =>
   attr.replace(/-(.)/g, (_, char: string) => char.toUpperCase());
-
-/** Creates a `<template>` from a string of HTML */
-export function template(html: string) {
-  const el = document.createElement("template");
-  el.innerHTML = html;
-  return el;
-}
-
-export function css(...styles: string[]) {
-  const sheet = new CSSStyleSheet();
-  sheet.replaceSync(styles.join(""));
-  return sheet;
-}
 
 /** Sets (or removes, if nullish) an attribute, only touching the DOM on change */
 export function setAttr(
@@ -130,10 +139,13 @@ export abstract class Base<
   Props = {},
   Events = {},
   Internal = {},
-> extends HTMLElement {
+  // so that merely importing a component doesn't throw on a server
+> extends (globalThis.HTMLElement ?? (class {} as typeof HTMLElement)) {
   static props: PropDefs<any> = {};
-  static template?: HTMLTemplateElement;
-  static styles?: CSSStyleSheet;
+  /** The HTML of the shadow root */
+  static template?: string;
+  /** The CSS of the shadow root */
+  static styles?: string;
 
   /**
    * The platform reads this once for each class, when it is defined, before
@@ -163,9 +175,12 @@ export abstract class Base<
       .map(toAttr);
   }
 
-  /** Registers the component as a custom element */
+  /** Registers the component as a custom element. Does nothing on a server */
   static define(tag: string) {
-    customElements.define(tag, this as unknown as CustomElementConstructor);
+    globalThis.customElements?.define(
+      tag,
+      this as unknown as CustomElementConstructor,
+    );
   }
 
   /** Exists only so that the type of the public events can be inferred */
@@ -180,7 +195,11 @@ export abstract class Base<
 
   constructor() {
     super();
-    const { props, template, styles } = this.constructor as typeof Base;
+    const {
+      props,
+      template: html,
+      styles: css,
+    } = this.constructor as typeof Base;
     const self = this as any;
 
     for (const name in props) {
@@ -194,8 +213,8 @@ export abstract class Base<
       }
     }
 
-    if (styles) this.root.adoptedStyleSheets = [styles];
-    if (template) this.root.append(template.content.cloneNode(true));
+    if (css) this.root.adoptedStyleSheets = [stylesheet(css)];
+    if (html) this.root.append(template(html).content.cloneNode(true));
   }
 
   connectedCallback() {

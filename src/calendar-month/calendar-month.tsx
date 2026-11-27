@@ -1,11 +1,4 @@
-import {
-  Base,
-  css,
-  setAttr,
-  setText,
-  template,
-  type PropDefs,
-} from "../utils/base.js";
+import { Base, setAttr, setText, type PropDefs } from "../utils/base.js";
 import { computed } from "../utils/signals.js";
 import {
   clamp,
@@ -121,7 +114,7 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
 
   // everything that could be shown is rendered once, up front.
   // what is not needed (e.g. a sixth week) is taken out of the tree until it is.
-  static template = template(
+  static template = (
     <>
       <calendar-heading month="long" id="h" class="vh" />
 
@@ -153,10 +146,10 @@ export class CalendarMonth extends Base<MonthProps, {}, DayEvents> {
         </thead>
         <tbody>{week.repeat(6)}</tbody>
       </table>
-    </>,
+    </>
   );
 
-  static styles = css(reset, styles);
+  static styles = reset + styles;
 
   #table = this.query<HTMLTableElement>("table");
 
