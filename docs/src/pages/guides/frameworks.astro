@@ -388,8 +388,11 @@ import type {
   CalendarDateProps,
 } from "cally";
 
+// e.g. onchange in Svelte 5, or on:change in Svelte 4
 type MapEvents<T> = {
-  [K in keyof T as K extends \`on\${infer E}\` ? \`on:\${Lowercase<E>}\` : K]: T[K];
+  [K in keyof T as K extends \`on\${infer E}\`
+    ? \`on\${Lowercase<E>}\` | \`on:\${Lowercase<E>}\`
+    : K]: T[K];
 };
 
 declare module "svelte/elements" {

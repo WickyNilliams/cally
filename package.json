@@ -28,6 +28,7 @@
     "check-types": "attw --pack . --profile esm-only",
     "test": "vitest run",
     "test:ui": "vitest --ui",
+    "test:frameworks": "node scripts/test-frameworks.mjs",
     "astro:dev": "astro dev --root ./docs",
     "astro:build": "astro check --root ./docs && astro build --root ./docs",
     "astro:preview": "astro preview --root ./docs"

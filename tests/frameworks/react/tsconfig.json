@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    // as the docs instruct, rather than including the file directly
+    "types": ["./globals.d.ts"]
+  },
+  "include": ["src", "../shared"]
+}
