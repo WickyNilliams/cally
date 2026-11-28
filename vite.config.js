@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import atomico from "@atomico/vite";
+import atomico from "./vite-plugin-atomico.js";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { appendFile, readFile } from "fs/promises";
@@ -23,8 +23,7 @@ export default defineConfig({
     }),
 
     dts({
-      rollupTypes: true,
-      bundledPackages: ["atomico"],
+      bundleTypes: { bundledPackages: ["atomico"] },
       tsconfigPath: "./tsconfig.build.json",
 
       // workaround to include the global types
