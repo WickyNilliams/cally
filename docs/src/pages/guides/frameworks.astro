@@ -172,6 +172,38 @@ import 'cally';
 `.trim()}
   />
 
+  <Heading id="vue-functions" level={3}>Functions as props</Heading>
+
+  <p>
+    Some props take a function, such as <code>isDateDisallowed</code> and
+    <code>getDayParts</code>. A function can't be passed as an attribute, only
+    as a property. Vue only sets a property if its name matches exactly, so
+    these props must be written in camelCase:
+  </p>
+
+  <Code
+    lang="vue"
+    code={`
+<script setup>
+import 'cally';
+
+function isWeekend(date) {
+  return date.getUTCDay() === 0 || date.getUTCDay() === 6;
+}
+</script>
+<template>
+  <calendar-date :isDateDisallowed="isWeekend">
+    <calendar-month />
+  </calendar-date>
+</template>
+`.trim()}
+  />
+
+  <Note>
+    Written in kebab-case, as <code>:is-date-disallowed</code>, Vue sets an
+    attribute instead, and the function has no effect.
+  </Note>
+
   <Heading id="vue-usage" level={3}>Usage with <code>v-model</code></Heading>
 
   <p>
@@ -205,6 +237,14 @@ const selected = ref("")
 </template>
 `.trim()}
   />
+
+  <Note>
+    Vue only allows <code>v-model</code> on <code>{`<input>`}</code>,
+    <code>{`<select>`}</code>, and <code>{`<textarea>`}</code> when rendering on
+    the server, for example with Nuxt. Components which use it on Cally's
+    components fail to compile for the server. If you render on the server,
+    listen for events instead, as shown below.
+  </Note>
 
   <p>
     You are not required to use <code>v-model</code>. You can listen for events
