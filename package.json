@@ -37,7 +37,8 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/markdown-remark": "^7.3.10",
     "@atomico/tsconfig": "^1.1.2",
     "@atomico/vite": "^3.1.0",
     "@jridgewell/sourcemap-codec": "^1.6.0",
@@ -45,7 +46,7 @@
     "@vitest/browser": "^5.1.2",
     "@vitest/browser-playwright": "^5.1.2",
     "@vitest/ui": "^5.1.2",
-    "astro": "^5.5.6",
+    "astro": "^7.4.13",
     "hastscript": "^9.0.1",
     "playwright": "^1.65.1",
     "postcss-nesting": "^13.0.1",
