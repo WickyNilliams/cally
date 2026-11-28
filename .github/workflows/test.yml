@@ -19,7 +19,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run check-types
-      - run: npx playwright install chromium --with-deps
+      - run: npx playwright install chromium firefox webkit --with-deps
       - uses: actions/cache/save@v4
         with:
           path: |
@@ -48,6 +48,8 @@ jobs:
             node_modules
             ~/.cache/ms-playwright
           key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+      # the browsers are cached, but the system libraries they need are not
+      - run: npx playwright install-deps chromium firefox webkit
       - name: Run tests (TZ=${{ matrix.timezone }})
         run: npm test
         env:
