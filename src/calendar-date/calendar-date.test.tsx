@@ -148,6 +148,18 @@ describe("CalendarDate", () => {
     });
   });
 
+  // as it does for native inputs. svelte 5 relies on this, for example
+  it("dispatches change events that bubble", async () => {
+    const spy = createSpy<(e: Event) => void>();
+    const calendar = await mount(<Fixture value="2020-01-01" />);
+    calendar.parentElement!.addEventListener("change", spy);
+
+    await clickDay(getMonth(calendar), "19 January");
+
+    expect(spy.count).toBe(1);
+    expect(spy.last[0].target).toBe(calendar);
+  });
+
   describe("keyboard interaction", () => {
     it("can select a date in the future", async () => {
       const spy = createSpy();
