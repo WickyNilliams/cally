@@ -132,7 +132,7 @@ export function useCalendarBase({
   const [max] = useDateProp("max");
   const [today] = useDateProp("today");
   const dispatchFocusDay = useEvent<Date>("focusday");
-  const dispatch = useEvent("change");
+  const dispatch = useEvent("change", { bubbles: true });
 
   const focusedDate = useMemo(
     () => clamp(focusedDateProp ?? today ?? getToday(), min, max),
