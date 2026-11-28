@@ -1,0 +1,22 @@
+{
+  "name": "cally-svelte-test",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "svelte-check --fail-on-warnings",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "svelte": "5.59.2"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "7.3.2",
+    "@vitest/browser-playwright": "5.1.2",
+    "playwright": "1.65.1",
+    "svelte-check": "4.7.8",
+    "typescript": "5.9.3",
+    "vite": "8.4.0",
+    "vitest": "5.1.2",
+    "vitest-browser-svelte": "3.1.0"
+  }
+}

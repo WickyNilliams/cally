@@ -39,6 +39,8 @@ export default defineConfig({
   },
   test: {
     setupFiles: ["./vitest.setup.ts"],
+    // each framework has its own tests, run with `npm run test:frameworks`
+    exclude: ["**/node_modules/**", "tests/frameworks/**"],
     browser: {
       enabled: true,
       provider: playwright(),
