@@ -10,5 +10,5 @@
     // as the docs instruct, rather than including the file directly
     "types": ["./globals.d.ts"]
   },
-  "include": ["src"]
+  "include": ["src", "../shared"]
 }

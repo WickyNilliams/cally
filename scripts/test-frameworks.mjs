@@ -4,14 +4,17 @@
 //   npm run test:frameworks
 //   npm run test:frameworks -- react vue
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readdirSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const frameworksDir = join(root, "tests/frameworks");
+// each app has its own package.json. anything else, e.g. the shared tests, isn't one
 const all = readdirSync(frameworksDir, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
+  .filter((entry) =>
+    existsSync(join(frameworksDir, entry.name, "package.json")),
+  )
   .map((entry) => entry.name);
 
 const names = process.argv.slice(2);

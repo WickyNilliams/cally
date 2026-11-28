@@ -13,6 +13,10 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    // the shared tests are outside of this app, but must use its vitest
+    dedupe: ["vitest"],
+  },
   test: {
     projects: [
       {

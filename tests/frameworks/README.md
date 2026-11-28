@@ -10,6 +10,10 @@ npm run test:frameworks              # all of them
 npm run test:frameworks -- react vue # only these
 ```
 
+The tests are the same for every framework, as cally should work the same in
+each. They're in `shared/suite.ts`, along with what each app must render. Each
+app's test only says how to mount it in that framework.
+
 This builds cally and packs it as it would be published, then installs it into
 each app before running `npm run check` (types) and `npm test` there.
 
