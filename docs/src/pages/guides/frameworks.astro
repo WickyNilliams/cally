@@ -239,11 +239,12 @@ const selected = ref("")
   />
 
   <Note>
-    Vue only allows <code>v-model</code> on <code>{`<input>`}</code>,
-    <code>{`<select>`}</code>, and <code>{`<textarea>`}</code> when rendering on
-    the server, for example with Nuxt. Components which use it on Cally's
-    components fail to compile for the server. If you render on the server,
-    listen for events instead, as shown below.
+    Vue supports <code>v-model</code> on custom elements in the browser, but
+    not yet when rendering on the server, for example with Nuxt. There, its
+    compiler only allows <code>v-model</code> on <code>{`<input>`}</code>,
+    <code>{`<select>`}</code>, and <code>{`<textarea>`}</code>, so components
+    which use it on Cally's components fail to compile. If you render on the
+    server, listen for events instead, as shown below.
   </Note>
 
   <p>
