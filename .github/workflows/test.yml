@@ -20,12 +20,14 @@ jobs:
       - run: npm run build
       - run: npm run check-types
       - run: npx playwright install chromium firefox webkit --with-deps
+      # caches can't be replaced, so the key must change along with what is
+      # installed, e.g. which browsers. hence including this file in the key
       - uses: actions/cache/save@v4
         with:
           path: |
             node_modules
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json', '.github/workflows/test.yml') }}
 
   test:
     needs: build
@@ -47,7 +49,8 @@ jobs:
           path: |
             node_modules
             ~/.cache/ms-playwright
-          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ hashFiles('package-lock.json', '.github/workflows/test.yml') }}
+          fail-on-cache-miss: true
       # the browsers are cached, but the system libraries they need are not
       - run: npx playwright install-deps chromium firefox webkit
       - name: Run tests (TZ=${{ matrix.timezone }})
